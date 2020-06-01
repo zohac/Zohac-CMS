@@ -56,7 +56,7 @@ class ViewService
 
     /**
      * @param string $view
-     * @param array $options
+     * @param array  $options
      *
      * @return $this
      */

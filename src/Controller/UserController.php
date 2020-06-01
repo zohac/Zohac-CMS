@@ -23,7 +23,7 @@ class UserController extends DefaultController
      * @Route("/users", name="users.list")
      *
      * @param UserRepository $userRepository
-     * @param UserService $userService
+     * @param UserService    $userService
      *
      * @return Response
      */
@@ -56,9 +56,9 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request $request
+     * @param Request     $request
      * @param UserService $userService
-     * @param UserDto $userDto
+     * @param UserDto     $userDto
      *
      * @return Response
      */

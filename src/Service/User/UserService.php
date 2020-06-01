@@ -34,13 +34,13 @@ class UserService extends DefaultService
     /**
      * UserService constructor.
      *
-     * @param SerializerInterface $serializer
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ValidatorInterface $validator
-     * @param EventService $eventService
+     * @param SerializerInterface          $serializer
+     * @param EventDispatcherInterface     $eventDispatcher
+     * @param ValidatorInterface           $validator
+     * @param EventService                 $eventService
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface $entityManager
-     * @param UuidService $uuidService
+     * @param EntityManagerInterface       $entityManager
+     * @param UuidService                  $uuidService
      */
     public function __construct(
         SerializerInterface $serializer,
@@ -50,8 +50,7 @@ class UserService extends DefaultService
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager,
         UuidService $uuidService
-    )
-    {
+    ) {
         parent::__construct($serializer, $eventDispatcher, $validator, $eventService);
 
         $this->passwordEncoder = $passwordEncoder;

@@ -32,15 +32,14 @@ class DefaultController extends AbstractController
      * DefaultController constructor.
      *
      * @param EventDispatcherInterface $eventDispatcher
-     * @param ViewService $viewService
-     * @param FlashBagInterface $flashBag
+     * @param ViewService              $viewService
+     * @param FlashBagInterface        $flashBag
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         ViewService $viewService,
         FlashBagInterface $flashBag
-    )
-    {
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
@@ -63,7 +62,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param string $type
+     * @param string      $type
      * @param string|null $title
      * @param string|null $content
      *
@@ -89,8 +88,8 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param string $view
-     * @param array $options
+     * @param string        $view
+     * @param array         $options
      * @param Response|null $response
      *
      * @return Response
