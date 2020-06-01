@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List!{% endblock %}
+
+{% block body %}
+    <div class="users-wrapper">
+        {% for user in users %}
+            <div class="user-wrapper">
+                uuid: {{ user.uuid }}<br/>
+                email: {{ user.email }}<br/>
+                roles:
+                <ul>
+                    {% for role in user.roles %}
+                        <li>{{ role }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ path('users.detail', {'uuid': user.uuid}) }}">Detail</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
