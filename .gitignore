@@ -14,5 +14,5 @@
 ###< ide configuartion ###
 
 ###> .env file ###
-.env.develop
+.env.dev
 ###< .env file ###
