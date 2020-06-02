@@ -100,7 +100,7 @@ class UserService extends DefaultService
 
     /**
      * @param UserDto $userDto
-     * @param User $user
+     * @param User    $user
      *
      * @return User
      *

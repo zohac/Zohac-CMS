@@ -64,9 +64,9 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request $request
+     * @param Request     $request
      * @param UserService $userService
-     * @param UserDto $userDto
+     * @param UserDto     $userDto
      *
      * RedirectResponse|Response
      */
@@ -102,9 +102,9 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param Request $request
+     * @param Request     $request
      * @param UserService $userService
-     * @param User $user
+     * @param User        $user
      *
      * @return RedirectResponse|Response
      */
