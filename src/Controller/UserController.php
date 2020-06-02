@@ -13,7 +13,6 @@ use App\Event\User\UserUpdateViewEvent;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\User\UserService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,7 +67,7 @@ class UserController extends DefaultController
      * @param UserService $userService
      * @param UserDto     $userDto
      *
-     * RedirectResponse|Response
+     * @return Response
      */
     public function create(Request $request, UserService $userService, UserDto $userDto): Response
     {
@@ -106,9 +105,9 @@ class UserController extends DefaultController
      * @param UserService $userService
      * @param User        $user
      *
-     * @return RedirectResponse|Response
+     * @return Response
      */
-    public function update(Request $request, UserService $userService, User $user)
+    public function update(Request $request, UserService $userService, User $user): Response
     {
         $userDto = $userService->createUserDtoFromUser($user);
         $form = $this->createForm(UserType::class, $userDto);
