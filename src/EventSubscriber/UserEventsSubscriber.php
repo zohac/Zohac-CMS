@@ -4,7 +4,11 @@ namespace App\EventSubscriber;
 
 use App\Event\User\UserCreateEvent;
 use App\Event\User\UserPostCreateEvent;
+use App\Event\User\UserPostUpdateEvent;
 use App\Event\User\UserPreCreateEvent;
+use App\Event\User\UserPreUpdateEvent;
+use App\Event\User\UserUpdateEvent;
+use App\Exception\UuidException;
 use App\Service\User\UserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -31,6 +35,9 @@ class UserEventsSubscriber implements EventSubscriberInterface
             UserPreCreateEvent::class => ['onUserPreCreate', 0],
             UserCreateEvent::class => ['onUserCreate', 0],
             UserPostCreateEvent::class => ['onUserPostCreate', 0],
+            UserPreUpdateEvent::class => ['onUserPreUpdate', 0],
+            UserUpdateEvent::class => ['onUserUpdate', 0],
+            UserPostUpdateEvent::class => ['onUserPostUpdate', 0],
         ];
     }
 
@@ -44,6 +51,8 @@ class UserEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param UserCreateEvent $event
+     *
+     * @throws UuidException
      */
     public function onUserCreate(UserCreateEvent $event)
     {
@@ -54,6 +63,32 @@ class UserEventsSubscriber implements EventSubscriberInterface
      * @param UserPostCreateEvent $event
      */
     public function onUserPostCreate(UserPostCreateEvent $event)
+    {
+        dump($event);
+    }
+
+    /**
+     * @param UserPreUpdateEvent $event
+     */
+    public function onUserPreUpdate(UserPreUpdateEvent $event)
+    {
+        dump($event);
+    }
+
+    /**
+     * @param UserUpdateEvent $event
+     *
+     * @throws UuidException
+     */
+    public function onUserUpdate(UserUpdateEvent $event)
+    {
+        $this->userService->updateUserFromDto($event->getUserDto(), $event->getUser());
+    }
+
+    /**
+     * @param UserPostUpdateEvent $event
+     */
+    public function onUserPostUpdate(UserPostUpdateEvent $event)
     {
         dump($event);
     }

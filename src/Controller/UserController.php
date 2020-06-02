@@ -7,9 +7,13 @@ use App\Entity\User;
 use App\Event\User\UserCreateEvent;
 use App\Event\User\UserCreateViewEvent;
 use App\Event\User\UserPreCreateEvent;
-use App\Form\UserCreateType;
+use App\Event\User\UserPreUpdateEvent;
+use App\Event\User\UserUpdateEvent;
+use App\Event\User\UserUpdateViewEvent;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\User\UserService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +44,11 @@ class UserController extends DefaultController
     }
 
     /**
-     * @Route("/users/{uuid}", name="users.detail")
+     * @Route(
+     *     "/users/{uuid}",
+     *     name="users.detail",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     * )
      *
      * @param User $user
      *
@@ -56,15 +64,15 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request     $request
+     * @param Request $request
      * @param UserService $userService
-     * @param UserDto     $userDto
+     * @param UserDto $userDto
      *
-     * @return Response
+     * RedirectResponse|Response
      */
     public function create(Request $request, UserService $userService, UserDto $userDto): Response
     {
-        $form = $this->createForm(UserCreateType::class, $userDto);
+        $form = $this->createForm(UserType::class, $userDto);
 
         $userService->dispatchEvent(UserPreCreateEvent::NAME, [
             'form' => $form,
@@ -77,12 +85,55 @@ class UserController extends DefaultController
 
             $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
 
-            $this->redirectToRoute('users.list');
+            return $this->redirectToRoute('users.list');
         }
 
         $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
 
         $userService->dispatchEvent(UserCreateViewEvent::NAME, ['viewService' => $this->getViewService()]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @Route(
+     *     "/users/{uuid}/update",
+     *     name="users.update",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     * )
+     *
+     * @param Request $request
+     * @param UserService $userService
+     * @param User $user
+     *
+     * @return RedirectResponse|Response
+     */
+    public function update(Request $request, UserService $userService, User $user)
+    {
+        $userDto = $userService->createUserDtoFromUser($user);
+        $form = $this->createForm(UserType::class, $userDto);
+
+        $userService->dispatchEvent(UserPreUpdateEvent::NAME, [
+            'form' => $form,
+            'userDto' => $userDto,
+            'user' => $user,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userService->dispatchEvent(UserUpdateEvent::NAME, [
+                'userDto' => $userDto,
+                'user' => $user,
+            ]);
+
+            $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
+
+            return $this->redirectToRoute('users.list');
+        }
+
+        $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
+
+        $userService->dispatchEvent(UserUpdateViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }

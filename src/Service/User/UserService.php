@@ -5,6 +5,7 @@ namespace App\Service\User;
 use App\Dto\user\UserDto;
 use App\Entity\User;
 use App\Event\User\UserPostCreateEvent;
+use App\Event\User\UserPostUpdateEvent;
 use App\Exception\UuidException;
 use App\Service\DefaultService;
 use App\Service\EventService;
@@ -78,6 +79,44 @@ class UserService extends DefaultService
         $this->entityManager->flush();
 
         $this->dispatchEvent(UserPostCreateEvent::NAME, ['user' => $user]);
+
+        return $user;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return UserDto
+     */
+    public function createUserDtoFromUser(User $user): UserDto
+    {
+        $userDto = new UserDto();
+
+        $userDto->email = $user->getEmail();
+        $userDto->roles = $user->getRoles();
+
+        return $userDto;
+    }
+
+    /**
+     * @param UserDto $userDto
+     * @param User $user
+     *
+     * @return User
+     *
+     * @throws UuidException
+     */
+    public function updateUserFromDto(UserDto $userDto, User $user): User
+    {
+        $user->setUuid($this->getUuid());
+        $user->setEmail($userDto->email);
+        $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
+        $user->setPassword($password);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $this->dispatchEvent(UserPostUpdateEvent::NAME, ['user' => $user]);
 
         return $user;
     }

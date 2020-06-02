@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -61,22 +60,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('u.id', 'ASC')
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @param string $uuid
-     *
-     * @return User
-     *
-     * @throws NonUniqueResultException
-     */
-    public function findUserWithUuid(string $uuid): User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.uuid = :uuid')
-            ->setParameter('uuid', $uuid)
-            ->getQuery()
-            ->getOneOrNullResult();
     }
 
     // /**
