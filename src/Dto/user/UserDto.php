@@ -11,7 +11,7 @@ class UserDto
      */
     public $email;
 
-    public $roles;
+    public $roles = [];
 
     /**
      * @Assert\Type("string")

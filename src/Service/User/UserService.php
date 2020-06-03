@@ -72,6 +72,8 @@ class UserService extends DefaultService
 
         $user->setUuid($this->getUuid());
         $user->setEmail($userDto->email);
+        $user->setRoles($userDto->roles);
+
         $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
         $user->setPassword($password);
 
@@ -110,8 +112,12 @@ class UserService extends DefaultService
     {
         $user->setUuid($this->getUuid());
         $user->setEmail($userDto->email);
-        $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-        $user->setPassword($password);
+        $user->setRoles($userDto->roles);
+
+        if (null !== $userDto->password) {
+            $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
+            $user->setPassword($password);
+        }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

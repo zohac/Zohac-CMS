@@ -80,6 +80,7 @@ class UserController extends DefaultController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            dump($userDto);
             $userService->dispatchEvent(UserCreateEvent::NAME, ['userDto' => $userDto]);
 
             $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
@@ -110,6 +111,7 @@ class UserController extends DefaultController
     public function update(Request $request, UserService $userService, User $user): Response
     {
         $userDto = $userService->createUserDtoFromUser($user);
+        dump($userDto);
         $form = $this->createForm(UserType::class, $userDto);
 
         $userService->dispatchEvent(UserPreUpdateEvent::NAME, [

@@ -11,6 +11,8 @@ use App\Event\User\UserUpdateEvent;
 use App\Exception\UuidException;
 use App\Service\User\UserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class UserEventsSubscriber implements EventSubscriberInterface
 {
@@ -72,7 +74,12 @@ class UserEventsSubscriber implements EventSubscriberInterface
      */
     public function onUserPreUpdate(UserPreUpdateEvent $event)
     {
-        dump($event);
+        $form = $event->getForm();
+        $form->remove('password');
+        $form->add('password', RepeatedType::class, [
+            'type' => PasswordType::class,
+            'required' => false,
+        ]);
     }
 
     /**
