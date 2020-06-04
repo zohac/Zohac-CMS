@@ -75,7 +75,9 @@ class UserController extends DefaultController
      */
     public function create(Request $request, UserService $userService, UserDto $userDto): Response
     {
-        $form = $this->createForm(UserType::class, $userDto);
+        $form = $this->createForm(UserType::class, $userDto, [
+            'action' => $this->generateUrl('users.create'),
+        ]);
 
         $userService->dispatchEvent(UserPreCreateEvent::NAME, [
             'form' => $form,
@@ -111,10 +113,18 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function update(Request $request, UserService $userService, User $user): Response
+    public function update(Request $request, UserService $userService, ?User $user = null): Response
     {
+        if (!$user) {
+            $this->addFlashMessage('error', 'User', 'L\'utilisateur n\'a pas été trouvé.');
+
+            return $this->redirectToRoute('users.list');
+        }
+
         $userDto = $userService->createUserDtoFromUser($user);
-        $form = $this->createForm(UserType::class, $userDto);
+        $form = $this->createForm(UserType::class, $userDto, [
+            'action' => $this->generateUrl('users.update', ['uuid' => $user->getUuid()]),
+        ]);
 
         $userService->dispatchEvent(UserPreUpdateEvent::NAME, [
             'form' => $form,
