@@ -18,16 +18,16 @@ trait EventTrait
     }
 
     /**
-     * @param array $data
+     * @param array|null $data
      *
      * @return $this
      */
-    public function setData(array $data): self
+    public function setData(?array $data = []): self
     {
         $this->data = $data;
 
         foreach ($data as $key => $value) {
-            $method = 'set'.ucfirst($key);
+            $method = 'set' . ucfirst($key);
 
             if (method_exists($this, $method)) {
                 $this->$method($value);

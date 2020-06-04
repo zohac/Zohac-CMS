@@ -5,6 +5,7 @@ namespace App\Service\User;
 use App\Dto\user\UserDto;
 use App\Entity\User;
 use App\Event\User\UserPostCreateEvent;
+use App\Event\User\UserPostDeleteEvent;
 use App\Event\User\UserPostUpdateEvent;
 use App\Exception\UuidException;
 use App\Service\DefaultService;
@@ -125,6 +126,14 @@ class UserService extends DefaultService
         $this->dispatchEvent(UserPostUpdateEvent::NAME, ['user' => $user]);
 
         return $user;
+    }
+
+    public function deleteUser(User $user)
+    {
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+
+        $this->dispatchEvent(UserPostDeleteEvent::NAME);
     }
 
     /**

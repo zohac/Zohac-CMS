@@ -3,9 +3,12 @@
 namespace App\EventSubscriber;
 
 use App\Event\User\UserCreateEvent;
+use App\Event\User\UserDeleteEvent;
 use App\Event\User\UserPostCreateEvent;
+use App\Event\User\UserPostDeleteEvent;
 use App\Event\User\UserPostUpdateEvent;
 use App\Event\User\UserPreCreateEvent;
+use App\Event\User\UserPreDeleteEvent;
 use App\Event\User\UserPreUpdateEvent;
 use App\Event\User\UserUpdateEvent;
 use App\Exception\UuidException;
@@ -40,6 +43,9 @@ class UserEventsSubscriber implements EventSubscriberInterface
             UserPreUpdateEvent::class => ['onUserPreUpdate', 0],
             UserUpdateEvent::class => ['onUserUpdate', 0],
             UserPostUpdateEvent::class => ['onUserPostUpdate', 0],
+            UserPreDeleteEvent::class => ['onUserPreDelete', 0],
+            UserDeleteEvent::class => ['onUserDelete', 0],
+            UserPostDeleteEvent::class => ['onUserPostDelete', 0],
         ];
     }
 
@@ -96,6 +102,30 @@ class UserEventsSubscriber implements EventSubscriberInterface
      * @param UserPostUpdateEvent $event
      */
     public function onUserPostUpdate(UserPostUpdateEvent $event)
+    {
+        dump($event);
+    }
+
+    /**
+     * @param UserPreDeleteEvent $event
+     */
+    public function onUserPreDelete(UserPreDeleteEvent $event)
+    {
+        dump($event);
+    }
+
+    /**
+     * @param UserDeleteEvent $event
+     */
+    public function onUserDelete(UserDeleteEvent $event)
+    {
+        $this->userService->deleteUser($event->getUser());
+    }
+
+    /**
+     * @param UserPostDeleteEvent $event
+     */
+    public function onUserPostDelete(UserPostDeleteEvent $event)
     {
         dump($event);
     }

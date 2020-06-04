@@ -76,11 +76,11 @@ class DefaultService
 
     /**
      * @param string $eventName
-     * @param array  $data
+     * @param array|null $data
      *
      * @return $this
      */
-    public function dispatchEvent(string $eventName, array $data): self
+    public function dispatchEvent(string $eventName, ?array $data = []): self
     {
         $event = $this->getEvent($eventName);
         $event->setData($data);
