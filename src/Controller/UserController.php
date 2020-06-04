@@ -6,6 +6,7 @@ use App\Dto\user\UserDto;
 use App\Entity\User;
 use App\Event\User\UserCreateEvent;
 use App\Event\User\UserCreateViewEvent;
+use App\Event\User\UserDetailViewEvent;
 use App\Event\User\UserPreCreateEvent;
 use App\Event\User\UserPreUpdateEvent;
 use App\Event\User\UserUpdateEvent;
@@ -49,13 +50,15 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param User $user
-     *
+     * @param UserService $userService
+     * @param User|null $user
      * @return Response
      */
-    public function detail(?User $user = null): Response
+    public function detail(UserService $userService, ?User $user = null): Response
     {
         $this->getViewService()->setData('user/detail.html.twig', ['user' => $user]);
+
+        $userService->dispatchEvent(UserDetailViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -80,7 +83,6 @@ class UserController extends DefaultController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($userDto);
             $userService->dispatchEvent(UserCreateEvent::NAME, ['userDto' => $userDto]);
 
             $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
@@ -150,8 +152,16 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function delete(Request $request, User $user): Response
+    public function delete(Request $request, ?User $user = null): Response
     {
+        if (!$user) {
+            $this->addFlashMessage('error', 'User', 'L\'utilisateur n\'a pas été trouvé.');
+
+            return $this->redirectToRoute('users.list');
+        }
+
+
+
         return $this->getResponse();
     }
 }

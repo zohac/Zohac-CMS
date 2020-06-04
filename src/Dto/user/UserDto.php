@@ -7,6 +7,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserDto
 {
     /**
+     * @Assert\Uuid()
+     */
+    public $uuid;
+
+    /**
      * @Assert\Email()
      */
     public $email;
