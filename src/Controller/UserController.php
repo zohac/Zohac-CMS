@@ -51,7 +51,8 @@ class UserController extends DefaultController
      * )
      *
      * @param UserService $userService
-     * @param User|null $user
+     * @param User|null   $user
+     *
      * @return Response
      */
     public function detail(UserService $userService, ?User $user = null): Response
@@ -159,8 +160,6 @@ class UserController extends DefaultController
 
             return $this->redirectToRoute('users.list');
         }
-
-
 
         return $this->getResponse();
     }
