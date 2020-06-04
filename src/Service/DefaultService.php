@@ -75,7 +75,7 @@ class DefaultService
     }
 
     /**
-     * @param string $eventName
+     * @param string     $eventName
      * @param array|null $data
      *
      * @return $this
