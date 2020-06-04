@@ -146,12 +146,12 @@ class UserController extends DefaultController
      * )
      *
      * @param Request $request
-     * @param User $user
+     * @param User    $user
+     *
      * @return Response
      */
     public function delete(Request $request, User $user): Response
     {
-        
         return $this->getResponse();
     }
 }
