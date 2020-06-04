@@ -111,7 +111,6 @@ class UserController extends DefaultController
     public function update(Request $request, UserService $userService, User $user): Response
     {
         $userDto = $userService->createUserDtoFromUser($user);
-        dump($userDto);
         $form = $this->createForm(UserType::class, $userDto);
 
         $userService->dispatchEvent(UserPreUpdateEvent::NAME, [
@@ -136,6 +135,23 @@ class UserController extends DefaultController
 
         $userService->dispatchEvent(UserUpdateViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
+        return $this->getResponse();
+    }
+
+    /**
+     * @Route(
+     *     "/users/{uuid}/delete",
+     *     name="users.delete",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     * )
+     *
+     * @param Request $request
+     * @param User $user
+     * @return Response
+     */
+    public function delete(Request $request, User $user): Response
+    {
+        
         return $this->getResponse();
     }
 }

@@ -16,7 +16,6 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        dump($options);
         /** @var UserDto $userDto */
         $userDto = $options['data'];
 
