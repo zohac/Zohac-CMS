@@ -84,7 +84,7 @@ class DefaultService
     {
         $event = $this->getEvent($eventName);
         $event->setData($data);
-        $this->getEventDispatcher()->dispatch($event);
+        $this->getEventDispatcher()->dispatch($event, $eventName);
 
         return $this;
     }

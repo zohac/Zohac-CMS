@@ -37,15 +37,15 @@ class UserEventsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserPreCreateEvent::class => ['onUserPreCreate', 0],
-            UserCreateEvent::class => ['onUserCreate', 0],
-            UserPostCreateEvent::class => ['onUserPostCreate', 0],
-            UserPreUpdateEvent::class => ['onUserPreUpdate', 0],
-            UserUpdateEvent::class => ['onUserUpdate', 0],
-            UserPostUpdateEvent::class => ['onUserPostUpdate', 0],
-            UserPreDeleteEvent::class => ['onUserPreDelete', 0],
-            UserDeleteEvent::class => ['onUserDelete', 0],
-            UserPostDeleteEvent::class => ['onUserPostDelete', 0],
+            UserPreCreateEvent::NAME => ['onUserPreCreate', 0],
+            UserCreateEvent::NAME => ['onUserCreate', 0],
+            UserPostCreateEvent::NAME => ['onUserPostCreate', 0],
+            UserPreUpdateEvent::NAME => ['onUserPreUpdate', 0],
+            UserUpdateEvent::NAME => ['onUserUpdate', 0],
+            UserPostUpdateEvent::NAME => ['onUserPostUpdate', 0],
+            UserPreDeleteEvent::NAME => ['onUserPreDelete', 0],
+            UserDeleteEvent::NAME => ['onUserDelete', 0],
+            UserPostDeleteEvent::NAME => ['onUserPostDelete', 0],
         ];
     }
 
