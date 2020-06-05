@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail!{% endblock %}
+
+{% block body %}
+    <div class="user-wrapper">
+
+        {% if user is not empty %}
+            uuid: {{ user.uuid }}<br/>
+            email: {{ user.email }}<br/>
+            roles:
+            <ul>
+                {% for role in user.roles %}
+                    <li>{{ role }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ path('users.list') }}">List</a>
+            <a href="{{ path('users.update', {"uuid": user.uuid}) }}">Update</a>
+            <a href="{{ path('users.delete', {"uuid": user.uuid}) }}">Delete</a>
+        {% endif %}
+
+    </div>
+
+{% endblock %}
