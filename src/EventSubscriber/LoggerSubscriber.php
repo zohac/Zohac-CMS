@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\EventSubscriber;
-
 
 use App\Event\User\UserViewEvent;
 use Psr\Log\LoggerInterface;
