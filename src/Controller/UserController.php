@@ -30,18 +30,17 @@ class UserController extends DefaultController
      * @Route("/users", name="users.list")
      *
      * @param UserRepository $userRepository
-     * @param UserService    $userService
      *
      * @return Response
      */
-    public function list(UserRepository $userRepository, UserService $userService): Response
+    public function list(UserRepository $userRepository): Response
     {
 //        $users = $userRepository->findAll();
         $users = $userRepository->findAllNotArchived();
 
         $this->getViewService()->setData('user/index.html.twig', ['users' => $users]);
 
-        $userService->dispatchEvent(UserCreateViewEvent::NAME, ['viewService' => $this->getViewService()]);
+        $this->dispatchEvent(UserCreateViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -53,16 +52,15 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param UserService $userService
-     * @param User|null   $user
+     * @param User|null $user
      *
      * @return Response
      */
-    public function detail(UserService $userService, ?User $user = null): Response
+    public function detail(?User $user = null): Response
     {
         $this->getViewService()->setData('user/detail.html.twig', ['user' => $user]);
 
-        $userService->dispatchEvent(UserDetailViewEvent::NAME, ['viewService' => $this->getViewService()]);
+        $this->dispatchEvent(UserDetailViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -70,26 +68,25 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request     $request
-     * @param UserService $userService
-     * @param UserDto     $userDto
+     * @param Request $request
+     * @param UserDto $userDto
      *
      * @return Response
      */
-    public function create(Request $request, UserService $userService, UserDto $userDto): Response
+    public function create(Request $request, UserDto $userDto): Response
     {
         $form = $this->createForm(UserType::class, $userDto, [
             'action' => $this->generateUrl('users.create'),
         ]);
 
-        $userService->dispatchEvent(UserPreCreateEvent::NAME, [
+        $this->dispatchEvent(UserPreCreateEvent::NAME, [
             'form' => $form,
             'userDto' => $userDto,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $userService->dispatchEvent(UserCreateEvent::NAME, ['userDto' => $userDto]);
+            $this->dispatchEvent(UserCreateEvent::NAME, ['userDto' => $userDto]);
 
             $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
 
@@ -98,7 +95,7 @@ class UserController extends DefaultController
 
         $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
 
-        $userService->dispatchEvent(UserCreateViewEvent::NAME, ['viewService' => $this->getViewService()]);
+        $this->dispatchEvent(UserCreateViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -129,7 +126,7 @@ class UserController extends DefaultController
             'action' => $this->generateUrl('users.update', ['uuid' => $user->getUuid()]),
         ]);
 
-        $userService->dispatchEvent(UserPreUpdateEvent::NAME, [
+        $this->dispatchEvent(UserPreUpdateEvent::NAME, [
             'form' => $form,
             'userDto' => $userDto,
             'user' => $user,
@@ -137,7 +134,7 @@ class UserController extends DefaultController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $userService->dispatchEvent(UserUpdateEvent::NAME, [
+            $this->dispatchEvent(UserUpdateEvent::NAME, [
                 'userDto' => $userDto,
                 'user' => $user,
             ]);
@@ -149,7 +146,7 @@ class UserController extends DefaultController
 
         $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
 
-        $userService->dispatchEvent(UserUpdateViewEvent::NAME, ['viewService' => $this->getViewService()]);
+        $this->dispatchEvent(UserUpdateViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -161,13 +158,12 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param Request     $request
-     * @param UserService $userService
-     * @param User|null   $user
+     * @param Request   $request
+     * @param User|null $user
      *
      * @return Response
      */
-    public function delete(Request $request, UserService $userService, ?User $user = null): Response
+    public function delete(Request $request, ?User $user = null): Response
     {
         if (!$user) {
             $this->addFlashMessage('error', 'User', 'L\'utilisateur n\'a pas été trouvé.');
@@ -179,14 +175,14 @@ class UserController extends DefaultController
             'action' => $this->generateUrl('users.delete', ['uuid' => $user->getUuid()]),
         ]);
 
-        $userService->dispatchEvent(UserPreDeleteEvent::NAME, [
+        $this->dispatchEvent(UserPreDeleteEvent::NAME, [
             'form' => $form,
             'user' => $user,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $userService->dispatchEvent(UserDeleteEvent::NAME, ['user' => $user]);
+            $this->dispatchEvent(UserDeleteEvent::NAME, ['user' => $user]);
 
             $this->addFlashMessage('sucess', 'User', 'Utilisateur supprimé avec succès.');
 
@@ -198,7 +194,7 @@ class UserController extends DefaultController
             'message' => sprintf('êtes-vous sûr de vouloir supprimer cet utilisateur (%s) ?', $user->getEmail()),
         ]);
 
-        $userService->dispatchEvent(UserDetailViewEvent::NAME, ['viewService' => $this->getViewService()]);
+        $this->dispatchEvent(UserDetailViewEvent::NAME, ['viewService' => $this->getViewService()]);
 
         return $this->getResponse();
     }

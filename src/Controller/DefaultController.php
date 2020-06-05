@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\DefaultService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -27,6 +28,10 @@ class DefaultController extends AbstractController
      * @var FlashBagInterface
      */
     private $flashBag;
+    /**
+     * @var DefaultService
+     */
+    private $defaultService;
 
     /**
      * DefaultController constructor.
@@ -34,15 +39,18 @@ class DefaultController extends AbstractController
      * @param EventDispatcherInterface $eventDispatcher
      * @param ViewService              $viewService
      * @param FlashBagInterface        $flashBag
+     * @param DefaultService           $defaultService
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         ViewService $viewService,
-        FlashBagInterface $flashBag
+        FlashBagInterface $flashBag,
+        DefaultService $defaultService
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
+        $this->defaultService = $defaultService;
     }
 
     /**
@@ -106,5 +114,14 @@ class DefaultController extends AbstractController
         }
 
         return $this->render($view, $options, $response);
+    }
+
+    /**
+     * @param string     $eventName
+     * @param array|null $data
+     */
+    public function dispatchEvent(string $eventName, ?array $data = [])
+    {
+        $this->defaultService->dispatchEvent($eventName, $data);
     }
 }
