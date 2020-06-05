@@ -53,6 +53,8 @@ class UserEvent extends Event implements EventInterface
      */
     private $user;
 
+    private $eventCalled;
+
     /**
      * @return UserDto
      */
@@ -107,5 +109,21 @@ class UserEvent extends Event implements EventInterface
     public function setUser(User $user): void
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEventCalled()
+    {
+        return $this->eventCalled;
+    }
+
+    /**
+     * @param mixed $eventCalled
+     */
+    public function setEventCalled($eventCalled): void
+    {
+        $this->eventCalled = $eventCalled;
     }
 }

@@ -150,6 +150,6 @@ class UserEventsSubscriber implements EventSubscriberInterface
 
     public function onUserListView(UserViewEvent $event)
     {
-        dump('list.view');
+//        dump('list.view');
     }
 }

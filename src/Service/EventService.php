@@ -35,6 +35,7 @@ class EventService
     {
         foreach ($this->events as $event) {
             if (in_array($eventName, $event->getEventsName())) {
+                $event->setEventCalled($eventName);
                 return $event;
             }
         }

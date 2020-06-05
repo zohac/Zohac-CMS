@@ -19,6 +19,8 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
     public const LIST = 'user.list.view';
     public const DETAIL = 'user.detail.view';
 
+    private $eventCalled;
+
     public function getEventsName(): array
     {
         return [
@@ -28,5 +30,21 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
             self::DETAIL,
             self::LIST,
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEventCalled()
+    {
+        return $this->eventCalled;
+    }
+
+    /**
+     * @param mixed $eventCalled
+     */
+    public function setEventCalled($eventCalled): void
+    {
+        $this->eventCalled = $eventCalled;
     }
 }

@@ -26,4 +26,8 @@ interface EventInterface
      * @return array
      */
     public function getEventsName();
+
+    public function getEventCalled();
+
+    public function setEventCalled(string $eventName);
 }
