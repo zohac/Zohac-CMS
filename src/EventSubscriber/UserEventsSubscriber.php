@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Event\User\UserCreateEvent;
 use App\Event\User\UserDeleteEvent;
+use App\Event\User\UserEvent;
 use App\Event\User\UserPostCreateEvent;
 use App\Event\User\UserPostDeleteEvent;
 use App\Event\User\UserPostUpdateEvent;
@@ -11,6 +12,7 @@ use App\Event\User\UserPreCreateEvent;
 use App\Event\User\UserPreDeleteEvent;
 use App\Event\User\UserPreUpdateEvent;
 use App\Event\User\UserUpdateEvent;
+use App\Event\User\UserViewEvent;
 use App\Exception\UuidException;
 use App\Service\User\UserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,48 +39,53 @@ class UserEventsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserPreCreateEvent::NAME => ['onUserPreCreate', 0],
-            UserCreateEvent::NAME => ['onUserCreate', 0],
-            UserPostCreateEvent::NAME => ['onUserPostCreate', 0],
-            UserPreUpdateEvent::NAME => ['onUserPreUpdate', 0],
-            UserUpdateEvent::NAME => ['onUserUpdate', 0],
-            UserPostUpdateEvent::NAME => ['onUserPostUpdate', 0],
-            UserPreDeleteEvent::NAME => ['onUserPreDelete', 0],
-            UserDeleteEvent::NAME => ['onUserDelete', 0],
-            UserPostDeleteEvent::NAME => ['onUserPostDelete', 0],
+            UserEvent::PRE_CREATE => ['onUserPreCreate', 0],
+            UserEvent::CREATE => ['onUserCreate', 0],
+            UserEvent::POST_CREATE => ['onUserPostCreate', 0],
+            UserEvent::PRE_UPDATE => ['onUserPreUpdate', 0],
+            UserEvent::UPDATE => ['onUserUpdate', 0],
+            UserEvent::POST_UPDATE => ['onUserPostUpdate', 0],
+            UserEvent::PRE_DELETE => ['onUserPreDelete', 0],
+            UserEvent::DELETE => ['onUserDelete', 0],
+            UserEvent::POST_DELETE => ['onUserPostDelete', 0],
+            UserViewEvent::CREATE => ['onUserCreateView', 0],
+            UserViewEvent::UPDATE => ['onUserUpdateView', 0],
+            UserViewEvent::DELETE => ['onUserDeleteView', 0],
+            UserViewEvent::LIST => ['onUserListView', 0],
+            UserViewEvent::DETAIL => ['onUserDetailView', 0],
         ];
     }
 
     /**
-     * @param UserPreCreateEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPreCreate(UserPreCreateEvent $event)
+    public function onUserPreCreate(UserEvent $event)
     {
-        dump($event);
+        dump('pre.create');
     }
 
     /**
-     * @param UserCreateEvent $event
+     * @param UserEvent $event
      *
      * @throws UuidException
      */
-    public function onUserCreate(UserCreateEvent $event)
+    public function onUserCreate(UserEvent $event)
     {
         $this->userService->createUserFromDto($event->getUserDto());
     }
 
     /**
-     * @param UserPostCreateEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPostCreate(UserPostCreateEvent $event)
+    public function onUserPostCreate(UserEvent $event)
     {
-        dump($event);
+        dump('post.create');
     }
 
     /**
-     * @param UserPreUpdateEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPreUpdate(UserPreUpdateEvent $event)
+    public function onUserPreUpdate(UserEvent $event)
     {
         $form = $event->getForm();
         $form->remove('password');
@@ -89,44 +96,69 @@ class UserEventsSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param UserUpdateEvent $event
+     * @param UserEvent $event
      *
      * @throws UuidException
      */
-    public function onUserUpdate(UserUpdateEvent $event)
+    public function onUserUpdate(UserEvent $event)
     {
         $this->userService->updateUserFromDto($event->getUserDto(), $event->getUser());
     }
 
     /**
-     * @param UserPostUpdateEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPostUpdate(UserPostUpdateEvent $event)
+    public function onUserPostUpdate(UserEvent $event)
     {
-        dump($event);
+        dump('post.update');
     }
 
     /**
-     * @param UserPreDeleteEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPreDelete(UserPreDeleteEvent $event)
+    public function onUserPreDelete(UserEvent $event)
     {
-        dump($event);
+        dump('pre.delete');
     }
 
     /**
-     * @param UserDeleteEvent $event
+     * @param UserEvent $event
      */
-    public function onUserDelete(UserDeleteEvent $event)
+    public function onUserDelete(UserEvent $event)
     {
         $this->userService->deleteUser($event->getUser());
     }
 
     /**
-     * @param UserPostDeleteEvent $event
+     * @param UserEvent $event
      */
-    public function onUserPostDelete(UserPostDeleteEvent $event)
+    public function onUserPostDelete(UserEvent $event)
     {
-        dump($event);
+        dump('post.delete');
+    }
+
+    public function onUserCreateView(UserViewEvent $event)
+    {
+        dump('create.view');
+    }
+
+    public function onUserUpdateView(UserViewEvent $event)
+    {
+        dump('update.view');
+    }
+
+    public function onUserDeleteView(UserViewEvent $event)
+    {
+        dump('delete.view');
+    }
+
+    public function onUserDetailView(UserViewEvent $event)
+    {
+        dump('detail.view');
+    }
+
+    public function onUserListView(UserViewEvent $event)
+    {
+        dump('list.view');
     }
 }

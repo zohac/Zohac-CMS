@@ -34,11 +34,11 @@ class EventService
     public function getEvent(string $eventName)
     {
         foreach ($this->events as $event) {
-            if ($event::NAME === $eventName) {
+            if (in_array($eventName, $event->getEventsName())) {
                 return $event;
             }
         }
 
-        throw new EventException('Le nom de l\'event n\'existe pas.');
+        throw new EventException(sprintf('Le nom de l\'event : %s n\'existe pas.', $eventName));
     }
 }

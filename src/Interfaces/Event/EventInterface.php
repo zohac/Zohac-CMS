@@ -5,6 +5,8 @@ namespace App\Interfaces\Event;
 interface EventInterface
 {
     /**
+     * Set the raw data in the event.
+     *
      * @param array $data
      *
      * @return self
@@ -17,4 +19,11 @@ interface EventInterface
      * @return string
      */
     public function getClassName();
+
+    /**
+     * Return an array of all the events name.
+     *
+     * @return array
+     */
+    public function getEventsName();
 }

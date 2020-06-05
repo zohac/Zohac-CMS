@@ -4,6 +4,7 @@ namespace App\Service\User;
 
 use App\Dto\user\UserDto;
 use App\Entity\User;
+use App\Event\User\UserEvent;
 use App\Event\User\UserPostCreateEvent;
 use App\Event\User\UserPostDeleteEvent;
 use App\Event\User\UserPostUpdateEvent;
@@ -81,7 +82,7 @@ class UserService extends DefaultService
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserPostCreateEvent::NAME, ['user' => $user]);
+        $this->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
         return $user;
     }
@@ -123,17 +124,20 @@ class UserService extends DefaultService
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserPostUpdateEvent::NAME, ['user' => $user]);
+        $this->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
 
         return $user;
     }
 
+    /**
+     * @param User $user
+     */
     public function deleteUser(User $user)
     {
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserPostDeleteEvent::NAME);
+        $this->dispatchEvent(UserEvent::POST_DELETE);
     }
 
     /**
