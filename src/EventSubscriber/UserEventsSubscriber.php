@@ -2,16 +2,7 @@
 
 namespace App\EventSubscriber;
 
-use App\Event\User\UserCreateEvent;
-use App\Event\User\UserDeleteEvent;
 use App\Event\User\UserEvent;
-use App\Event\User\UserPostCreateEvent;
-use App\Event\User\UserPostDeleteEvent;
-use App\Event\User\UserPostUpdateEvent;
-use App\Event\User\UserPreCreateEvent;
-use App\Event\User\UserPreDeleteEvent;
-use App\Event\User\UserPreUpdateEvent;
-use App\Event\User\UserUpdateEvent;
 use App\Event\User\UserViewEvent;
 use App\Exception\UuidException;
 use App\Service\User\UserService;

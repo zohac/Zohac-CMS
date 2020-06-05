@@ -4,16 +4,7 @@ namespace App\Controller;
 
 use App\Dto\user\UserDto;
 use App\Entity\User;
-use App\Event\User\UserCreateEvent;
-use App\Event\User\UserCreateViewEvent;
-use App\Event\User\UserDeleteEvent;
-use App\Event\User\UserDetailViewEvent;
 use App\Event\User\UserEvent;
-use App\Event\User\UserPreCreateEvent;
-use App\Event\User\UserPreDeleteEvent;
-use App\Event\User\UserPreUpdateEvent;
-use App\Event\User\UserUpdateEvent;
-use App\Event\User\UserUpdateViewEvent;
 use App\Event\User\UserViewEvent;
 use App\Form\DeleteType;
 use App\Form\UserType;
