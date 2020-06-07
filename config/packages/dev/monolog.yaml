@@ -20,5 +20,5 @@ monolog:
 
     app_log:
       type: stream
-      path: "%kernel.logs_dir%/%app.log%.log"
+      path: "%kernel.logs_dir%/%app.log.dev%.log"
       channels: [app]
