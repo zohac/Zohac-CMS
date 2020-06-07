@@ -25,9 +25,17 @@ interface EventInterface
      *
      * @return array
      */
-    public function getEventsName();
+    public static function getEventsName();
 
-    public function getEventCalled();
+    /**
+     * @return string
+     */
+    public function getEventCalled(): string;
 
+    /**
+     * @param string $eventName
+     *
+     * @return $this
+     */
     public function setEventCalled(string $eventName);
 }

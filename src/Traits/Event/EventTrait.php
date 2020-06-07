@@ -10,6 +10,11 @@ trait EventTrait
     private $data;
 
     /**
+     * @var string
+     */
+    private $eventCalled;
+
+    /**
      * @return array
      */
     public function getData(): array
@@ -43,5 +48,25 @@ trait EventTrait
     public function getClassName()
     {
         return static::class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEventCalled(): string
+    {
+        return $this->eventCalled;
+    }
+
+    /**
+     * @param string $eventCalled
+     *
+     * @return $this
+     */
+    public function setEventCalled(string $eventCalled): self
+    {
+        $this->eventCalled = $eventCalled;
+
+        return $this;
     }
 }

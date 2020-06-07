@@ -43,4 +43,9 @@ class EventService
 
         throw new EventException(sprintf('Le nom de l\'event : %s n\'existe pas.', $eventName));
     }
+
+    public function getEvents(): array
+    {
+        return $this->events;
+    }
 }

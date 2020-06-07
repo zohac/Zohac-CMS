@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -58,7 +59,7 @@ class User implements AdvancedUserInterface
     private $token;
 
     /**
-     * @var \DateTimeInterface|null
+     * @var DateTimeInterface|null
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $tokenValidity;
@@ -179,12 +180,12 @@ class User implements AdvancedUserInterface
     /**
      * @see AdvancedUserInterface
      */
-    public function getTokenValidity(): ?\DateTimeInterface
+    public function getTokenValidity(): ?DateTimeInterface
     {
         return $this->tokenValidity;
     }
 
-    public function setTokenValidity(?\DateTimeInterface $tokenValidity): self
+    public function setTokenValidity(?DateTimeInterface $tokenValidity): self
     {
         $this->tokenValidity = $tokenValidity;
 

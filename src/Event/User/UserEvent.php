@@ -23,7 +23,10 @@ class UserEvent extends Event implements EventInterface
     public const DELETE = 'user.delete';
     public const POST_DELETE = 'user.post.delete';
 
-    public function getEventsName(): array
+    /**
+     * @return array|string[]
+     */
+    public static function getEventsName(): array
     {
         return [
             self::PRE_CREATE,
@@ -52,8 +55,6 @@ class UserEvent extends Event implements EventInterface
      * @var User
      */
     private $user;
-
-    private $eventCalled;
 
     /**
      * @return UserDto
@@ -105,25 +106,13 @@ class UserEvent extends Event implements EventInterface
 
     /**
      * @param User $user
+     *
+     * @return $this
      */
-    public function setUser(User $user): void
+    public function setUser(User $user): self
     {
         $this->user = $user;
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getEventCalled()
-    {
-        return $this->eventCalled;
-    }
-
-    /**
-     * @param mixed $eventCalled
-     */
-    public function setEventCalled($eventCalled): void
-    {
-        $this->eventCalled = $eventCalled;
+        return $this;
     }
 }
