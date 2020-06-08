@@ -28,26 +28,13 @@ class LoggerSubscriber implements EventSubscriberInterface
         $subscribedEvents = [
             KernelEvents::EXCEPTION => 'onException',
         ];
-        $events = FinderService::getEventsByInterface(EventInterface::class, true);
-        $viewEvents = FinderService::getEventsByInterface(ViewEventInterface::class);
-
-        foreach ($viewEvents as $viewEvent) {
-            $subscribedEvents[$viewEvent] = 'onViewEvent';
-        }
+        $events = FinderService::getEventsByInterface(EventInterface::class);
 
         foreach ($events as $event) {
             $subscribedEvents[$event] = 'onEvent';
         }
 
         return $subscribedEvents;
-    }
-
-    /**
-     * @param ViewEventInterface $event
-     */
-    public function onViewEvent(ViewEventInterface $event)
-    {
-        $this->logger->info($event->getEventCalled(), $this->getContext());
     }
 
     /**

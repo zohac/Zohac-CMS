@@ -70,11 +70,11 @@ class FinderService
         $events = [];
 
         foreach (self::loadEvents() as $key => $event) {
-            if (\count($event) < 3 && $strict) {
-                if (in_array($eventName, $event, $strict)) {
+            if (\count($event) < 1 && $strict) {
+                if (in_array($eventName, $event)) {
                     $events = array_merge($events, $key::getEventsName());
                 }
-            } elseif (in_array($eventName, $event, $strict) && !$strict) {
+            } elseif (in_array($eventName, $event) && !$strict) {
                 $events = array_merge($events, $key::getEventsName());
             }
         }
