@@ -4,10 +4,10 @@ namespace App\EventSubscriber;
 
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
+use App\Service\FinderService;
 use function array_slice;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -28,47 +28,8 @@ class LoggerSubscriber implements EventSubscriberInterface
         $subscribedEvents = [
             KernelEvents::EXCEPTION => 'onException',
         ];
-        $viewEvents = [];
-        $events = [];
-
-        $finder = new Finder();
-        $finder->files()->in(__DIR__.'/../Event/*');
-
-        // check if there are any search results
-        if ($finder->hasResults()) {
-            foreach ($finder as $file) {
-                $absoluteFilePath = $file->getRealPath();
-                $fileNameWithExtension = $file->getRelativePathname();
-                list($fileName, $extension) = explode('.', $fileNameWithExtension);
-
-                $handle = @fopen($absoluteFilePath, 'r');
-                if ($handle) {
-                    $continue = true;
-                    while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
-                        $pattern = '/namespace ([a-zA-Z\\\]*)\;/';
-                        if (preg_match($pattern, $buffer, $matches)) {
-                            $className = $matches[1].'\\'.$fileName;
-                            $interfaces = class_implements($className);
-
-                            if (in_array(EventInterface::class, $interfaces) &&
-                                !in_array(ViewEventInterface::class, $interfaces)) {
-                                /** @var EventInterface $className */
-                                $events = array_merge($events, $className::getEventsName());
-                            }
-                            if (in_array(EventInterface::class, $interfaces) &&
-                                in_array(ViewEventInterface::class, $interfaces)) {
-                                /** @var EventInterface $className */
-                                $viewEvents = array_merge($viewEvents, $className::getEventsName());
-                            }
-
-                            $continue = false;
-                        }
-                    }
-
-                    fclose($handle);
-                }
-            }
-        }
+        $events = FinderService::getEventsByInterface(EventInterface::class, true);
+        $viewEvents = FinderService::getEventsByInterface(ViewEventInterface::class);
 
         foreach ($viewEvents as $viewEvent) {
             $subscribedEvents[$viewEvent] = 'onViewEvent';
