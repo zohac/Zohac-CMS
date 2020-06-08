@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Interfaces\Event\EventInterface;
-use App\Interfaces\Event\ViewEventInterface;
 use App\Service\FinderService;
 use function array_slice;
 use Psr\Log\LoggerInterface;
