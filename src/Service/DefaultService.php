@@ -49,29 +49,11 @@ class DefaultService
     }
 
     /**
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher(): EventDispatcherInterface
-    {
-        return $this->eventDispatcher;
-    }
-
-    /**
      * @return ValidatorInterface
      */
     public function getValidator(): ValidatorInterface
     {
         return $this->validator;
-    }
-
-    /**
-     * @param string $eventName
-     *
-     * @return EventInterface
-     */
-    public function getEvent(string $eventName): EventInterface
-    {
-        return $this->eventService->getEvent($eventName);
     }
 
     /**
@@ -87,5 +69,23 @@ class DefaultService
         $this->getEventDispatcher()->dispatch($event, $eventName);
 
         return $this;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return EventInterface
+     */
+    public function getEvent(string $eventName): EventInterface
+    {
+        return $this->eventService->getEvent($eventName);
+    }
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher(): EventDispatcherInterface
+    {
+        return $this->eventDispatcher;
     }
 }

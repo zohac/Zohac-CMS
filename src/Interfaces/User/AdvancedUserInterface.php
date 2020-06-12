@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\User;
 
+use DateTimeInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 interface AdvancedUserInterface extends UserInterface
@@ -21,7 +22,7 @@ interface AdvancedUserInterface extends UserInterface
     /**
      * Return the token validity.
      *
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface|null
      */
     public function getTokenValidity();
 

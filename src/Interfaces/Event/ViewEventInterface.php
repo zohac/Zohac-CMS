@@ -17,4 +17,9 @@ interface ViewEventInterface
      * @return $this
      */
     public function setViewService(ViewService $viewService);
+
+    /**
+     * @return string
+     */
+    public function getEventCalled(): string;
 }

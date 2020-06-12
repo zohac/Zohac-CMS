@@ -85,6 +85,22 @@ class UserService extends DefaultService
     }
 
     /**
+     * @return string
+     *
+     * @throws UuidException
+     */
+    public function getUuid(): string
+    {
+        $uuid = $this->uuidService->create();
+
+        if (!$uuid) {
+            throw new UuidException('L\'application ne parviens pas à générer un uuid.');
+        }
+
+        return $uuid;
+    }
+
+    /**
      * @param User $user
      *
      * @return UserDto
@@ -135,21 +151,5 @@ class UserService extends DefaultService
         $this->entityManager->flush();
 
         $this->dispatchEvent(UserEvent::POST_DELETE);
-    }
-
-    /**
-     * @return string
-     *
-     * @throws UuidException
-     */
-    public function getUuid(): string
-    {
-        $uuid = $this->uuidService->create();
-
-        if (!$uuid) {
-            throw new UuidException('L\'application ne parviens pas à générer un uuid.');
-        }
-
-        return $uuid;
     }
 }

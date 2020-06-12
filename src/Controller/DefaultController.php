@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Event\IndexViewEvent;
 use App\Service\DefaultService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -62,14 +63,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @return ViewService
-     */
-    public function getViewService(): ViewService
-    {
-        return $this->viewService;
-    }
-
-    /**
      * @param string      $type
      * @param string|null $title
      * @param string|null $content
@@ -92,7 +85,28 @@ class DefaultController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->getResponse('base.html.twig');
+        $this->getViewService()->setData('base.html.twig');
+
+        $this->dispatchEvent(IndexViewEvent::INDEX, ['viewService' => $this->getViewService()]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @return ViewService
+     */
+    public function getViewService(): ViewService
+    {
+        return $this->viewService;
+    }
+
+    /**
+     * @param string     $eventName
+     * @param array|null $data
+     */
+    public function dispatchEvent(string $eventName, ?array $data = [])
+    {
+        $this->defaultService->dispatchEvent($eventName, $data);
     }
 
     /**
@@ -114,14 +128,5 @@ class DefaultController extends AbstractController
         }
 
         return $this->render($view, $options, $response);
-    }
-
-    /**
-     * @param string     $eventName
-     * @param array|null $data
-     */
-    public function dispatchEvent(string $eventName, ?array $data = [])
-    {
-        $this->defaultService->dispatchEvent($eventName, $data);
     }
 }

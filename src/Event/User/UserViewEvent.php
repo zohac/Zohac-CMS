@@ -19,7 +19,10 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
     public const LIST = 'user.list.view';
     public const DETAIL = 'user.detail.view';
 
-    public function getEventsName(): array
+    /**
+     * @return array|string[]
+     */
+    public static function getEventsName(): array
     {
         return [
             self::CREATE,
