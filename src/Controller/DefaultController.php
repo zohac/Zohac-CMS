@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Event\IndexViewEvent;
 use App\Service\DefaultService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -92,7 +93,11 @@ class DefaultController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->getResponse('base.html.twig');
+        $this->getViewService()->setData('base.html.twig');
+
+        $this->dispatchEvent(IndexViewEvent::INDEX, ['viewService' => $this->getViewService()]);
+
+        return $this->getResponse();
     }
 
     /**
