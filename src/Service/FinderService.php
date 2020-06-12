@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Interfaces\Event\EventInterface;
+use function count;
 use Symfony\Component\Finder\Finder;
 
 class FinderService
@@ -10,7 +11,7 @@ class FinderService
     /**
      * @var string
      */
-    private $defaultEventsPath = __DIR__.'/../Event/*';
+    private $defaultEventsPath = __DIR__.'/../Event';
 
     /**
      * @var Finder
@@ -20,6 +21,30 @@ class FinderService
     public function __construct(Finder $finder)
     {
         $this->finder = $finder;
+    }
+
+    /**
+     * @param string $eventName
+     * @param bool   $strict
+     *
+     * @return array
+     */
+    public static function getEventsByInterface(string $eventName, bool $strict = false): array
+    {
+        $events = [];
+
+        /** @var EventInterface $key */
+        foreach (self::loadEvents() as $key => $event) {
+            if (count($event) < 1 && $strict) {
+                if (in_array($eventName, $event)) {
+                    $events = array_merge($events, $key::getEventsName());
+                }
+            } elseif (in_array($eventName, $event) && !$strict) {
+                $events = array_merge($events, $key::getEventsName());
+            }
+        }
+
+        return $events;
     }
 
     /**
@@ -37,14 +62,14 @@ class FinderService
         // check if there are any search results
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
-                list($fileName, $extension) = explode('.', $file->getRelativePathname());
+                preg_match('/([a-zA-Z]*).php/', $file->getRelativePathname(), $fileName);
 
                 $handle = @fopen($file->getRealPath(), 'r');
                 if ($handle) {
                     $continue = true;
                     while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
                         if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
-                            $className = $matches[1].'\\'.$fileName;
+                            $className = $matches[1].'\\'.$fileName[1];
 
                             $events[$className] = class_implements($className);
 
@@ -54,30 +79,6 @@ class FinderService
 
                     fclose($handle);
                 }
-            }
-        }
-
-        return $events;
-    }
-
-    /**
-     * @param string $eventName
-     * @param bool   $strict
-     *
-     * @return array
-     */
-    public static function getEventsByInterface(string $eventName, bool $strict = false): array
-    {
-        $events = [];
-
-        /** @var EventInterface $key */
-        foreach (self::loadEvents() as $key => $event) {
-            if (\count($event) < 1 && $strict) {
-                if (in_array($eventName, $event)) {
-                    $events = array_merge($events, $key::getEventsName());
-                }
-            } elseif (in_array($eventName, $event) && !$strict) {
-                $events = array_merge($events, $key::getEventsName());
             }
         }
 

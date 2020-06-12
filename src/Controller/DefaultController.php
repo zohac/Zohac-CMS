@@ -63,14 +63,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @return ViewService
-     */
-    public function getViewService(): ViewService
-    {
-        return $this->viewService;
-    }
-
-    /**
      * @param string      $type
      * @param string|null $title
      * @param string|null $content
@@ -101,6 +93,23 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @return ViewService
+     */
+    public function getViewService(): ViewService
+    {
+        return $this->viewService;
+    }
+
+    /**
+     * @param string     $eventName
+     * @param array|null $data
+     */
+    public function dispatchEvent(string $eventName, ?array $data = [])
+    {
+        $this->defaultService->dispatchEvent($eventName, $data);
+    }
+
+    /**
      * @param string        $view
      * @param array         $options
      * @param Response|null $response
@@ -119,14 +128,5 @@ class DefaultController extends AbstractController
         }
 
         return $this->render($view, $options, $response);
-    }
-
-    /**
-     * @param string     $eventName
-     * @param array|null $data
-     */
-    public function dispatchEvent(string $eventName, ?array $data = [])
-    {
-        $this->defaultService->dispatchEvent($eventName, $data);
     }
 }

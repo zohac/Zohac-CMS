@@ -22,6 +22,18 @@ class UserEvent extends Event implements EventInterface
     public const PRE_DELETE = 'user.pre.delete';
     public const DELETE = 'user.delete';
     public const POST_DELETE = 'user.post.delete';
+    /**
+     * @var UserDto
+     */
+    private $userDto;
+    /**
+     * @var FormInterface
+     */
+    private $form;
+    /**
+     * @var User
+     */
+    private $user;
 
     /**
      * @return array|string[]
@@ -40,21 +52,6 @@ class UserEvent extends Event implements EventInterface
             self::POST_DELETE,
         ];
     }
-
-    /**
-     * @var UserDto
-     */
-    private $userDto;
-
-    /**
-     * @var FormInterface
-     */
-    private $form;
-
-    /**
-     * @var User
-     */
-    private $user;
 
     /**
      * @return UserDto

@@ -3,8 +3,8 @@
 namespace App\EventSubscriber;
 
 use App\Interfaces\Event\EventInterface;
+use App\Service\DebugService;
 use App\Service\FinderService;
-use function array_slice;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -17,12 +17,27 @@ class LoggerSubscriber implements EventSubscriberInterface
      */
     private $logger;
 
-    public function __construct(LoggerInterface $appLogger)
+    /**
+     * @var DebugService
+     */
+    private $debugService;
+
+    /**
+     * LoggerSubscriber constructor.
+     *
+     * @param LoggerInterface $appLogger
+     * @param DebugService    $debugService
+     */
+    public function __construct(LoggerInterface $appLogger, DebugService $debugService)
     {
         $this->logger = $appLogger;
+        $this->debugService = $debugService;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array|string[]
+     */
+    public static function getSubscribedEvents(): array
     {
         $subscribedEvents = [
             KernelEvents::EXCEPTION => 'onException',
@@ -41,51 +56,15 @@ class LoggerSubscriber implements EventSubscriberInterface
      */
     public function onEvent(EventInterface $event)
     {
-        $this->logger->info($event->getEventCalled(), $this->getContext());
-    }
-
-    public function onException(ExceptionEvent $event)
-    {
-        dump($event);
-        $this->logger->error($event->getThrowable()->getMessage(), [$event->getThrowable()]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getContext(): array
-    {
-        return debug_backtrace();
+        $this->logger->debug($event->getEventCalled(), $this->debugService->getContext());
     }
 
     /**
      * @param ExceptionEvent $event
-     *
-     * @return array
      */
-    public function getExceptionContext(ExceptionEvent $event): array
+    public function onException(ExceptionEvent $event)
     {
-        $line = $event->getThrowable()->getLine();
-        $message = $event->getThrowable()->getMessage();
-        $file = $event->getThrowable()->getFile();
-
-        $backtrace = debug_backtrace();
-        // Clean the trace by removing first frames added by the error handler itself.
-        for ($i = 0; isset($backtrace[$i]); ++$i) {
-            if (isset($backtrace[$i]['file'], $backtrace[$i]['line']) && $backtrace[$i]['line'] === $line && $backtrace[$i]['file'] === $file) {
-                $backtrace = array_slice($backtrace, 1 + $i);
-                break;
-            }
-        }
-
-        $collectedLogs[$message] = [
-            'message' => $message,
-            'file' => $file,
-            'line' => $line,
-            'trace' => [$backtrace[0]],
-            'count' => 1,
-        ];
-
-        return $collectedLogs;
+        $this->debugService->displayDebugMessage('error');
+        $this->logger->error($event->getThrowable()->getMessage(), [$event->getThrowable()]);
     }
 }
