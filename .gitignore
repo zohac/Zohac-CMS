@@ -16,3 +16,7 @@
 ###> .env file ###
 .env.dev
 ###< .env file ###
+
+###> php-cs-fixer cache file ###
+.php_cs.cache
+###< php-cs-fixer cache file ###
