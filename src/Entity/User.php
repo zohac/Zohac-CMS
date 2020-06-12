@@ -8,11 +8,13 @@ use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource
  *
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("uuid")
  */
 class User implements AdvancedUserInterface
 {

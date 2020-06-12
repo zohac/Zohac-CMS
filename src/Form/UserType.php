@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Dto\user\UserDto;
+use App\Dto\User\UserDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;

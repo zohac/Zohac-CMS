@@ -2,7 +2,7 @@
 
 namespace App\Service\User;
 
-use App\Dto\user\UserDto;
+use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Exception\UuidException;

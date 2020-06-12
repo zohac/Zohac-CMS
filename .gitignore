@@ -20,3 +20,8 @@
 ###> php-cs-fixer cache file ###
 .php_cs.cache
 ###< php-cs-fixer cache file ###
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###

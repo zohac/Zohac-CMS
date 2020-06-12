@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Dto\user\UserDto;
+use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Event\User\UserViewEvent;
