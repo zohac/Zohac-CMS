@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Interfaces\Event\EventInterface;
 use Symfony\Component\Finder\Finder;
 
 class FinderService
@@ -69,6 +70,7 @@ class FinderService
     {
         $events = [];
 
+        /** @var EventInterface $key */
         foreach (self::loadEvents() as $key => $event) {
             if (\count($event) < 1 && $strict) {
                 if (in_array($eventName, $event)) {
