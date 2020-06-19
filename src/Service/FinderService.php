@@ -23,6 +23,17 @@ class FinderService
     }
 
     /**
+     * @param string $relativePath
+     * @return string
+     */
+    public function getFilename(string $relativePath): string
+    {
+        preg_match('/([a-zA-Z]*).php/', $relativePath, $fileName);
+
+        return $fileName;
+    }
+
+    /**
      * @param string      $eventName
      * @param string|null $path
      *
@@ -60,27 +71,39 @@ class FinderService
 
         // check if there are any search results
         if ($finder->hasResults()) {
-            foreach ($finder as $file) {
-                preg_match('/([a-zA-Z]*).php/', $file->getRelativePathname(), $fileName);
-
-                $handle = @fopen($file->getRealPath(), 'r');
-                if ($handle) {
-                    $continue = true;
-                    while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
-                        if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
-                            $className = $matches[1].'\\'.$fileName[1];
-
-                            $events[$className] = class_implements($className);
-
-                            $continue = false;
-                        }
-                    }
-
-                    fclose($handle);
-                }
-            }
+            $events = $finderService->getEventsInFinder($finder);
         }
 
+        return $events;
+    }
+
+    /**
+     * @param Finder $finder
+     * @return array
+     */
+    public function getEventsInFinder(Finder $finder): array
+    {
+        $events = [];
+
+        foreach ($finder as $file) {
+            $fileName = $this->getFilename($file->getRelativePathname());
+
+            $handle = @fopen($file->getRealPath(), 'r');
+            if ($handle) {
+                $continue = true;
+                while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
+                    if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
+                        $className = $matches[1] . '\\' . $fileName[1];
+
+                        $events[$className] = class_implements($className);
+
+                        $continue = false;
+                    }
+                }
+
+                fclose($handle);
+            }
+        }
         return $events;
     }
 }
