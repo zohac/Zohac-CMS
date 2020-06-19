@@ -7,18 +7,44 @@
         {{ form_start(form) }}
 
         <div>
+            {% if form.email.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.email) }}
+                </div>
+            {% endif %}
             {{ form_label(form.email) }}
             {{ form_widget(form.email) }}
         </div>
 
         <div>
+            {% if form.roles.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.roles) }}
+                </div>
+            {% endif %}
             {{ form_label(form.roles) }}
             {{ form_widget(form.roles) }}
         </div>
 
         <div>
             {{ form_label(form.password) }}
-            {{ form_widget(form.password) }}
+
+            {% if form.password.children.first.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.password.first) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.password.first) }}
+            {{ form_widget(form.password.first) }}
+
+            {% if form.password.children.second.vars.errors|length %}
+                {{ dump(form.password.second) }}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.password.second) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.password.second) }}
+            {{ form_widget(form.password.second) }}
         </div>
 
         <div>

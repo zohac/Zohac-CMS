@@ -30,15 +30,10 @@ class UserEventsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserEvent::PRE_CREATE => ['onUserPreCreate', 0],
             UserEvent::CREATE => ['onUserCreate', 0],
-            UserEvent::POST_CREATE => ['onUserPostCreate', 0],
             UserEvent::PRE_UPDATE => ['onUserPreUpdate', 0],
             UserEvent::UPDATE => ['onUserUpdate', 0],
-            UserEvent::POST_UPDATE => ['onUserPostUpdate', 0],
-            UserEvent::PRE_DELETE => ['onUserPreDelete', 0],
             UserEvent::DELETE => ['onUserDelete', 0],
-            UserEvent::POST_DELETE => ['onUserPostDelete', 0],
             UserViewEvent::CREATE => ['onUserCreateView', 0],
             UserViewEvent::UPDATE => ['onUserUpdateView', 0],
             UserViewEvent::DELETE => ['onUserDeleteView', 0],
@@ -49,28 +44,12 @@ class UserEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param UserEvent $event
-     */
-    public function onUserPreCreate(UserEvent $event)
-    {
-        dump('pre.create');
-    }
-
-    /**
-     * @param UserEvent $event
      *
      * @throws UuidException
      */
     public function onUserCreate(UserEvent $event)
     {
         $this->userService->createUserFromDto($event->getUserDto());
-    }
-
-    /**
-     * @param UserEvent $event
-     */
-    public function onUserPostCreate(UserEvent $event)
-    {
-        dump('post.create');
     }
 
     /**
@@ -99,57 +78,43 @@ class UserEventsSubscriber implements EventSubscriberInterface
     /**
      * @param UserEvent $event
      */
-    public function onUserPostUpdate(UserEvent $event)
-    {
-        dump('post.update');
-    }
-
-    /**
-     * @param UserEvent $event
-     */
-    public function onUserPreDelete(UserEvent $event)
-    {
-        dump('pre.delete');
-    }
-
-    /**
-     * @param UserEvent $event
-     */
     public function onUserDelete(UserEvent $event)
     {
         $this->userService->deleteUser($event->getUser());
     }
 
     /**
-     * @param UserEvent $event
+     * @param UserViewEvent $event
      */
-    public function onUserPostDelete(UserEvent $event)
-    {
-        dump('post.delete');
-    }
-
     public function onUserCreateView(UserViewEvent $event)
     {
-        dump('create.view');
     }
 
+    /**
+     * @param UserViewEvent $event
+     */
     public function onUserUpdateView(UserViewEvent $event)
     {
-        dump('update.view');
     }
 
+    /**
+     * @param UserViewEvent $event
+     */
     public function onUserDeleteView(UserViewEvent $event)
     {
-        dump('delete.view');
     }
 
+    /**
+     * @param UserViewEvent $event
+     */
     public function onUserDetailView(UserViewEvent $event)
     {
-        dump('detail.view');
     }
 
+    /**
+     * @param UserViewEvent $event
+     */
     public function onUserListView(UserViewEvent $event)
     {
-//        dump('list.view');
     }
 }

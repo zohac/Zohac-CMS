@@ -45,14 +45,6 @@ trait EventTrait
     /**
      * @return string
      */
-    public function getClassName()
-    {
-        return static::class;
-    }
-
-    /**
-     * @return string
-     */
     public function getEventCalled(): string
     {
         return $this->eventCalled;

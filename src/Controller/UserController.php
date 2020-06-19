@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Dto\user\UserDto;
+use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Event\User\UserViewEvent;
@@ -87,7 +87,7 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::CREATE, ['userDto' => $userDto]);
 
-            $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
+            $this->addFlashMessage('success', 'User', 'Utilisateur créé avec succès.');
 
             return $this->redirectToRoute('users.list');
         }
@@ -138,7 +138,7 @@ class UserController extends DefaultController
                 'user' => $user,
             ]);
 
-            $this->addFlashMessage('sucess', 'User', 'Utilisateur créé avec succès.');
+            $this->addFlashMessage('success', 'User', 'Utilisateur mis à jour avec succès.');
 
             return $this->redirectToRoute('users.list');
         }
@@ -183,7 +183,7 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::DELETE, ['user' => $user]);
 
-            $this->addFlashMessage('sucess', 'User', 'Utilisateur supprimé avec succès.');
+            $this->addFlashMessage('success', 'User', 'Utilisateur supprimé avec succès.');
 
             return $this->redirectToRoute('users.list');
         }

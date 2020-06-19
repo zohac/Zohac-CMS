@@ -6,7 +6,6 @@ use App\Event\IndexViewEvent;
 use App\Service\DefaultService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,11 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends AbstractController
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     /**
      * @var ViewService
      */
@@ -37,29 +31,18 @@ class DefaultController extends AbstractController
     /**
      * DefaultController constructor.
      *
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ViewService              $viewService
-     * @param FlashBagInterface        $flashBag
-     * @param DefaultService           $defaultService
+     * @param ViewService       $viewService
+     * @param FlashBagInterface $flashBag
+     * @param DefaultService    $defaultService
      */
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
         ViewService $viewService,
         FlashBagInterface $flashBag,
         DefaultService $defaultService
     ) {
-        $this->eventDispatcher = $eventDispatcher;
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
         $this->defaultService = $defaultService;
-    }
-
-    /**
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher(): EventDispatcherInterface
-    {
-        return $this->eventDispatcher;
     }
 
     /**
