@@ -2,7 +2,7 @@
 
 namespace App\Event\User;
 
-use App\Dto\user\UserDto;
+use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Interfaces\Event\EventInterface;
 use App\Traits\Event\EventTrait;
