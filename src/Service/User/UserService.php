@@ -6,16 +6,12 @@ use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Exception\UuidException;
-use App\Service\DefaultService;
 use App\Service\EventService;
 use App\Service\UuidService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserService extends DefaultService
+class UserService
 {
     /**
      * @var UserPasswordEncoderInterface
@@ -26,33 +22,32 @@ class UserService extends DefaultService
      * @var EntityManagerInterface
      */
     private $entityManager;
+
     /**
      * @var UuidService
      */
     private $uuidService;
 
     /**
+     * @var EventService
+     */
+    private $eventService;
+
+    /**
      * UserService constructor.
      *
-     * @param SerializerInterface          $serializer
-     * @param EventDispatcherInterface     $eventDispatcher
-     * @param ValidatorInterface           $validator
      * @param EventService                 $eventService
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EntityManagerInterface       $entityManager
      * @param UuidService                  $uuidService
      */
     public function __construct(
-        SerializerInterface $serializer,
-        EventDispatcherInterface $eventDispatcher,
-        ValidatorInterface $validator,
         EventService $eventService,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface $entityManager,
         UuidService $uuidService
     ) {
-        parent::__construct($serializer, $eventDispatcher, $validator, $eventService);
-
+        $this->eventService = $eventService;
         $this->passwordEncoder = $passwordEncoder;
         $this->entityManager = $entityManager;
         $this->uuidService = $uuidService;
@@ -79,7 +74,7 @@ class UserService extends DefaultService
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
+        $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
         return $user;
     }
@@ -138,7 +133,7 @@ class UserService extends DefaultService
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
+        $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
 
         return $user;
     }
@@ -153,7 +148,7 @@ class UserService extends DefaultService
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $this->dispatchEvent(UserEvent::POST_DELETE);
+        $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
 
         return $this;
     }

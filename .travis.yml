@@ -1,18 +1,13 @@
 language: php
+os: linux
+dist: trusty
+
 php:
   - '7.3'
 
-services:
-  - sqlite
-
-test:
-  adapter: sqlite
-  database: test.db
-  encoding: utf8
-
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
 before_script:
-  - composer install -n
+  - composer install
 
 script:
   - php bin/phpunit

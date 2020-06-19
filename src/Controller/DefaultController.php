@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
-use App\Service\DefaultService;
+use App\Service\EventService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,26 +23,27 @@ class DefaultController extends AbstractController
      * @var FlashBagInterface
      */
     private $flashBag;
+
     /**
-     * @var DefaultService
+     * @var EventService
      */
-    private $defaultService;
+    private $eventService;
 
     /**
      * DefaultController constructor.
      *
      * @param ViewService       $viewService
      * @param FlashBagInterface $flashBag
-     * @param DefaultService    $defaultService
+     * @param EventService      $eventService
      */
     public function __construct(
         ViewService $viewService,
         FlashBagInterface $flashBag,
-        DefaultService $defaultService
+        EventService $eventService
     ) {
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
-        $this->defaultService = $defaultService;
+        $this->eventService = $eventService;
     }
 
     /**
@@ -89,7 +90,7 @@ class DefaultController extends AbstractController
      */
     public function dispatchEvent(string $eventName, ?array $data = [])
     {
-        $this->defaultService->dispatchEvent($eventName, $data);
+        $this->eventService->dispatchEvent($eventName, $data);
     }
 
     /**
