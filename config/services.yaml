@@ -38,3 +38,4 @@ services:
         # inject all services tagged with app.event.interface as first argument
         arguments:
             - !tagged_iterator app.event.interface
+            - '@event_dispatcher'

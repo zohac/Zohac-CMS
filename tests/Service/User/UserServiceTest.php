@@ -12,10 +12,7 @@ use App\Service\UuidService;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserServiceTest extends KernelTestCase
 {
@@ -161,15 +158,6 @@ class UserServiceTest extends KernelTestCase
 
     public function testExceptionWhenGetUuid()
     {
-        $serializer = $this->getMockBuilder(SerializerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $validator = $this->getMockBuilder(ValidatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $eventService = $this->getMockBuilder(EventService::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -184,9 +172,6 @@ class UserServiceTest extends KernelTestCase
             ->getMock();
 
         $userService = new UserService(
-            $serializer,
-            $eventDispatcher,
-            $validator,
             $eventService,
             $passwordEncoder,
             $entityManager,
