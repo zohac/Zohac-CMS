@@ -1,0 +1,21 @@
+---
+engines:
+  phpcs:
+    enabled: true
+    php_version: 7.3
+    exclude_paths:
+      - 'bin/**'
+      - 'config/**'
+      - 'var/**'
+      - 'var/SymfonyRequirements.php'
+      - 'public/index.php'
+      - 'public/bundles/apiplatform/**'
+  coverage:
+    enabled: true
+  exclude_paths:
+    - 'bin/**'
+    - 'config/**'
+    - 'var/**'
+    - 'var/SymfonyRequirements.php'
+    - 'public/index.php'
+    - 'public/bundles/apiplatform/**'
