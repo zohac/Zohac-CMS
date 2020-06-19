@@ -11,7 +11,7 @@ engines:
       - 'public/index.php'
       - 'public/bundles/apiplatform/**'
       - 'src/kernel.php'
-      - 'tests'
+      - 'tests/**'
   coverage:
     enabled: true
   exclude_paths:
@@ -22,4 +22,4 @@ engines:
     - 'public/index.php'
     - 'public/bundles/apiplatform/**'
     - 'src/kernel.php'
-    - 'tests'
+    - 'tests/**'
