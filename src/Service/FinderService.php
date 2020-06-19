@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Interfaces\Event\EventInterface;
-use function count;
 use Symfony\Component\Finder\Finder;
 
 class FinderService
@@ -24,22 +23,18 @@ class FinderService
     }
 
     /**
-     * @param string $eventName
-     * @param bool   $strict
+     * @param string      $eventName
+     * @param string|null $path
      *
      * @return array
      */
-    public static function getEventsByInterface(string $eventName, bool $strict = false): array
+    public static function getEventsByInterface(string $eventName, ?string $path = null): array
     {
         $events = [];
 
         /** @var EventInterface $key */
-        foreach (self::loadEvents() as $key => $event) {
-            if (count($event) < 1 && $strict) {
-                if (in_array($eventName, $event)) {
-                    $events = array_merge($events, $key::getEventsName());
-                }
-            } elseif (in_array($eventName, $event) && !$strict) {
+        foreach (self::loadEvents($path) as $key => $event) {
+            if (in_array($eventName, $event) && method_exists($key, 'getEventsName')) {
                 $events = array_merge($events, $key::getEventsName());
             }
         }
@@ -48,16 +43,20 @@ class FinderService
     }
 
     /**
+     * @param string|null $path
+     *
      * @return array
      */
-    public static function loadEvents(): array
+    public static function loadEvents(?string $path = null): array
     {
         $events = [];
 
         $finder = new Finder();
         $finderService = new static ($finder);
 
-        $finder->files()->in($finderService->defaultEventsPath);
+        $path = $path ?? $finderService->defaultEventsPath;
+
+        $finder->files()->in($path);
 
         // check if there are any search results
         if ($finder->hasResults()) {

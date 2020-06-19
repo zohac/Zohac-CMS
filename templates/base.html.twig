@@ -15,7 +15,9 @@
                         <div class="container mt-3 alert alert-{{ key }} alert-dismissible fade show" role="alert">
                             <div>{{ content.title }}</div>
                             <div>{{ content.message|raw }}</div>
+                            {% if content.context is defined %}
                             <div>{{ content.context|raw }}</div>
+                            {% endif %}
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>

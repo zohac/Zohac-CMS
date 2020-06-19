@@ -109,6 +109,7 @@ class UserService extends DefaultService
     {
         $userDto = new UserDto();
 
+        $userDto->uuid = $user->getUuid();
         $userDto->email = $user->getEmail();
         $userDto->roles = $user->getRoles();
 
@@ -144,12 +145,16 @@ class UserService extends DefaultService
 
     /**
      * @param User $user
+     *
+     * @return $this
      */
-    public function deleteUser(User $user)
+    public function deleteUser(User $user): self
     {
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
         $this->dispatchEvent(UserEvent::POST_DELETE);
+
+        return $this;
     }
 }

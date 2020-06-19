@@ -8,7 +8,6 @@ class UserDto
 {
     /**
      * @Assert\Uuid()
-     * @Assert\NotBlank()
      */
     public $uuid;
 
