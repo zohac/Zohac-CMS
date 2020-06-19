@@ -1,0 +1,10 @@
+version: "2"
+exclude_patterns:
+  - 'bin/**'
+  - 'config/**'
+  - 'var/**'
+  - 'var/SymfonyRequirements.php'
+  - 'public/index.php'
+  - 'public/bundles/apiplatform/**'
+  - 'src/kernel.php'
+  - 'tests/**'
