@@ -24,6 +24,7 @@ class FinderService
 
     /**
      * @param string $relativePath
+     *
      * @return string
      */
     public function getFilename(string $relativePath): string
@@ -79,6 +80,7 @@ class FinderService
 
     /**
      * @param Finder $finder
+     *
      * @return array
      */
     public function getEventsInFinder(Finder $finder): array
@@ -93,7 +95,7 @@ class FinderService
                 $continue = true;
                 while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
                     if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
-                        $className = $matches[1] . '\\' . $fileName[1];
+                        $className = $matches[1].'\\'.$fileName[1];
 
                         $events[$className] = class_implements($className);
 
@@ -104,6 +106,7 @@ class FinderService
                 fclose($handle);
             }
         }
+
         return $events;
     }
 }
