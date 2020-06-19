@@ -10,6 +10,8 @@ engines:
       - 'var/SymfonyRequirements.php'
       - 'public/index.php'
       - 'public/bundles/apiplatform/**'
+      - 'src/kernel.php'
+      - 'tests'
   coverage:
     enabled: true
   exclude_paths:
@@ -19,3 +21,5 @@ engines:
     - 'var/SymfonyRequirements.php'
     - 'public/index.php'
     - 'public/bundles/apiplatform/**'
+    - 'src/kernel.php'
+    - 'tests'
