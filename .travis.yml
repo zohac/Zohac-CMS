@@ -5,6 +5,7 @@ dist: trusty
 cache: false
 
 php:
+  - '7.2'
   - '7.3'
 
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
