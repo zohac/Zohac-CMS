@@ -2,6 +2,8 @@ language: php
 os: linux
 dist: trusty
 
+cache: false
+
 php:
   - '7.3'
 
