@@ -89,7 +89,7 @@ class FinderService
         $events = [];
 
         foreach ($finder as $file) {
-            $events = $this->readFileContent($file);
+            $events = array_merge($events, $this->readFileContent($file));
         }
 
         return $events;
