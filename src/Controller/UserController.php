@@ -28,7 +28,7 @@ class UserController extends DefaultController
      */
     public function list(UserRepository $userRepository): Response
     {
-//        $users = $userRepository->findAll();
+        // $users = $userRepository->findAll();
         $users = $userRepository->findAllNotArchived();
 
         $this->getViewService()->setData('user/index.html.twig', ['users' => $users]);
