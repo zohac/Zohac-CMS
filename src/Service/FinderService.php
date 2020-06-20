@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Interfaces\Event\EventInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FinderService
 {
@@ -31,7 +32,7 @@ class FinderService
     {
         preg_match('/([a-zA-Z]*).php/', $relativePath, $fileName);
 
-        return $fileName;
+        return $fileName[1];
     }
 
     /**
@@ -88,23 +89,36 @@ class FinderService
         $events = [];
 
         foreach ($finder as $file) {
-            $fileName = $this->getFilename($file->getRelativePathname());
+            $events = array_merge($events, $this->readFileContent($file));
+        }
 
-            $handle = @fopen($file->getRealPath(), 'r');
-            if ($handle) {
-                $continue = true;
-                while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
-                    if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
-                        $className = $matches[1].'\\'.$fileName[1];
+        return $events;
+    }
 
-                        $events[$className] = class_implements($className);
+    /**
+     * @param SplFileInfo $file
+     *
+     * @return array
+     */
+    public function readFileContent(SplFileInfo $file): array
+    {
+        $events = [];
+        $fileName = $this->getFilename($file->getRelativePathname());
 
-                        $continue = false;
-                    }
+        $handle = @fopen($file->getRealPath(), 'r');
+        if ($handle) {
+            $continue = true;
+            while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
+                if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
+                    $className = $matches[1].'\\'.$fileName;
+
+                    $events[$className] = class_implements($className);
+
+                    $continue = false;
                 }
-
-                fclose($handle);
             }
+
+            fclose($handle);
         }
 
         return $events;
