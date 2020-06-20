@@ -184,7 +184,7 @@ class UserServiceTest extends KernelTestCase
 
         $this->expectException(UuidException::class);
 
-        $uuid = $userService->getUuid();
+        $userService->getUuid();
     }
 
     protected function tearDown(): void
