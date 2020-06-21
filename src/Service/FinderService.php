@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Interfaces\Event\EventInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FinderService
 {
