@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use SplFileObject;
 use Symfony\Component\Finder\SplFileInfo;
 
 class ReaderFileService
@@ -19,17 +20,19 @@ class ReaderFileService
     }
 
     /**
-     * @param $handle "stream resource"
-     * @param string $pattern
+     * @param SplFileObject $fileObject
+     * @param string        $pattern
+     *
+     * @return array
      */
-    public function regexSearchInFileContent($handle, string $pattern, $fileName): array
+    public function regexSearchInFileContent(SplFileObject $fileObject, string $pattern): array
     {
         $events = [];
         $continue = true;
 
-        while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
+        while (false !== ($buffer = $fileObject->fread(4096)) && $continue) {
             if (preg_match($pattern, $buffer, $matches)) {
-                $className = $matches[1].'\\'.$fileName;
+                $className = $matches[1].'\\'.$this->getFilename($fileObject->getFilename());
 
                 $events[$className] = class_implements($className);
 
@@ -42,21 +45,19 @@ class ReaderFileService
 
     /**
      * @param SplFileInfo $file
+     * @param string      $pattern
      *
      * @return array
      */
     public function readAndRegexSearchInFileContent(SplFileInfo $file, string $pattern): array
     {
-//        $fileObject = $file->openFile();
-//        dump($fileObject);
         $events = [];
-        $fileName = $this->getFilename($file->getRelativePathname());
 
-        $handle = @fopen($file->getRealPath(), 'r');
-        if ($handle) {
-            $events = $this->regexSearchInFileContent($handle, '/namespace ([a-zA-Z\\\]*)\;/', $fileName);
+        if ($fileObject = $file->openFile()) {
+            $events = $this->regexSearchInFileContent($fileObject, '/namespace ([a-zA-Z\\\]*)\;/');
 
-            fclose($handle);
+            // Close the file
+            $fileObject = null;
         }
 
         return $events;
