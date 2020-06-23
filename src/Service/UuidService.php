@@ -14,11 +14,12 @@ class UuidService
     public function create()
     {
         if ($this->functionExist('uuid_create')) {
-            $uuid = uuid_create(UUID_TYPE_RANDOM);
 
-            for ($i = 0; !$this->isValid($uuid) && 5 > $i; ++$i) {
+            $i = 0;
+            do {
                 $uuid = uuid_create(UUID_TYPE_RANDOM);
-            }
+                $i++;
+            } while (!$this->isValid($uuid) && 5 > $i);
 
             if (!$this->isValid($uuid)) {
                 throw new UuidException('L\'application ne parvient pas à générer un uuid v4 valide.');
