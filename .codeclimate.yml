@@ -8,3 +8,18 @@ exclude_patterns:
   - 'public/bundles/apiplatform/**'
   - 'src/kernel.php'
   - 'tests/**'
+
+plugins:
+  phpcodesniffer:
+    enabled: true
+  phpmd:
+    enabled: true
+  phan:
+    enabled: true
+    config:
+      file_extensions: "php"
+  sonar-php:
+    enabled: true
+    config:
+      tests_patterns:
+        - tests/**
