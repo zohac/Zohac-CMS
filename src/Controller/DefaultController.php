@@ -19,6 +19,7 @@ class DefaultController extends AbstractController
      * @var ViewService
      */
     private $viewService;
+
     /**
      * @var FlashBagInterface
      */
@@ -94,13 +95,13 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param string        $view
+     * @param string|null   $view
      * @param array         $options
      * @param Response|null $response
      *
      * @return Response
      */
-    public function getResponse(string $view = null, array $options = [], Response $response = null): Response
+    public function getResponse(?string $view = null, array $options = [], Response $response = null): Response
     {
         if (null === $view && null === $this->viewService->getView()) {
             return new Response();
