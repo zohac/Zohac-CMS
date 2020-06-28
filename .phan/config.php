@@ -63,8 +63,8 @@ return [
         // the global scope or function bodies.
         'UnreachableCodePlugin',
         'UseReturnValuePlugin',
-        'EmptyStatementListPlugin',
-        'LoopVariableReusePlugin',
-        'vendor/drenso/phan-extensions/Plugin/Annotation/SymfonyAnnotationPlugin.php'
+//        'EmptyStatementListPlugin',
+//        'LoopVariableReusePlugin',
+//        'vendor/drenso/phan-extensions/Plugin/Annotation/SymfonyAnnotationPlugin.php'
     ],
 ];
