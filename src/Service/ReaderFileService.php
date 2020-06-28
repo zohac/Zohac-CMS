@@ -54,7 +54,7 @@ class ReaderFileService
         $events = [];
 
         if ($fileObject = $file->openFile()) {
-            $events = $this->regexSearchInFileContent($fileObject, '/namespace ([a-zA-Z\\\]*)\;/');
+            $events = $this->regexSearchInFileContent($fileObject, $pattern);
 
             // Close the file
             $fileObject = null;
