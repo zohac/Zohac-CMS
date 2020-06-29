@@ -4,6 +4,8 @@ namespace App\Service;
 
 class ViewService
 {
+    CONST NAME = 'viewService';
+
     /**
      * @var string
      */
