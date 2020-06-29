@@ -14,10 +14,10 @@ class UuidService
     public function create()
     {
         if ($this->functionExist('uuid_create')) {
-            $i = 0;
+            $counter = 0;
             do {
                 $uuid = uuid_create(UUID_TYPE_RANDOM);
-                ++$i;
+                ++$counter;
             } while (!$this->isValid($uuid) && 5 > $i);
 
             if (!$this->isValid($uuid)) {

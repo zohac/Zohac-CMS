@@ -16,6 +16,7 @@ plugins:
     standard: "PSR1,PSR2"
   phpmd:
     enabled: true
+    rulesets: "codesize.xml"
 #  phan:
 #    enabled: true
 #    config:
