@@ -8,6 +8,7 @@ exclude_patterns:
   - 'public/bundles/apiplatform/**'
   - 'src/kernel.php'
   - 'tests/**'
+  - '.phan/**'
 
 plugins:
   phpcodesniffer:
