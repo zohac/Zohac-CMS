@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends AbstractController
 {
-    CONST FLASH_SUCCESS = 'success';
-    CONST FLASH_ERROR = 'error';
+    const FLASH_SUCCESS = 'success';
+    const FLASH_ERROR = 'error';
 
     /**
      * @var ViewService

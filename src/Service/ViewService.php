@@ -4,7 +4,7 @@ namespace App\Service;
 
 class ViewService
 {
-    CONST NAME = 'viewService';
+    const NAME = 'viewService';
 
     /**
      * @var string
