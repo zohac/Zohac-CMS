@@ -65,6 +65,6 @@ return [
         'UseReturnValuePlugin',
 //        'EmptyStatementListPlugin',
 //        'LoopVariableReusePlugin',
-        '.phan/plugins/drenso/phan-extensions/Plugin/Annotation/SymfonyAnnotationPlugin.php'
+//        '.phan/plugins/drenso/phan-extensions/Plugin/Annotation/SymfonyAnnotationPlugin.php'
     ],
 ];

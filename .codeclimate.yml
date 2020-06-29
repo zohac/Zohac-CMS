@@ -16,10 +16,10 @@ plugins:
     standard: "PSR1,PSR2"
   phpmd:
     enabled: true
-  phan:
-    enabled: true
-    config:
-      file_extensions: "php"
+#  phan:
+#    enabled: true
+#    config:
+#      file_extensions: "php"
   sonar-php:
     enabled: true
     config:
