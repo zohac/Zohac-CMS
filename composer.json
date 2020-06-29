@@ -17,8 +17,10 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "drenso/phan-extensions": "^3.1",
         "liip/test-fixtures-bundle": "^1.0.0",
         "nelmio/alice": "^3.7",
+        "phan/phan": "^3.0",
         "symfony/browser-kit": "5.0.*",
         "symfony/css-selector": "5.0.*",
         "symfony/framework-bundle": "5.0.*",
