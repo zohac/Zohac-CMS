@@ -39,6 +39,14 @@ class UserController extends DefaultController
     }
 
     /**
+     * @return Response
+     */
+    public function redirectToUserList(): Response
+    {
+        return $this->redirectToRoute('users.list');
+    }
+
+    /**
      * @Route(
      *     "/users/{uuid}",
      *     name="users.detail",
@@ -54,7 +62,7 @@ class UserController extends DefaultController
         if (!$user) {
             $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $this->getViewService()->setData('user/detail.html.twig', ['user' => $user]);
@@ -89,7 +97,7 @@ class UserController extends DefaultController
 
             $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur créé avec succès.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
@@ -117,7 +125,7 @@ class UserController extends DefaultController
         if (!$user) {
             $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $userDto = $userService->createUserDtoFromUser($user);
@@ -140,7 +148,7 @@ class UserController extends DefaultController
 
             $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur mis à jour avec succès.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
@@ -167,7 +175,7 @@ class UserController extends DefaultController
         if (!$user) {
             $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $form = $this->createForm(DeleteType::class, null, [
@@ -185,7 +193,7 @@ class UserController extends DefaultController
 
             $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur supprimé avec succès.');
 
-            return $this->redirectToRoute('users.list');
+            return $this->redirectToUserList();
         }
 
         $this->getViewService()->setData('delete.html.twig', [
