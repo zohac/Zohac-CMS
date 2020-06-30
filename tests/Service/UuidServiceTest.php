@@ -23,7 +23,7 @@ class UuidServiceTest extends TestCase
             ->setMethods(['isValid', 'functionExist'])
             ->getMock();
 
-        $uuidService->expects($this->exactly(7))
+        $uuidService->expects($this->exactly(6))
             ->method('isValid')
             ->willReturn(false);
 

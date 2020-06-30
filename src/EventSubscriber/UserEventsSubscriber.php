@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Event\User\UserEvent;
-use App\Event\User\UserViewEvent;
 use App\Exception\UuidException;
 use App\Service\User\UserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,11 +33,6 @@ class UserEventsSubscriber implements EventSubscriberInterface
             UserEvent::PRE_UPDATE => ['onUserPreUpdate', 0],
             UserEvent::UPDATE => ['onUserUpdate', 0],
             UserEvent::DELETE => ['onUserDelete', 0],
-            UserViewEvent::CREATE => ['onUserCreateView', 0],
-            UserViewEvent::UPDATE => ['onUserUpdateView', 0],
-            UserViewEvent::DELETE => ['onUserDeleteView', 0],
-            UserViewEvent::LIST => ['onUserListView', 0],
-            UserViewEvent::DETAIL => ['onUserDetailView', 0],
         ];
     }
 
@@ -81,40 +75,5 @@ class UserEventsSubscriber implements EventSubscriberInterface
     public function onUserDelete(UserEvent $event)
     {
         $this->userService->deleteUser($event->getUser());
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserCreateView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserUpdateView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserDeleteView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserDetailView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserListView(UserViewEvent $event)
-    {
     }
 }

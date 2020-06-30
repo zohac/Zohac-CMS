@@ -5,7 +5,6 @@ namespace App\Tests\EventSubscriber;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
-use App\Event\User\UserViewEvent;
 use App\EventSubscriber\UserEventsSubscriber;
 use App\Service\User\UserService;
 use PHPUnit\Framework\TestCase;
@@ -29,11 +28,6 @@ class UserEventsSubscriberTest extends TestCase
         $this->assertArrayHasKey(UserEvent::PRE_UPDATE, UserEventsSubscriber::getSubscribedEvents());
         $this->assertArrayHasKey(UserEvent::UPDATE, UserEventsSubscriber::getSubscribedEvents());
         $this->assertArrayHasKey(UserEvent::DELETE, UserEventsSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::LIST, UserEventsSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::DETAIL, UserEventsSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::CREATE, UserEventsSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::UPDATE, UserEventsSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::DELETE, UserEventsSubscriber::getSubscribedEvents());
     }
 
     public function testOnUserCreate()
