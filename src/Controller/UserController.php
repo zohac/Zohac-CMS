@@ -47,6 +47,16 @@ class UserController extends DefaultController
     }
 
     /**
+     * @return Response
+     */
+    public function userNotFound(): Response
+    {
+        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'User', 'The user was not found.', 'user');
+
+        return $this->redirectToUserList();
+    }
+
+    /**
      * @Route(
      *     "/users/{uuid}",
      *     name="users.detail",
@@ -60,9 +70,7 @@ class UserController extends DefaultController
     public function detail(?User $user = null): Response
     {
         if (!$user) {
-            $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
-
-            return $this->redirectToUserList();
+            return $this->userNotFound();
         }
 
         $this->getViewService()->setData('user/detail.html.twig', ['user' => $user]);
@@ -95,7 +103,7 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::CREATE, ['userDto' => $userDto]);
 
-            $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur créé avec succès.');
+            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully created.', 'user');
 
             return $this->redirectToUserList();
         }
@@ -123,9 +131,7 @@ class UserController extends DefaultController
     public function update(Request $request, UserService $userService, ?User $user = null): Response
     {
         if (!$user) {
-            $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
-
-            return $this->redirectToUserList();
+            return $this->userNotFound();
         }
 
         $userDto = $userService->createUserDtoFromUser($user);
@@ -146,7 +152,7 @@ class UserController extends DefaultController
                 'user' => $user,
             ]);
 
-            $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur mis à jour avec succès.');
+            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully updated.', 'user');
 
             return $this->redirectToUserList();
         }
@@ -173,9 +179,7 @@ class UserController extends DefaultController
     public function delete(Request $request, ?User $user = null): Response
     {
         if (!$user) {
-            $this->addFlashMessage(self::FLASH_ERROR, 'User', 'L\'utilisateur n\'a pas été trouvé.');
-
-            return $this->redirectToUserList();
+            return $this->userNotFound();
         }
 
         $form = $this->createForm(DeleteType::class, null, [
@@ -191,14 +195,16 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::DELETE, ['user' => $user]);
 
-            $this->addFlashMessage(self::FLASH_SUCCESS, 'User', 'Utilisateur supprimé avec succès.');
+            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully deleted.', 'user');
 
             return $this->redirectToUserList();
         }
 
         $this->getViewService()->setData('delete.html.twig', [
             'form' => $form->createView(),
-            'message' => sprintf('êtes-vous sûr de vouloir supprimer cet utilisateur (%s) ?', $user->getEmail()),
+            'message' => $this->trans('Are you sure you want to delete this user (%email%) ?', 'user', [
+                'email' => $user->getEmail(),
+            ]),
         ]);
 
         $this->dispatchEvent(UserViewEvent::DELETE, [ViewService::NAME => $this->getViewService()]);

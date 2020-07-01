@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class DefaultController.
@@ -34,20 +35,63 @@ class DefaultController extends AbstractController
     private $eventService;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * DefaultController constructor.
      *
-     * @param ViewService       $viewService
-     * @param FlashBagInterface $flashBag
-     * @param EventService      $eventService
+     * @param ViewService         $viewService
+     * @param FlashBagInterface   $flashBag
+     * @param EventService        $eventService
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ViewService $viewService,
         FlashBagInterface $flashBag,
-        EventService $eventService
+        EventService $eventService,
+        TranslatorInterface $translator
     ) {
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
         $this->eventService = $eventService;
+        $this->translator = $translator;
+    }
+
+    /**
+     * @param string      $string
+     * @param string|null $domain
+     * @param array       $args
+     * @param string|null $locale
+     *
+     * @return string
+     */
+    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
+    {
+        return $this->translator->trans($string, $args, $domain, $locale);
+    }
+
+    /**
+     * @param string      $type
+     * @param string|null $title
+     * @param string|null $content
+     * @param string|null $domaine
+     *
+     * @return $this
+     */
+    public function addAndTransFlashMessage(
+        string $type = 'success',
+        ?string $title = null,
+        ?string $content = null,
+        ?string $domaine = null
+    ): self {
+        $title = $this->trans($title, $domaine);
+        $content = $this->trans($content, $domaine);
+
+        $this->addFlashMessage($type, $title, $content);
+
+        return $this;
     }
 
     /**

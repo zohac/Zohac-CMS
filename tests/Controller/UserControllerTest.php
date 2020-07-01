@@ -102,7 +102,7 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
+        $this->assertSelectorTextContains('div', 'User successfully created.');
     }
 
     /**
@@ -133,7 +133,7 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
+        $this->assertSelectorTextContains('div', 'User successfully updated.');
     }
 
     public function testDeleteUser()
@@ -145,7 +145,7 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
+        $this->assertSelectorTextContains('div', 'User successfully deleted.');
     }
 
     public function provideUrls()
