@@ -81,7 +81,7 @@ class DefaultController extends AbstractController
      * @return $this
      */
     public function addAndTransFlashMessage(
-        string $type = 'success',
+        string $type = self::FLASH_SUCCESS,
         ?string $title = null,
         ?string $content = null,
         ?string $domaine = null
@@ -101,8 +101,11 @@ class DefaultController extends AbstractController
      *
      * @return $this
      */
-    public function addFlashMessage(string $type = 'success', ?string $title = null, ?string $content = null): self
-    {
+    public function addFlashMessage(
+        string $type = self::FLASH_SUCCESS,
+        ?string $title = null,
+        ?string $content = null
+    ): self {
         $message = [
             'title' => $title,
             'message' => $content,
