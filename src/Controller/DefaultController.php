@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Event\IndexViewEvent;
 use App\Service\EventService;
+use App\Service\TranslatorService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class DefaultController.
@@ -35,28 +35,28 @@ class DefaultController extends AbstractController
     private $eventService;
 
     /**
-     * @var TranslatorInterface
+     * @var TranslatorService
      */
-    private $translator;
+    private $translatorService;
 
     /**
      * DefaultController constructor.
      *
-     * @param ViewService         $viewService
-     * @param FlashBagInterface   $flashBag
-     * @param EventService        $eventService
-     * @param TranslatorInterface $translator
+     * @param ViewService       $viewService
+     * @param FlashBagInterface $flashBag
+     * @param EventService      $eventService
+     * @param TranslatorService $translatorService
      */
     public function __construct(
         ViewService $viewService,
         FlashBagInterface $flashBag,
         EventService $eventService,
-        TranslatorInterface $translator
+        TranslatorService $translatorService
     ) {
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
         $this->eventService = $eventService;
-        $this->translator = $translator;
+        $this->translatorService = $translatorService;
     }
 
     /**
@@ -69,7 +69,7 @@ class DefaultController extends AbstractController
      */
     public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
     {
-        return $this->translator->trans($string, $args, $domain, $locale);
+        return $this->translatorService->trans($string, $domain, $args, $locale);
     }
 
     /**

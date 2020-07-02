@@ -71,6 +71,11 @@ class User implements AdvancedUserInterface
      */
     private $archived = false;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $locale;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -201,6 +206,18 @@ class User implements AdvancedUserInterface
     public function setArchived(bool $archived): self
     {
         $this->archived = $archived;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }

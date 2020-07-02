@@ -30,4 +30,11 @@ interface AdvancedUserInterface extends UserInterface
      * @return bool
      */
     public function isArchived();
+
+    /**
+     * Return the locale of the user.
+     *
+     * @return string
+     */
+    public function getLocale();
 }

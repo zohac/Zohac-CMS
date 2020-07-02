@@ -4,3 +4,7 @@ Are you sure you want to delete this user (%email%) ? : Êtes-vous sûr de voulo
 User successfully created. : Utilisateur créé avec succès.
 User successfully deleted. : Utilisateur supprimé avec succès.
 User successfully updated. : Utilisateur mis à jour avec succès.
+email : email
+roles : rôles
+password : mot de passe
+repeat password : répétez le mot de passe

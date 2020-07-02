@@ -20,8 +20,13 @@ class UserType extends AbstractType
         $userDto = $options['data'];
 
         $builder
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'label' => 'email',
+                'translation_domain' => 'user',
+            ])
             ->add('roles', ChoiceType::class, [
+                'label' => 'roles',
+                'translation_domain' => 'user',
                 'choices' => [
                     'ROLE_USER' => 0,
                     'ROLE_ADMIN' => 1,
@@ -31,9 +36,16 @@ class UserType extends AbstractType
                 'data' => array_keys($userDto->roles),
             ])
             ->add('password', RepeatedType::class, [
+                'label' => false,
+                'translation_domain' => 'user',
                 'type' => PasswordType::class,
+                'first_options' => ['label' => 'password'],
+                'second_options' => ['label' => 'repeat password'],
             ])
-            ->add('save', SubmitType::class);
+            ->add('save', SubmitType::class, [
+                'label' => 'save',
+                'translation_domain' => 'fields',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
