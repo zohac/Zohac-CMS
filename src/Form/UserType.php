@@ -23,11 +23,9 @@ class UserType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'email',
-                'translation_domain' => 'user',
             ])
             ->add('roles', ChoiceType::class, [
                 'label' => 'roles',
-                'translation_domain' => 'user',
                 'choices' => [
                     'ROLE_USER' => 0,
                     'ROLE_ADMIN' => 1,
@@ -38,14 +36,12 @@ class UserType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'label' => false,
-                'translation_domain' => 'user',
                 'type' => PasswordType::class,
                 'first_options' => ['label' => 'password'],
                 'second_options' => ['label' => 'repeat password'],
             ])
             ->add('locale', TextType::class, [
                 'label' => 'locale',
-                'translation_domain' => 'user',
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'save',
@@ -57,6 +53,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UserDto::class,
+            'translation_domain' => 'user',
         ]);
     }
 }
