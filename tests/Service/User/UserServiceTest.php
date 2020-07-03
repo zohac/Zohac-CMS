@@ -86,6 +86,7 @@ class UserServiceTest extends KernelTestCase
         $userDto = new UserDto();
         $userDto->email = uniqid().'@test.com';
         $userDto->roles = ['ROLE_TEST', 'ROLE_USER'];
+        $userDto->locale = 'en';
 
         if ($withPassword) {
             $userDto->password = '0000';

@@ -48,6 +48,16 @@
         </div>
 
         <div>
+            {% if form.locale.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.locale) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.locale) }}
+            {{ form_widget(form.locale) }}
+        </div>
+
+        <div>
             {{ form_widget(form.save) }}
         </div>
 

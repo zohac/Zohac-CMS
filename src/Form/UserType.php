@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,8 +21,11 @@ class UserType extends AbstractType
         $userDto = $options['data'];
 
         $builder
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'label' => 'email',
+            ])
             ->add('roles', ChoiceType::class, [
+                'label' => 'roles',
                 'choices' => [
                     'ROLE_USER' => 0,
                     'ROLE_ADMIN' => 1,
@@ -31,15 +35,25 @@ class UserType extends AbstractType
                 'data' => array_keys($userDto->roles),
             ])
             ->add('password', RepeatedType::class, [
+                'label' => false,
                 'type' => PasswordType::class,
+                'first_options' => ['label' => 'password'],
+                'second_options' => ['label' => 'repeat password'],
             ])
-            ->add('save', SubmitType::class);
+            ->add('locale', TextType::class, [
+                'label' => 'locale',
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'save',
+                'translation_domain' => 'fields',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => UserDto::class,
+            'translation_domain' => 'user',
         ]);
     }
 }

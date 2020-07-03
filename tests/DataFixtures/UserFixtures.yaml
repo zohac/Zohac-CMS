@@ -3,3 +3,4 @@ App\Entity\User:
     email: <email()>
     password: "0000"
     uuid: <uuid()>
+    locale: 'en'

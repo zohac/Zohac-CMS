@@ -1,0 +1,36 @@
+version:  '3.7'
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: on-failure
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: example
+  adminer:
+    image: adminer
+    restart: on-failure
+    ports:
+      - '8080:8080'
+  nginx:
+    image: nginx:1.15.3-alpine
+    restart: on-failure
+    volumes:
+      - './:/home/wwwroot'
+      - './docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro'
+    ports:
+      - '80:80'
+    links:
+      - mysql
+      - php
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    restart: on-failure
+    volumes:
+      - './:/home/wwwroot'
+    links:
+      - mysql

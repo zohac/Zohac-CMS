@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Event\IndexViewEvent;
 use App\Service\EventService;
+use App\Service\TranslatorService;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,20 +35,63 @@ class DefaultController extends AbstractController
     private $eventService;
 
     /**
+     * @var TranslatorService
+     */
+    private $translatorService;
+
+    /**
      * DefaultController constructor.
      *
      * @param ViewService       $viewService
      * @param FlashBagInterface $flashBag
      * @param EventService      $eventService
+     * @param TranslatorService $translatorService
      */
     public function __construct(
         ViewService $viewService,
         FlashBagInterface $flashBag,
-        EventService $eventService
+        EventService $eventService,
+        TranslatorService $translatorService
     ) {
         $this->viewService = $viewService;
         $this->flashBag = $flashBag;
         $this->eventService = $eventService;
+        $this->translatorService = $translatorService;
+    }
+
+    /**
+     * @param string      $string
+     * @param string|null $domain
+     * @param array       $args
+     * @param string|null $locale
+     *
+     * @return string
+     */
+    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
+    {
+        return $this->translatorService->trans($string, $domain, $args, $locale);
+    }
+
+    /**
+     * @param string      $type
+     * @param string|null $title
+     * @param string|null $content
+     * @param string|null $domaine
+     *
+     * @return $this
+     */
+    public function addAndTransFlashMessage(
+        string $type = self::FLASH_SUCCESS,
+        ?string $title = null,
+        ?string $content = null,
+        ?string $domaine = null
+    ): self {
+        $title = $this->trans($title, $domaine);
+        $content = $this->trans($content, $domaine);
+
+        $this->addFlashMessage($type, $title, $content);
+
+        return $this;
     }
 
     /**
@@ -57,8 +101,11 @@ class DefaultController extends AbstractController
      *
      * @return $this
      */
-    public function addFlashMessage(string $type = 'success', ?string $title = null, ?string $content = null): self
-    {
+    public function addFlashMessage(
+        string $type = self::FLASH_SUCCESS,
+        ?string $title = null,
+        ?string $content = null
+    ): self {
         $message = [
             'title' => $title,
             'message' => $content,

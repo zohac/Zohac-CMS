@@ -33,4 +33,9 @@ class UserDto
      * @Assert\DateTime()
      */
     public $tokenValidity;
+
+    /**
+     * @Assert\Type("string")
+     */
+    public $locale;
 }
