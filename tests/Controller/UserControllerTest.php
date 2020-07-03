@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
+use App\Service\TranslatorService;
 use App\Service\User\UserService;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
@@ -30,17 +31,23 @@ class UserControllerTest extends WebTestCase
      */
     private $uuidService = null;
 
+    /**
+     * @var TranslatorService
+     */
+    private $translatorService;
+
     public function setUp(): void
     {
         $this->client = static::createClient();
         $this->uuidService = self::$container->get(UuidService::class);
+        $this->translatorService = self::$container->get(TranslatorService::class);
 
         $this->loadUsers();
     }
 
     public function loadUsers()
     {
-        $uuidService = self::$container->get(UserService::class);
+        $uuidService = self::$container->get(UuidService::class);
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->users = $this->loadFixtureFiles([
@@ -48,7 +55,7 @@ class UserControllerTest extends WebTestCase
         ]);
 
         foreach ($this->users as $key => $user) {
-            $user->setUuid($uuidService->getUuid());
+            $user->setUuid($uuidService->create());
             $entityManager->persist($user);
 
             $this->users[$key] = $user;
@@ -97,12 +104,13 @@ class UserControllerTest extends WebTestCase
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
+            'user[locale]' => 'en',
         ]);
         $this->client->submit($form);
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'User successfully created.');
+        $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
     }
 
     /**
@@ -128,12 +136,13 @@ class UserControllerTest extends WebTestCase
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
+            'user[locale]' => 'en',
         ]);
         $this->client->submit($form);
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'User successfully updated.');
+        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
     }
 
     public function testDeleteUser()
@@ -145,7 +154,7 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseRedirects('/users');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'User successfully deleted.');
+        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
     }
 
     public function provideUrls()
@@ -172,6 +181,7 @@ class UserControllerTest extends WebTestCase
                 'user[email]' => 'test@test.com',
                 'user[password][first]' => '132456',
                 'user[password][second]' => '1324655',
+                'user[locale]' => 'fr',
             ],
         ];
         yield [
@@ -179,6 +189,7 @@ class UserControllerTest extends WebTestCase
                 'user[email]' => 'notAnEmail',
                 'user[password][first]' => '132456',
                 'user[password][second]' => '132456',
+                'user[locale]' => 'fr',
             ],
         ];
     }

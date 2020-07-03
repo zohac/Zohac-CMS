@@ -57,22 +57,12 @@ class UserService
      * @param UserDto $userDto
      *
      * @return User
-     *
-     * @throws UuidException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
         $user = new User();
 
-        $user->setUuid($this->getUuid());
-        $user->setEmail($userDto->email);
-        $user->setRoles($userDto->roles);
-
-        $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-        $user->setPassword($password);
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $user = $this->populateUserWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
@@ -107,6 +97,7 @@ class UserService
         $userDto->uuid = $user->getUuid();
         $userDto->email = $user->getEmail();
         $userDto->roles = $user->getRoles();
+        $userDto->locale = $user->getLocale();
 
         return $userDto;
     }
@@ -116,14 +107,30 @@ class UserService
      * @param User    $user
      *
      * @return User
+     */
+    public function updateUserFromDto(UserDto $userDto, User $user): User
+    {
+        $user = $this->populateUserWithDto($user, $userDto);
+
+        $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
+
+        return $user;
+    }
+
+    /**
+     * @param User    $user
+     * @param UserDto $userDto
+     *
+     * @return User
      *
      * @throws UuidException
      */
-    public function updateUserFromDto(UserDto $userDto, User $user): User
+    public function populateUserWithDto(User $user, UserDto $userDto): User
     {
         $user->setUuid($this->getUuid());
         $user->setEmail($userDto->email);
         $user->setRoles($userDto->roles);
+        $user->setLocale($userDto->locale);
 
         if (null !== $userDto->password) {
             $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
@@ -132,8 +139,6 @@ class UserService
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-
-        $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
 
         return $user;
     }

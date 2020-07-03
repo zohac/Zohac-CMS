@@ -26,7 +26,7 @@ class LocaleSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * On kernel Request, we get the user Locale OR set the default Locale
+     * On kernel Request, we get the user Locale OR set the default Locale.
      *
      * @param RequestEvent $event
      */
@@ -36,8 +36,10 @@ class LocaleSubscriber implements EventSubscriberInterface
 
         /** @var User $user */
         if ($user = $request->getUser()) {
-            $this->translatorService->setLocale($user->getLocale());
-            $request->setLocale($this->translatorService->getLocale());
+            $locale = $user->getLocale();
+
+            $this->translatorService->setLocale($locale);
+            $request->setLocale($locale);
         }
     }
 
