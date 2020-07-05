@@ -100,7 +100,12 @@ class LanguageController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(LanguageEvent::CREATE, ['languageDto' => $languageDto]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'Language', 'Language successfully created.', 'language');
+            $this->addAndTransFlashMessage(
+                self::FLASH_SUCCESS,
+                'Language',
+                'Language successfully created.',
+                'language'
+            );
 
             return $this->redirectToLanguageList();
         }
@@ -149,7 +154,12 @@ class LanguageController extends DefaultController
                 'language' => $language,
             ]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'Language', 'Language successfully updated.', 'language');
+            $this->addAndTransFlashMessage(
+                self::FLASH_SUCCESS,
+                'Language',
+                'Language successfully updated.',
+                'language'
+            );
 
             return $this->redirectToLanguageList();
         }
@@ -192,7 +202,12 @@ class LanguageController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(LanguageEvent::DELETE, ['language' => $language]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'Language', 'Language successfully deleted.', 'language');
+            $this->addAndTransFlashMessage(
+                self::FLASH_SUCCESS,
+                'Language',
+                'Language successfully deleted.',
+                'language'
+            );
 
             return $this->redirectToLanguageList();
         }
