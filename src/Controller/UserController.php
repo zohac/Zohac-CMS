@@ -39,24 +39,6 @@ class UserController extends DefaultController
     }
 
     /**
-     * @return Response
-     */
-    public function redirectToUserList(): Response
-    {
-        return $this->redirectToRoute('users.list');
-    }
-
-    /**
-     * @return Response
-     */
-    public function userNotFound(): Response
-    {
-        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'User', 'The user was not found.', 'user');
-
-        return $this->redirectToUserList();
-    }
-
-    /**
      * @Route(
      *     "/users/{uuid}",
      *     name="users.detail",
@@ -78,6 +60,24 @@ class UserController extends DefaultController
         $this->dispatchEvent(UserViewEvent::DETAIL, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @return Response
+     */
+    public function userNotFound(): Response
+    {
+        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'User', 'The user was not found.', 'user');
+
+        return $this->redirectToUserList();
+    }
+
+    /**
+     * @return Response
+     */
+    public function redirectToUserList(): Response
+    {
+        return $this->redirectToRoute('users.list');
     }
 
     /**

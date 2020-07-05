@@ -36,24 +36,6 @@ class LanguageController extends DefaultController
     }
 
     /**
-     * @return Response
-     */
-    public function redirectToLanguageList(): Response
-    {
-        return $this->redirectToRoute('languages.list');
-    }
-
-    /**
-     * @return Response
-     */
-    public function languageNotFound(): Response
-    {
-        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'Language', 'The language was not found.', 'language');
-
-        return $this->redirectToLanguageList();
-    }
-
-    /**
      * @Route(
      *     "/languages/{id}",
      *     name="languages.detail",
@@ -75,6 +57,24 @@ class LanguageController extends DefaultController
         $this->dispatchEvent(LanguageViewEvent::DETAIL, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @return Response
+     */
+    public function languageNotFound(): Response
+    {
+        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'Language', 'The language was not found.', 'language');
+
+        return $this->redirectToLanguageList();
+    }
+
+    /**
+     * @return Response
+     */
+    public function redirectToLanguageList(): Response
+    {
+        return $this->redirectToRoute('languages.list');
     }
 
     /**

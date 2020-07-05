@@ -8,15 +8,23 @@ use Symfony\Component\Finder\SplFileInfo;
 class ReaderFileService
 {
     /**
-     * @param string $relativePath
+     * @param SplFileInfo $file
+     * @param string      $pattern
      *
-     * @return string
+     * @return array
      */
-    public function getFilename(string $relativePath): string
+    public function readAndRegexSearchInFileContent(SplFileInfo $file, string $pattern): array
     {
-        preg_match('/([a-zA-Z]*).php/', $relativePath, $fileName);
+        $events = [];
 
-        return $fileName[1];
+        if ($fileObject = $file->openFile()) {
+            $events = $this->regexSearchInFileContent($fileObject, $pattern);
+
+            // Close the file
+            $fileObject = null;
+        }
+
+        return $events;
     }
 
     /**
@@ -44,22 +52,14 @@ class ReaderFileService
     }
 
     /**
-     * @param SplFileInfo $file
-     * @param string      $pattern
+     * @param string $relativePath
      *
-     * @return array
+     * @return string
      */
-    public function readAndRegexSearchInFileContent(SplFileInfo $file, string $pattern): array
+    public function getFilename(string $relativePath): string
     {
-        $events = [];
+        preg_match('/([a-zA-Z]*).php/', $relativePath, $fileName);
 
-        if ($fileObject = $file->openFile()) {
-            $events = $this->regexSearchInFileContent($fileObject, $pattern);
-
-            // Close the file
-            $fileObject = null;
-        }
-
-        return $events;
+        return $fileName[1];
     }
 }

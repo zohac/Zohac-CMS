@@ -60,19 +60,6 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param string      $string
-     * @param string|null $domain
-     * @param array       $args
-     * @param string|null $locale
-     *
-     * @return string
-     */
-    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
-    {
-        return $this->translatorService->trans($string, $domain, $args, $locale);
-    }
-
-    /**
      * @param string      $type
      * @param string|null $title
      * @param string|null $content
@@ -92,6 +79,19 @@ class DefaultController extends AbstractController
         $this->addFlashMessage($type, $title, $content);
 
         return $this;
+    }
+
+    /**
+     * @param string      $string
+     * @param string|null $domain
+     * @param array       $args
+     * @param string|null $locale
+     *
+     * @return string
+     */
+    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
+    {
+        return $this->translatorService->trans($string, $domain, $args, $locale);
     }
 
     /**

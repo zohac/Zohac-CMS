@@ -32,26 +32,6 @@ class EventService
     }
 
     /**
-     * @param string $eventName
-     *
-     * @return EventInterface
-     *
-     * @throws EventException
-     */
-    public function getEvent(string $eventName)
-    {
-        foreach ($this->events as $event) {
-            if (in_array($eventName, $event->getEventsName())) {
-                $event->setEventCalled($eventName);
-
-                return $event;
-            }
-        }
-
-        throw new EventException(sprintf('Le nom de l\'event : %s n\'existe pas.', $eventName));
-    }
-
-    /**
      * @return EventInterface[]|array
      */
     public function getEvents(): array
@@ -80,5 +60,25 @@ class EventService
         $this->eventDispatcher->dispatch($event, $eventName);
 
         return $this;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return EventInterface
+     *
+     * @throws EventException
+     */
+    public function getEvent(string $eventName)
+    {
+        foreach ($this->events as $event) {
+            if (in_array($eventName, $event->getEventsName())) {
+                $event->setEventCalled($eventName);
+
+                return $event;
+            }
+        }
+
+        throw new EventException(sprintf('Le nom de l\'event : %s n\'existe pas.', $eventName));
     }
 }

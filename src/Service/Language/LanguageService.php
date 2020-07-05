@@ -43,6 +43,28 @@ class LanguageService
     }
 
     /**
+     * @param Language    $language
+     * @param LanguageDto $languageDto
+     *
+     * @return Language
+     */
+    public function populateLanguageWithDto(Language $language, LanguageDto $languageDto): Language
+    {
+        $language->setName($languageDto->name)
+            ->setAlternateName($languageDto->alternateName)
+            ->setDescription($languageDto->description)
+            ->setIso6391($languageDto->iso639_1)
+            ->setIso6392B($languageDto->iso639_2B)
+            ->setIso6392T($languageDto->iso639_2T)
+            ->setIso6393($languageDto->iso639_3);
+
+        $this->entityManager->persist($language);
+        $this->entityManager->flush();
+
+        return $language;
+    }
+
+    /**
      * @param Language $language
      *
      * @return LanguageDto
@@ -90,27 +112,5 @@ class LanguageService
         $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
 
         return $this;
-    }
-
-    /**
-     * @param Language    $language
-     * @param LanguageDto $languageDto
-     *
-     * @return Language
-     */
-    public function populateLanguageWithDto(Language $language, LanguageDto $languageDto): Language
-    {
-        $language->setName($languageDto->name)
-            ->setAlternateName($languageDto->alternateName)
-            ->setDescription($languageDto->description)
-            ->setIso6391($languageDto->iso639_1)
-            ->setIso6392B($languageDto->iso639_2B)
-            ->setIso6392T($languageDto->iso639_2T)
-            ->setIso6393($languageDto->iso639_3);
-
-        $this->entityManager->persist($language);
-        $this->entityManager->flush();
-
-        return $language;
     }
 }

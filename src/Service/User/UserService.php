@@ -70,6 +70,32 @@ class UserService
     }
 
     /**
+     * @param User    $user
+     * @param UserDto $userDto
+     *
+     * @return User
+     *
+     * @throws UuidException
+     */
+    public function populateUserWithDto(User $user, UserDto $userDto): User
+    {
+        $user->setUuid($this->getUuid());
+        $user->setEmail($userDto->email);
+        $user->setRoles($userDto->roles);
+        $user->setLocale($userDto->locale);
+
+        if (null !== $userDto->password) {
+            $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
+            $user->setPassword($password);
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    /**
      * @return string
      *
      * @throws UuidException
@@ -113,32 +139,6 @@ class UserService
         $user = $this->populateUserWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
-
-        return $user;
-    }
-
-    /**
-     * @param User    $user
-     * @param UserDto $userDto
-     *
-     * @return User
-     *
-     * @throws UuidException
-     */
-    public function populateUserWithDto(User $user, UserDto $userDto): User
-    {
-        $user->setUuid($this->getUuid());
-        $user->setEmail($userDto->email);
-        $user->setRoles($userDto->roles);
-        $user->setLocale($userDto->locale);
-
-        if (null !== $userDto->password) {
-            $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-            $user->setPassword($password);
-        }
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
 
         return $user;
     }
