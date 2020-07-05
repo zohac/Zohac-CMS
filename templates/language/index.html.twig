@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List!{% endblock %}
+
+{% block body %}
+    <div class="languages-wrapper">
+        {% for language in languages %}
+            <div class="languages-wrapper">
+                {% trans from 'language' %}name{% endtrans %}: {{ language.name }}<br/>
+                {% trans from 'language' %}alternate name{% endtrans %}: {{ language.alternateName }}<br/>
+                {% trans from 'language' %}description{% endtrans %}: {{ language.description }}<br/>
+                {% trans from 'language' %}iso639-1{% endtrans %}: {{ language.iso639_1 }}<br/>
+                {% trans from 'language' %}iso639-2/T{% endtrans %}: {{ language.iso639_2T }}<br/>
+                {% trans from 'language' %}iso639-2/B{% endtrans %}: {{ language.iso639_2B }}<br/>
+                {% trans from 'language' %}iso639-3{% endtrans %}: {{ language.description }}<br/>
+                <ul>
+                    {% for iso639_3 in language.iso639_3 %}
+                        <li>{{ iso639_3 }}</li>
+                    {% endfor %}
+                </ul>
+{#                <a href="{{ path('users.detail', {'uuid': user.uuid}) }}">Detail</a>#}
+            </div>
+        {% endfor %}
+    </div>
+{#    <a href="{{ path('users.create') }}">Create</a>#}
+{% endblock %}

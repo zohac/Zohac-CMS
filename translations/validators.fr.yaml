@@ -1,0 +1,7 @@
+Your language name must be at least %limit% characters long : Votre nom de langue doit comporter au moins %limit% caractères
+Your language name cannot be longer than %limit% characters : Votre nom de langue ne doit pas comporter plus de %limit% caractères
+Your language alternate name must be at least %limit% characters long : Le nom de langue alternatif doit comporter au moins %limit% caractères
+Your language alternate name cannot be longer than %limit% characters : Le nom de langue alternatif ne doit pas comporter plus de %limit% caractères
+The iso639_1 string must be %limit% characters long : La chaîne iso639_1 doit comporter %limit% caractères
+The iso639_2/T string must be %limit% characters long : La chaîne iso639_2/T doit comporter %limit% caractères
+The iso639_2/B string must be %limit% characters long : La chaîne iso639_2/B doit comporter %limit% caractère
