@@ -27,7 +27,6 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
     {
         return [
             LanguageEvent::CREATE => ['onLanguageCreate', 0],
-            LanguageEvent::PRE_UPDATE => ['onLanguagePreUpdate', 0],
             LanguageEvent::UPDATE => ['onLanguageUpdate', 0],
             LanguageEvent::DELETE => ['onLanguageDelete', 0],
         ];
@@ -39,13 +38,6 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
     public function onLanguageCreate(LanguageEvent $event)
     {
         $this->languageService->createLanguageFromDto($event->getLanguageDto());
-    }
-
-    /**
-     * @param LanguageEvent $event
-     */
-    public function onLanguagePreUpdate(LanguageEvent $event)
-    {
     }
 
     /**
