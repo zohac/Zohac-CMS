@@ -38,7 +38,7 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
      */
     public function onLanguageCreate(LanguageEvent $event)
     {
-//        $this->languageService->createUserFromDto($event->getUserDto());
+        $this->languageService->createLanguageFromDto($event->getLanguageDto());
     }
 
     /**
@@ -53,6 +53,7 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
      */
     public function onLanguageUpdate(LanguageEvent $event)
     {
+        $this->languageService->updateLanguageFromDto($event->getLanguageDto(), $event->getLanguage());
     }
 
     /**
@@ -60,5 +61,6 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
      */
     public function onLanguageDelete(LanguageEvent $event)
     {
+        $this->languageService->deleteLanguage($event->getLanguage());
     }
 }

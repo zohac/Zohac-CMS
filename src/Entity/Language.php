@@ -119,7 +119,7 @@ class Language
         return $this->iso639_2T;
     }
 
-    public function setIso6392T(string $iso639_2T): self
+    public function setIso6392T(?string $iso639_2T): self
     {
         $this->iso639_2T = $iso639_2T;
 

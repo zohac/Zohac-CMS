@@ -57,7 +57,7 @@ class LanguageController extends DefaultController
      * @Route(
      *     "/languages/{id}",
      *     name="languages.detail",
-     *     requirements={"id"="/d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
      * @param Language|null $language
@@ -116,7 +116,7 @@ class LanguageController extends DefaultController
      * @Route(
      *     "/languages/{id}/update",
      *     name="languages.update",
-     *     requirements={"id"="/d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
      * @param Request         $request
@@ -133,7 +133,7 @@ class LanguageController extends DefaultController
 
         $languageDto = $languageService->createLanguageDtoFromLanguage($language);
         $form = $this->createForm(LanguageType::class, $languageDto, [
-            'action' => $this->generateUrl('languages.update', ['uuid' => $language->getId()]),
+            'action' => $this->generateUrl('languages.update', ['id' => $language->getId()]),
         ]);
 
         $this->dispatchEvent(LanguageEvent::PRE_UPDATE, [
@@ -165,7 +165,7 @@ class LanguageController extends DefaultController
      * @Route(
      *     "/languages/{id}/delete",
      *     name="languages.delete",
-     *     requirements={"uuid"="/d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
      * @param Request       $request
@@ -180,7 +180,7 @@ class LanguageController extends DefaultController
         }
 
         $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl('languages.delete', ['uuid' => $language->getId()]),
+            'action' => $this->generateUrl('languages.delete', ['id' => $language->getId()]),
         ]);
 
         $this->dispatchEvent(LanguageEvent::PRE_DELETE, [

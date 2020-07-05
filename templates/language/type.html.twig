@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Type!{% endblock %}
+
+{% block body %}
+    <div class="form-wrapper">
+        {{ form_start(form) }}
+
+        <div>
+            {% if form.name.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.name) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+        </div>
+
+        <div>
+            {% if form.alternateName.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.alternateName) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.alternateName) }}
+            {{ form_widget(form.alternateName) }}
+        </div>
+
+        <div>
+            {% if form.description.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.description) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+        </div>
+
+        <div>
+            {% if form.iso639_1.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.iso639_1) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.iso639_1) }}
+            {{ form_widget(form.iso639_1) }}
+        </div>
+
+        <div>
+            {% if form.iso639_2T.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.iso639_2T) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.iso639_2T) }}
+            {{ form_widget(form.iso639_2T) }}
+        </div>
+
+        <div>
+            {% if form.iso639_2B.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.iso639_2B) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.iso639_2B) }}
+            {{ form_widget(form.iso639_2B) }}
+        </div>
+
+        <div>
+            {% if form.iso639_3.vars.errors|length %}
+                <div class="form-error-wrapper">
+                    {{ form_errors(form.iso639_3) }}
+                </div>
+            {% endif %}
+            {{ form_label(form.iso639_3) }}
+            {{ form_widget(form.iso639_3) }}
+        </div>
+
+        <div>
+            {{ form_widget(form.save) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

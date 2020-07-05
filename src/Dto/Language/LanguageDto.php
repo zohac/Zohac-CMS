@@ -8,22 +8,21 @@ class LanguageDto
 {
     /**
      * @Assert\Length(
-     *      min = 0,
      *      max = 255,
      *      minMessage = "Your language name must be at least {{ limit }} characters long",
      *      maxMessage = "Your language name cannot be longer than {{ limit }} characters",
-     *      allowEmptyString = yes
+     *     allowEmptyString = true
      * )
+     * @Assert\NotBlank()
      */
     public $name;
 
     /**
      * @Assert\Length(
-     *      min = 0,
      *      max = 255,
      *      minMessage = "Your language alternate name must be at least {{ limit }} characters long",
      *      maxMessage = "Your language alternate name cannot be longer than {{ limit }} characters",
-     *      allowEmptyString = yes
+     *     allowEmptyString = true
      * )
      */
     public $alternateName;
@@ -41,6 +40,7 @@ class LanguageDto
      *      maxMessage = "The iso639_1 string must be {{ limit }} characters long",
      *      allowEmptyString = false
      * )
+     * @Assert\NotBlank()
      */
     public $iso639_1;
 
@@ -50,7 +50,7 @@ class LanguageDto
      *      max = 3,
      *      minMessage = "The iso639_2/T string must be {{ limit }} characters long",
      *      maxMessage = "The iso639_2/T string must be {{ limit }} characters long",
-     *      allowEmptyString = yes
+     *     allowEmptyString = true
      * )
      */
     public $iso639_2T;
@@ -61,7 +61,7 @@ class LanguageDto
      *      max = 3,
      *      minMessage = "The iso639_2/B string must be {{ limit }} characters long",
      *      maxMessage = "The iso639_2/B string must be {{ limit }} characters long",
-     *      allowEmptyString = yes
+     *     allowEmptyString = true
      * )
      */
     public $iso639_2B;
