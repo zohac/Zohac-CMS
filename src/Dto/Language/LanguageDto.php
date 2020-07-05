@@ -42,7 +42,7 @@ class LanguageDto
      * )
      * @Assert\NotBlank()
      */
-    public $iso639_1;
+    public $iso6391;
 
     /**
      * @Assert\Length(
@@ -53,7 +53,7 @@ class LanguageDto
      *     allowEmptyString = true
      * )
      */
-    public $iso639_2T;
+    public $iso6392T;
 
     /**
      * @Assert\Length(
@@ -64,7 +64,7 @@ class LanguageDto
      *     allowEmptyString = true
      * )
      */
-    public $iso639_2B;
+    public $iso6392B;
 
-    public $iso639_3 = [];
+    public $iso6393 = [];
 }

@@ -53,10 +53,10 @@ class LanguageService
         $language->setName($languageDto->name)
             ->setAlternateName($languageDto->alternateName)
             ->setDescription($languageDto->description)
-            ->setIso6391($languageDto->iso639_1)
-            ->setIso6392B($languageDto->iso639_2B)
-            ->setIso6392T($languageDto->iso639_2T)
-            ->setIso6393($languageDto->iso639_3);
+            ->setIso6391($languageDto->iso6391)
+            ->setIso6392B($languageDto->iso6392B)
+            ->setIso6392T($languageDto->iso6392T)
+            ->setIso6393($languageDto->iso6393);
 
         $this->entityManager->persist($language);
         $this->entityManager->flush();
@@ -76,10 +76,10 @@ class LanguageService
         $languageDto->name = $language->getName();
         $languageDto->alternateName = $language->getAlternateName();
         $languageDto->description = $language->getDescription();
-        $languageDto->iso639_1 = $language->getIso6391();
-        $languageDto->iso639_2B = $language->getIso6392B();
-        $languageDto->iso639_2T = $language->getIso6392T();
-        $languageDto->iso639_3 = $language->getIso6393();
+        $languageDto->iso6391 = $language->getIso6391();
+        $languageDto->iso6392B = $language->getIso6392B();
+        $languageDto->iso6392T = $language->getIso6392T();
+        $languageDto->iso6393 = $language->getIso6393();
 
         return $languageDto;
     }

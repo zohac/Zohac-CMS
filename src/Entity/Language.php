@@ -44,22 +44,22 @@ class Language
     /**
      * @ORM\Column(type="string", length=2)
      */
-    private $iso639_1;
+    private $iso6391;
 
     /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
-    private $iso639_2T;
+    private $iso6392T;
 
     /**
      * @ORM\Column(type="string", length=3, nullable=true)
      */
-    private $iso639_2B;
+    private $iso6392B;
 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    private $iso639_3 = [];
+    private $iso6393 = [];
 
     public function getId(): ?int
     {
@@ -104,48 +104,48 @@ class Language
 
     public function getIso6391(): ?string
     {
-        return $this->iso639_1;
+        return $this->iso6391;
     }
 
-    public function setIso6391(string $iso639_1): self
+    public function setIso6391(string $iso6391): self
     {
-        $this->iso639_1 = $iso639_1;
+        $this->iso6391 = $iso6391;
 
         return $this;
     }
 
     public function getIso6392T(): ?string
     {
-        return $this->iso639_2T;
+        return $this->iso6392T;
     }
 
-    public function setIso6392T(?string $iso639_2T): self
+    public function setIso6392T(?string $iso6392T): self
     {
-        $this->iso639_2T = $iso639_2T;
+        $this->iso6392T = $iso6392T;
 
         return $this;
     }
 
     public function getIso6392B(): ?string
     {
-        return $this->iso639_2B;
+        return $this->iso6392B;
     }
 
-    public function setIso6392B(?string $iso639_2B): self
+    public function setIso6392B(?string $iso6392B): self
     {
-        $this->iso639_2B = $iso639_2B;
+        $this->iso6392B = $iso6392B;
 
         return $this;
     }
 
     public function getIso6393(): ?array
     {
-        return $this->iso639_3;
+        return $this->iso6393;
     }
 
-    public function setIso6393(?array $iso639_3): self
+    public function setIso6393(?array $iso6393): self
     {
-        $this->iso639_3 = $iso639_3;
+        $this->iso6393 = $iso6393;
 
         return $this;
     }

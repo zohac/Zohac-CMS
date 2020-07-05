@@ -25,15 +25,19 @@ class LanguageType extends AbstractType
                 'label' => 'description',
                 'required' => false,
             ])
-            ->add('iso639_1', TextType::class, [
+            ->add('iso6391', TextType::class, [
                 'label' => 'iso639-1',
                 'required' => false,
             ])
-            ->add('iso639_2T', TextType::class, [
+            ->add('iso6392T', TextType::class, [
                 'label' => 'iso639-2/T',
                 'required' => false,
             ])
-            ->add('iso639_3', TextType::class, [
+            ->add('iso6392B', TextType::class, [
+                'label' => 'iso639-2/B',
+                'required' => false,
+            ])
+            ->add('iso6393', TextType::class, [
                 'label' => 'iso639-3',
                 'required' => false,
             ])
