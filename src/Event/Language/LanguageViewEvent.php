@@ -19,6 +19,8 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
     public const LIST = 'language.list.view';
     public const DETAIL = 'language.detail.view';
 
+    private $relatedEntity = 'Language';
+
     /**
      * @return array|string[]
      */
@@ -31,5 +33,13 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
             self::DETAIL,
             self::LIST,
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntity(): string
+    {
+        return $this->relatedEntity;
     }
 }

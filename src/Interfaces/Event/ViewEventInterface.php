@@ -22,4 +22,9 @@ interface ViewEventInterface
      * @return string
      */
     public function getEventCalled(): string;
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntity(): string;
 }

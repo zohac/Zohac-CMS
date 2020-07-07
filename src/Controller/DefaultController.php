@@ -6,6 +6,7 @@ use App\Event\IndexViewEvent;
 use App\Service\EventService;
 use App\Service\TranslatorService;
 use App\Service\ViewService;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -163,5 +164,24 @@ class DefaultController extends AbstractController
         }
 
         return $this->render($view, $options, $response);
+    }
+
+    /**
+     * @param ServiceEntityRepositoryInterface $repository
+     * @param string $entityName
+     * @return Response
+     */
+    public function list(ServiceEntityRepositoryInterface $repository, string $entityName): Response
+    {
+        $entityName = strtolower($entityName);
+        $list = $this->getViewService()->getConstant($entityName, 'list');
+
+        $entities = $repository->findAll();
+
+        $this->getViewService()->setData($entityName.'/index.html.twig', [$entityName.'s' => $entities]);
+
+        $this->dispatchEvent($list, [ViewService::NAME => $this->getViewService()]);
+
+        return $this->getResponse();
     }
 }

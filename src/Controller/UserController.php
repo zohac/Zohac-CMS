@@ -27,15 +27,16 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function list(UserRepository $userRepository): Response
+    public function userList(UserRepository $userRepository): Response
     {
-        $users = $userRepository->findAllNotArchived();
-
-        $this->getViewService()->setData('user/index.html.twig', ['users' => $users]);
-
-        $this->dispatchEvent(UserViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+//        $users = $userRepository->findAllNotArchived();
+//
+//        $this->getViewService()->setData('user/index.html.twig', ['users' => $users]);
+//
+//        $this->dispatchEvent(UserViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
+//
+//        return $this->getResponse();
+        return $this->list($userRepository, 'user');
     }
 
     /**

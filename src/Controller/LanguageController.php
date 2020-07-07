@@ -11,6 +11,7 @@ use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
 use App\Service\Language\LanguageService;
 use App\Service\ViewService;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,15 +25,16 @@ class LanguageController extends DefaultController
      *
      * @return Response
      */
-    public function list(LanguageRepository $languageRepository): Response
+    public function languageList(LanguageRepository $languageRepository): Response
     {
-        $languages = $languageRepository->findAll();
-
-        $this->getViewService()->setData('language/index.html.twig', ['languages' => $languages]);
-
-        $this->dispatchEvent(LanguageViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+//        $languages = $languageRepository->findAll();
+//
+//        $this->getViewService()->setData('language/index.html.twig', ['languages' => $languages]);
+//
+//        $this->dispatchEvent(LanguageViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
+//
+//        return $this->getResponse();
+        return $this->list($languageRepository, 'language');
     }
 
     /**

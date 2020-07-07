@@ -15,6 +15,8 @@ class IndexViewEvent extends Event implements EventInterface, ViewEventInterface
 
     public const INDEX = 'index.view';
 
+    private $relatedEntity = '';
+
     /**
      * @return array|string[]
      */
@@ -23,5 +25,13 @@ class IndexViewEvent extends Event implements EventInterface, ViewEventInterface
         return [
             self::INDEX,
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntity(): string
+    {
+        return $this->relatedEntity;
     }
 }
