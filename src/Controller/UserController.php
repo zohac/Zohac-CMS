@@ -29,13 +29,6 @@ class UserController extends DefaultController
      */
     public function userList(UserRepository $userRepository): Response
     {
-//        $users = $userRepository->findAllNotArchived();
-//
-//        $this->getViewService()->setData('user/index.html.twig', ['users' => $users]);
-//
-//        $this->dispatchEvent(UserViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
-//
-//        return $this->getResponse();
         return $this->list($userRepository, 'user');
     }
 
@@ -50,17 +43,13 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function detail(?User $user = null): Response
+    public function userDetail(?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        $this->getViewService()->setData('user/detail.html.twig', ['user' => $user]);
-
-        $this->dispatchEvent(UserViewEvent::DETAIL, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->detail($user, 'user');
     }
 
     /**

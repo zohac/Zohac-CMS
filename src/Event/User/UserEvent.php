@@ -23,6 +23,8 @@ class UserEvent extends Event implements EventInterface
     public const DELETE = 'user.delete';
     public const POST_DELETE = 'user.post.delete';
 
+    private $relatedEntity = 'User';
+
     /**
      * @var UserDto
      */
@@ -114,5 +116,13 @@ class UserEvent extends Event implements EventInterface
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntity(): string
+    {
+        return $this->relatedEntity;
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Dto\User;
 
+use App\Interfaces\Dto\DtoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserDto
+class UserDto implements DtoInterface
 {
     /**
      * @Assert\Uuid()

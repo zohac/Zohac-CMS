@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
+use App\Exception\EventException as EventExceptionAlias;
 use App\Service\EventService;
 use App\Service\TranslatorService;
 use App\Service\ViewService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -168,13 +170,16 @@ class DefaultController extends AbstractController
 
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param string $entityName
+     * @param string                           $entityName
+     *
      * @return Response
+     *
+     * @throws EventExceptionAlias
      */
     public function list(ServiceEntityRepositoryInterface $repository, string $entityName): Response
     {
         $entityName = strtolower($entityName);
-        $list = $this->getViewService()->getConstant($entityName, 'list');
+        $list = $this->getViewService()->getListConstant($entityName);
 
         $entities = $repository->findAll();
 
@@ -183,5 +188,59 @@ class DefaultController extends AbstractController
         $this->dispatchEvent($list, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @param object|null $entity
+     * @param string      $entityName
+     *
+     * @return Response
+     *
+     * @throws EventExceptionAlias
+     */
+    public function detail(object $entity, string $entityName): Response
+    {
+        $entityName = strtolower($entityName);
+        $detail = $this->getViewService()->getDetailConstant($entityName);
+
+        $this->getViewService()->setData($entityName.'/detail.html.twig', [$entityName => $entity]);
+
+        $this->dispatchEvent($detail, [ViewService::NAME => $this->getViewService()]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @Route("/languages/create", name="languages.create")
+     *
+     * @param Request $request
+     * @param $dto
+     * @param string $entityName
+     *
+     * @return Response
+     */
+    public function create(Request $request, $dto, string $entityName): bool
+    {
+        $form = $this->createForm(LanguageType::class, $dto, [
+            'action' => $this->generateUrl('languages.create'),
+        ]);
+
+        $this->dispatchEvent(LanguageEvent::PRE_CREATE, [
+            'form' => $form,
+            $entityName.'Dto' => $dto,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->dispatchEvent(LanguageEvent::CREATE, [$entityName.'Dto' => $dto]);
+
+            return true;
+        }
+
+        $this->getViewService()->setData('language/type.html.twig', ['form' => $form->createView()]);
+
+        $this->dispatchEvent(LanguageViewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
+
+        return false;
     }
 }

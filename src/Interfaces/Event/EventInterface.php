@@ -31,4 +31,9 @@ interface EventInterface
      * @return $this
      */
     public function setEventCalled(string $eventName);
+
+    /**
+     * @return string
+     */
+    public function getRelatedEntity(): string;
 }

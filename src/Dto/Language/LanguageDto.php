@@ -2,9 +2,10 @@
 
 namespace App\Dto\Language;
 
+use App\Interfaces\Dto\DtoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class LanguageDto
+class LanguageDto implements DtoInterface
 {
     /**
      * @Assert\Length(

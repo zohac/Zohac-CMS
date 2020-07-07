@@ -11,7 +11,6 @@ use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
 use App\Service\Language\LanguageService;
 use App\Service\ViewService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,13 +26,6 @@ class LanguageController extends DefaultController
      */
     public function languageList(LanguageRepository $languageRepository): Response
     {
-//        $languages = $languageRepository->findAll();
-//
-//        $this->getViewService()->setData('language/index.html.twig', ['languages' => $languages]);
-//
-//        $this->dispatchEvent(LanguageViewEvent::LIST, [ViewService::NAME => $this->getViewService()]);
-//
-//        return $this->getResponse();
         return $this->list($languageRepository, 'language');
     }
 
@@ -48,17 +40,13 @@ class LanguageController extends DefaultController
      *
      * @return Response
      */
-    public function detail(?Language $language = null): Response
+    public function languageDetail(?Language $language = null): Response
     {
         if (!$language) {
             return $this->languageNotFound();
         }
 
-        $this->getViewService()->setData('language/detail.html.twig', ['language' => $language]);
-
-        $this->dispatchEvent(LanguageViewEvent::DETAIL, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->detail($language, 'language');
     }
 
     /**
@@ -87,21 +75,10 @@ class LanguageController extends DefaultController
      *
      * @return Response
      */
-    public function create(Request $request, LanguageDto $languageDto): Response
+    public function languageCreate(Request $request, LanguageDto $languageDto): Response
     {
-        $form = $this->createForm(LanguageType::class, $languageDto, [
-            'action' => $this->generateUrl('languages.create'),
-        ]);
-
-        $this->dispatchEvent(LanguageEvent::PRE_CREATE, [
-            'form' => $form,
-            'languageDto' => $languageDto,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(LanguageEvent::CREATE, ['languageDto' => $languageDto]);
-
+        $response = $this->create($request, $languageDto, 'language');
+        if ($response) {
             $this->addAndTransFlashMessage(
                 self::FLASH_SUCCESS,
                 'Language',
@@ -111,10 +88,6 @@ class LanguageController extends DefaultController
 
             return $this->redirectToLanguageList();
         }
-
-        $this->getViewService()->setData('language/type.html.twig', ['form' => $form->createView()]);
-
-        $this->dispatchEvent(LanguageViewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
