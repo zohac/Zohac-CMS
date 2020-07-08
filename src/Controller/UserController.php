@@ -94,7 +94,12 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::CREATE, ['userDto' => $userDto]);
 
-            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully created.', 'user');
+            $this->addAndTransFlashMessage(
+                FlashBagService::FLASH_SUCCESS,
+                'User',
+                'User successfully created.',
+                'user'
+            );
 
             return $this->redirectToUserList();
         }
@@ -143,7 +148,12 @@ class UserController extends DefaultController
                 'user' => $user,
             ]);
 
-            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully updated.', 'user');
+            $this->addAndTransFlashMessage(
+                FlashBagService::FLASH_SUCCESS,
+                'User',
+                'User successfully updated.',
+                'user'
+            );
 
             return $this->redirectToUserList();
         }
@@ -186,7 +196,12 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::DELETE, ['user' => $user]);
 
-            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully deleted.', 'user');
+            $this->addAndTransFlashMessage(
+                FlashBagService::FLASH_SUCCESS,
+                'User',
+                'User successfully deleted.',
+                'user'
+            );
 
             return $this->redirectToUserList();
         }

@@ -6,7 +6,7 @@ use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
 use App\Event\Language\LanguageViewEvent;
-use App\Exception\EventException as EventExceptionAlias;
+use App\Exception\EventException;
 use App\Form\DeleteType;
 use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
@@ -25,6 +25,8 @@ class LanguageController extends DefaultController
      * @param LanguageRepository $languageRepository
      *
      * @return Response
+     *
+     * @throws EventException
      */
     public function languageList(LanguageRepository $languageRepository): Response
     {
@@ -42,7 +44,7 @@ class LanguageController extends DefaultController
      *
      * @return Response
      *
-     * @throws EventExceptionAlias
+     * @throws EventException
      */
     public function languageDetail(?Language $language = null): Response
     {
@@ -111,8 +113,11 @@ class LanguageController extends DefaultController
      *
      * @return Response
      */
-    public function languageUpdate(Request $request, LanguageService $languageService, ?Language $language = null): Response
-    {
+    public function languageUpdate(
+        Request $request,
+        LanguageService $languageService,
+        ?Language $language = null
+    ): Response {
         if (!$language) {
             return $this->languageNotFound();
         }
