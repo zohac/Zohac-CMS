@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
-use App\Exception\EventException as EventExceptionAlias;
+use App\Exception\EventException;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EventService;
+use App\Service\FlashBagService;
 use App\Service\TranslatorService;
 use App\Service\ViewService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
@@ -19,9 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends AbstractController
 {
-    const FLASH_SUCCESS = 'success';
-    const FLASH_ERROR = 'error';
-
     /**
      * @var ViewService
      */
@@ -60,62 +59,6 @@ class DefaultController extends AbstractController
         $this->flashBag = $flashBag;
         $this->eventService = $eventService;
         $this->translatorService = $translatorService;
-    }
-
-    /**
-     * @param string      $type
-     * @param string|null $title
-     * @param string|null $content
-     * @param string|null $domaine
-     *
-     * @return $this
-     */
-    public function addAndTransFlashMessage(
-        string $type = self::FLASH_SUCCESS,
-        ?string $title = null,
-        ?string $content = null,
-        ?string $domaine = null
-    ): self {
-        $title = $this->trans($title, $domaine);
-        $content = $this->trans($content, $domaine);
-
-        $this->addFlashMessage($type, $title, $content);
-
-        return $this;
-    }
-
-    /**
-     * @param string      $string
-     * @param string|null $domain
-     * @param array       $args
-     * @param string|null $locale
-     *
-     * @return string
-     */
-    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
-    {
-        return $this->translatorService->trans($string, $domain, $args, $locale);
-    }
-
-    /**
-     * @param string      $type
-     * @param string|null $title
-     * @param string|null $content
-     *
-     * @return $this
-     */
-    public function addFlashMessage(
-        string $type = self::FLASH_SUCCESS,
-        ?string $title = null,
-        ?string $content = null
-    ): self {
-        $message = [
-            'title' => $title,
-            'message' => $content,
-        ];
-        $this->flashBag->add($type, $message);
-
-        return $this;
     }
 
     /**
@@ -174,7 +117,7 @@ class DefaultController extends AbstractController
      *
      * @return Response
      *
-     * @throws EventExceptionAlias
+     * @throws EventException
      */
     public function list(ServiceEntityRepositoryInterface $repository, string $entityName): Response
     {
@@ -196,7 +139,7 @@ class DefaultController extends AbstractController
      *
      * @return Response
      *
-     * @throws EventExceptionAlias
+     * @throws EventException
      */
     public function detail(object $entity, string $entityName): Response
     {
@@ -211,36 +154,147 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/languages/create", name="languages.create")
-     *
-     * @param Request $request
-     * @param $dto
-     * @param string $entityName
+     * @param Request          $request
+     * @param ServiceInterface $service
      *
      * @return Response
      */
-    public function create(Request $request, $dto, string $entityName): bool
+    public function create(Request $request, ServiceInterface $service): Response
     {
-        $form = $this->createForm(LanguageType::class, $dto, [
-            'action' => $this->generateUrl('languages.create'),
+        $form = $this->createForm($service->getFormType(), null, [
+            'action' => $this->generateUrl($service->getEntityName().'s.create'),
         ]);
 
-        $this->dispatchEvent(LanguageEvent::PRE_CREATE, [
+        $events = $service->getEventService()->getEvents();
+        $event = $events[ucfirst($service->getEntityName())];
+        $viewEvents = $service->getEventService()->getViewEvents();
+        $viewEvent = $viewEvents[ucfirst($service->getEntityName())];
+
+        $this->dispatchEvent($event::PRE_CREATE, [
             'form' => $form,
-            $entityName.'Dto' => $dto,
+            $service->getEntityName().'Dto' => $service->getDto(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(LanguageEvent::CREATE, [$entityName.'Dto' => $dto]);
+            $this->dispatchEvent($event::CREATE, [$service->getEntityName().'Dto' => $service->getDto()]);
 
-            return true;
+            $redirection = 'redirectTo'.ucfirst($service->getEntityName()).'List';
+
+            return $this->$redirection();
         }
 
-        $this->getViewService()->setData('language/type.html.twig', ['form' => $form->createView()]);
+        $this->getViewService()->setData($service->getEntityName().'/type.html.twig', ['form' => $form->createView()]);
 
-        $this->dispatchEvent(LanguageViewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($viewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
 
-        return false;
+        return $this->getResponse();
+    }
+
+    /**
+     * @param Request          $request
+     * @param ServiceInterface $service
+     *
+     * @return Response
+     */
+    public function update(Request $request, ServiceInterface $service): Response
+    {
+        $events = $service->getEventService()->getEvents();
+        $event = $events[ucfirst($service->getEntityName())];
+        $viewEvents = $service->getEventService()->getViewEvents();
+        $viewEvent = $viewEvents[ucfirst($service->getEntityName())];
+
+        $form = $this->createForm($service->getFormType(), $service->getDto(), [
+            'action' => $this->generateUrl($service->getEntityName().'s.update', [
+                'id' => $service->getEntity()->getId(),
+            ]),
+        ]);
+
+        $this->dispatchEvent($event::PRE_UPDATE, [
+            'form' => $service->getFormType(),
+            $service->getEntityName().'Dto' => $service->getDto(),
+            $service->getEntityName() => $service->getEntity(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->dispatchEvent($event::UPDATE, [
+                $service->getEntityName().'Dto' => $service->getDto(),
+                $service->getEntityName() => $service->getEntity(),
+            ]);
+
+            $this->addAndTransFlashMessage(
+                FlashBagService::FLASH_SUCCESS,
+                'Language',
+                'Language successfully updated.',
+                'language'
+            );
+
+            $redirection = 'redirectTo'.ucfirst($service->getEntityName()).'List';
+
+            return $this->$redirection();
+        }
+
+        $this->getViewService()->setData($service->getEntityName().'/type.html.twig', ['form' => $form->createView()]);
+
+        $this->dispatchEvent($viewEvent::UPDATE, [ViewService::NAME => $this->getViewService()]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param string      $type
+     * @param string|null $title
+     * @param string|null $content
+     * @param string|null $domaine
+     *
+     * @return $this
+     */
+    public function addAndTransFlashMessage(
+        string $type = FlashBagService::FLASH_SUCCESS,
+        ?string $title = null,
+        ?string $content = null,
+        ?string $domaine = null
+    ): self {
+        $title = $this->trans($title, $domaine);
+        $content = $this->trans($content, $domaine);
+
+        $this->addFlashMessage($type, $title, $content);
+
+        return $this;
+    }
+
+    /**
+     * @param string      $string
+     * @param string|null $domain
+     * @param array       $args
+     * @param string|null $locale
+     *
+     * @return string
+     */
+    public function trans(string $string, string $domain = null, array $args = [], ?string $locale = null): string
+    {
+        return $this->translatorService->trans($string, $domain, $args, $locale);
+    }
+
+    /**
+     * @param string      $type
+     * @param string|null $title
+     * @param string|null $content
+     *
+     * @return $this
+     */
+    public function addFlashMessage(
+        string $type = FlashBagService::FLASH_SUCCESS,
+        ?string $title = null,
+        ?string $content = null
+    ): self {
+        $message = [
+            'title' => $title,
+            'message' => $content,
+        ];
+        $this->flashBag->add($type, $message);
+
+        return $this;
     }
 }

@@ -9,6 +9,7 @@ use App\Event\User\UserViewEvent;
 use App\Form\DeleteType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\FlashBagService;
 use App\Service\User\UserService;
 use App\Service\ViewService;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,7 @@ class UserController extends DefaultController
      */
     public function userNotFound(): Response
     {
-        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'User', 'The user was not found.', 'user');
+        $this->addAndTransFlashMessage(FlashBagService::FLASH_ERROR, 'User', 'The user was not found.', 'user');
 
         return $this->redirectToUserList();
     }
@@ -78,7 +79,7 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function create(Request $request, UserDto $userDto): Response
+    public function userCreate(Request $request, UserDto $userDto): Response
     {
         $form = $this->createForm(UserType::class, $userDto, [
             'action' => $this->generateUrl('users.create'),
@@ -93,7 +94,7 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::CREATE, ['userDto' => $userDto]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully created.', 'user');
+            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully created.', 'user');
 
             return $this->redirectToUserList();
         }
@@ -118,7 +119,7 @@ class UserController extends DefaultController
      *
      * @return Response
      */
-    public function update(Request $request, UserService $userService, ?User $user = null): Response
+    public function userUpdate(Request $request, UserService $userService, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
@@ -142,7 +143,7 @@ class UserController extends DefaultController
                 'user' => $user,
             ]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully updated.', 'user');
+            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully updated.', 'user');
 
             return $this->redirectToUserList();
         }
@@ -185,7 +186,7 @@ class UserController extends DefaultController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent(UserEvent::DELETE, ['user' => $user]);
 
-            $this->addAndTransFlashMessage(self::FLASH_SUCCESS, 'User', 'User successfully deleted.', 'user');
+            $this->addAndTransFlashMessage(FlashBagService::FLASH_SUCCESS, 'User', 'User successfully deleted.', 'user');
 
             return $this->redirectToUserList();
         }

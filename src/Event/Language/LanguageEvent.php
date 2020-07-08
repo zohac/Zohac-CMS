@@ -39,6 +39,11 @@ class LanguageEvent extends Event implements EventInterface
     private $language;
 
     /**
+     * @var string
+     */
+    private $relatedEntity = 'Language';
+
+    /**
      * @return array|string[]
      */
     public static function getEventsName(): array
@@ -114,5 +119,10 @@ class LanguageEvent extends Event implements EventInterface
         $this->language = $language;
 
         return $this;
+    }
+
+    public function getRelatedEntity(): string
+    {
+        return $this->relatedEntity;
     }
 }

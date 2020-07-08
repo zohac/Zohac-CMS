@@ -107,7 +107,7 @@ class ViewService
      */
     public function getListConstant(string $entityName): string
     {
-        return $this->viewEvents[ucfirst($entityName)]::LIST;
+        return $this->viewEvents[ucfirst($entityName)]::list;
 //        if (defined($this->viewEvents[ucfirst($entityName)]::LIST)) {
 //            return $this->viewEvents[ucfirst($entityName)]::LIST;
 //        }

@@ -5,10 +5,13 @@ namespace App\Service\Language;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
+use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EventService;
+use App\Service\FlashBagService;
 use Doctrine\ORM\EntityManagerInterface;
 
-class LanguageService
+class LanguageService implements ServiceInterface
 {
     /**
      * @var EventService
@@ -20,10 +23,36 @@ class LanguageService
      */
     private $entityManager;
 
-    public function __construct(EventService $eventService, EntityManagerInterface $entityManager)
-    {
+    /**
+     * @var string
+     */
+    private $formType;
+
+    /**
+     * @var string
+     */
+    private $entityName;
+
+    /**
+     * @var DtoInterface
+     */
+    private $dto;
+
+    /**
+     * @var FlashBagService
+     */
+    private $flashBagService;
+
+    private $language;
+
+    public function __construct(
+        EventService $eventService,
+        EntityManagerInterface $entityManager,
+        FlashBagService $flashBagService
+    ) {
         $this->eventService = $eventService;
         $this->entityManager = $entityManager;
+        $this->flashBagService = $flashBagService;
     }
 
     /**
@@ -38,6 +67,12 @@ class LanguageService
         $language = $this->populateLanguageWithDto($language, $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, ['language' => $language]);
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully created.',
+            'language'
+        );
 
         return $language;
     }
@@ -110,6 +145,92 @@ class LanguageService
         $this->entityManager->flush();
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType(): string
+    {
+        return $this->formType;
+    }
+
+    /**
+     * @param $formType
+     *
+     * @return $this
+     */
+    public function setFormType(string $formType): self
+    {
+        $this->formType = $formType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityName(): string
+    {
+        return $this->entityName;
+    }
+
+    /**
+     * @param $entityName
+     *
+     * @return $this
+     */
+    public function setEntityName($entityName): self
+    {
+        $this->entityName = $entityName;
+
+        return $this;
+    }
+
+    /**
+     * @return DtoInterface
+     */
+    public function getDto(): DtoInterface
+    {
+        return $this->dto;
+    }
+
+    /**
+     * @param DtoInterface $dto
+     *
+     * @return $this
+     */
+    public function setDto(DtoInterface $dto): self
+    {
+        $this->dto = $dto;
+
+        return $this;
+    }
+
+    /**
+     * @return EventService
+     */
+    public function getEventService(): EventService
+    {
+        return $this->eventService;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntity()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param mixed $language
+     */
+    public function setEntity($language): self
+    {
+        $this->language = $language;
 
         return $this;
     }

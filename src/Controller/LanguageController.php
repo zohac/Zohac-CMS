@@ -6,9 +6,11 @@ use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
 use App\Event\Language\LanguageViewEvent;
+use App\Exception\EventException as EventExceptionAlias;
 use App\Form\DeleteType;
 use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
+use App\Service\FlashBagService;
 use App\Service\Language\LanguageService;
 use App\Service\ViewService;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +41,8 @@ class LanguageController extends DefaultController
      * @param Language|null $language
      *
      * @return Response
+     *
+     * @throws EventExceptionAlias
      */
     public function languageDetail(?Language $language = null): Response
     {
@@ -54,7 +58,12 @@ class LanguageController extends DefaultController
      */
     public function languageNotFound(): Response
     {
-        $this->addAndTransFlashMessage(self::FLASH_ERROR, 'Language', 'The language was not found.', 'language');
+        $this->addAndTransFlashMessage(
+            FlashBagService::FLASH_ERROR,
+            'Language',
+            'The language was not found.',
+            'language'
+        );
 
         return $this->redirectToLanguageList();
     }
@@ -70,26 +79,23 @@ class LanguageController extends DefaultController
     /**
      * @Route("/languages/create", name="languages.create")
      *
-     * @param Request     $request
-     * @param LanguageDto $languageDto
+     * @param Request         $request
+     * @param LanguageDto     $languageDto
+     * @param LanguageService $languageService
      *
      * @return Response
      */
-    public function languageCreate(Request $request, LanguageDto $languageDto): Response
-    {
-        $response = $this->create($request, $languageDto, 'language');
-        if ($response) {
-            $this->addAndTransFlashMessage(
-                self::FLASH_SUCCESS,
-                'Language',
-                'Language successfully created.',
-                'language'
-            );
+    public function languageCreate(
+        Request $request,
+        LanguageDto $languageDto,
+        LanguageService $languageService
+    ): Response {
+        $languageService
+            ->setFormType(LanguageType::class)
+            ->setEntityName('language')
+            ->setDto($languageDto);
 
-            return $this->redirectToLanguageList();
-        }
-
-        return $this->getResponse();
+        return $this->create($request, $languageService);
     }
 
     /**
@@ -105,45 +111,21 @@ class LanguageController extends DefaultController
      *
      * @return Response
      */
-    public function update(Request $request, LanguageService $languageService, ?Language $language = null): Response
+    public function languageUpdate(Request $request, LanguageService $languageService, ?Language $language = null): Response
     {
         if (!$language) {
             return $this->languageNotFound();
         }
 
         $languageDto = $languageService->createLanguageDtoFromLanguage($language);
-        $form = $this->createForm(LanguageType::class, $languageDto, [
-            'action' => $this->generateUrl('languages.update', ['id' => $language->getId()]),
-        ]);
 
-        $this->dispatchEvent(LanguageEvent::PRE_UPDATE, [
-            'form' => $form,
-            'languageDto' => $languageDto,
-            'language' => $language,
-        ]);
+        $languageService
+            ->setFormType(LanguageType::class)
+            ->setEntityName('language')
+            ->setDto($languageDto)
+            ->setEntity($language);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(LanguageEvent::UPDATE, [
-                'languageDto' => $languageDto,
-                'language' => $language,
-            ]);
-
-            $this->addAndTransFlashMessage(
-                self::FLASH_SUCCESS,
-                'Language',
-                'Language successfully updated.',
-                'language'
-            );
-
-            return $this->redirectToLanguageList();
-        }
-
-        $this->getViewService()->setData('language/type.html.twig', ['form' => $form->createView()]);
-
-        $this->dispatchEvent(LanguageViewEvent::UPDATE, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->create($request, $languageService);
     }
 
     /**
@@ -178,7 +160,7 @@ class LanguageController extends DefaultController
             $this->dispatchEvent(LanguageEvent::DELETE, ['language' => $language]);
 
             $this->addAndTransFlashMessage(
-                self::FLASH_SUCCESS,
+                FlashBagService::FLASH_SUCCESS,
                 'Language',
                 'Language successfully deleted.',
                 'language'
