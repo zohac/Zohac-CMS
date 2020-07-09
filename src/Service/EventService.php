@@ -41,7 +41,7 @@ class EventService
             if ($handler instanceof ViewEventInterface) {
                 $this->viewEvents[$handler->getRelatedEntity()] = $handler;
             }
-            if (($handler instanceof EventInterface) && !($handler instanceof ViewEventInterface)){
+            if (($handler instanceof EventInterface) && !($handler instanceof ViewEventInterface)) {
                 $this->events[$handler->getRelatedEntity()] = $handler;
             }
             $this->allEvents[] = $handler;

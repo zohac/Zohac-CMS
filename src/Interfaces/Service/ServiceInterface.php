@@ -35,7 +35,6 @@ interface ServiceInterface
      */
     public function getDto(): DtoInterface;
 
-
     public function getEntity(): EntityInterface;
 
     /**

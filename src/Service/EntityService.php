@@ -18,8 +18,9 @@ class EntityService
 
     /**
      * EntityService constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param UuidService $uuidService
+     * @param UuidService            $uuidService
      */
     public function __construct(EntityManagerInterface $entityManager, UuidService $uuidService)
     {
