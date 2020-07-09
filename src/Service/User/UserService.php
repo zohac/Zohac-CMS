@@ -7,13 +7,13 @@ use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
-use App\Service\UuidService;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService implements ServiceInterface
@@ -41,11 +41,6 @@ class UserService implements ServiceInterface
     private $entityService;
 
     /**
-     * @var UuidService
-     */
-    private $uuidService;
-
-    /**
      * @var EventService
      */
     private $eventService;
@@ -66,7 +61,6 @@ class UserService implements ServiceInterface
      * @param EventService                 $eventService
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EntityService                $entityService
-     * @param UuidService                  $uuidService
      * @param FlashBagService              $flashBagService
      *
      * @throws \ReflectionException
@@ -75,16 +69,14 @@ class UserService implements ServiceInterface
         EventService $eventService,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityService $entityService,
-        UuidService $uuidService,
         FlashBagService $flashBagService
     ) {
         $this->eventService = $eventService;
         $this->passwordEncoder = $passwordEncoder;
         $this->entityService = $entityService;
-        $this->uuidService = $uuidService;
+        $this->flashBagService = $flashBagService;
 
         $this->reflectionClass = $this->entityService->getNewReflectionClass(self::ENTITY_NAME);
-        $this->flashBagService = $flashBagService;
     }
 
     /**
@@ -145,7 +137,7 @@ class UserService implements ServiceInterface
      */
     public function getUuid(): string
     {
-        $uuid = $this->uuidService->create();
+        $uuid = $this->entityService->getUuidService()->create();
 
         if (!$uuid) {
             throw new UuidException('L\'application ne parviens pas à générer un uuid.');
@@ -247,6 +239,14 @@ class UserService implements ServiceInterface
     }
 
     /**
+     * @return string
+     */
+    public function getEntityNamePlural(): string
+    {
+        return strtolower($this->reflectionClass->getShortName().'s');
+    }
+
+    /**
      * @return DtoInterface
      */
     public function getDto(): DtoInterface
@@ -295,19 +295,19 @@ class UserService implements ServiceInterface
     }
 
     /**
-     * @return User
+     * @return EntityInterface
      */
-    public function getEntity()
+    public function getEntity(): EntityInterface
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
+     * @param EntityInterface $user
      *
      * @return $this
      */
-    public function setEntity($user): self
+    public function setEntity(EntityInterface $user): self
     {
         $this->user = $user;
 

@@ -8,6 +8,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class LanguageDto implements DtoInterface
 {
     /**
+     * @Assert\Uuid()
+     */
+    public $uuid;
+
+    /**
      * @Assert\Length(
      *      max = 255,
      *      minMessage = "Your language name must be at least {{ limit }} characters long",

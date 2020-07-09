@@ -64,7 +64,7 @@ class LanguageController extends DefaultController
             FlashBagService::FLASH_ERROR,
             'Language',
             'The language was not found.',
-            'language'
+            $this->getEntityNameToLower()
         );
 
         return $this->redirectToLanguageList();
@@ -155,18 +155,18 @@ class LanguageController extends DefaultController
 
         $this->dispatchEvent(LanguageEvent::PRE_DELETE, [
             'form' => $form,
-            'language' => $language,
+            $this->getEntityNameToLower() => $language,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(LanguageEvent::DELETE, ['language' => $language]);
+            $this->dispatchEvent(LanguageEvent::DELETE, [$this->getEntityNameToLower() => $language]);
 
             $this->addAndTransFlashMessage(
                 FlashBagService::FLASH_SUCCESS,
                 'Language',
                 'Language successfully deleted.',
-                'language'
+                $this->getEntityNameToLower()
             );
 
             return $this->redirectToLanguageList();
@@ -174,9 +174,11 @@ class LanguageController extends DefaultController
 
         $this->getViewService()->setData('delete.html.twig', [
             'form' => $form->createView(),
-            'message' => $this->trans('Are you sure you want to delete this language (%language%) ?', 'language', [
-                'language' => $language->getIso6391(),
-            ]),
+            'message' => $this->trans(
+                'Are you sure you want to delete this language (%language%) ?',
+                $this->getEntityNameToLower(),
+                [$this->getEntityNameToLower() => $language->getIso6391()]
+            ),
         ]);
 
         $this->dispatchEvent(LanguageViewEvent::DELETE, [ViewService::NAME => $this->getViewService()]);

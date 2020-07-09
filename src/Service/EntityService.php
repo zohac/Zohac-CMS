@@ -11,15 +11,20 @@ class EntityService
      * @var EntityManagerInterface
      */
     private $entityManager;
+    /**
+     * @var UuidService
+     */
+    private $uuidService;
 
     /**
      * EntityService constructor.
-     *
      * @param EntityManagerInterface $entityManager
+     * @param UuidService $uuidService
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, UuidService $uuidService)
     {
         $this->entityManager = $entityManager;
+        $this->uuidService = $uuidService;
     }
 
     /**
@@ -119,5 +124,13 @@ class EntityService
         $this->entityManager->flush();
 
         return $this;
+    }
+
+    /**
+     * @return UuidService
+     */
+    public function getUuidService(): UuidService
+    {
+        return $this->uuidService;
     }
 }

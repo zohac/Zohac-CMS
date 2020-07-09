@@ -6,7 +6,9 @@ use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Exception\UuidException;
 use App\Repository\UserRepository;
+use App\Service\EntityService;
 use App\Service\EventService;
+use App\Service\FlashBagService;
 use App\Service\User\UserService;
 use App\Service\UuidService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -159,24 +161,29 @@ class UserServiceTest extends KernelTestCase
 
     public function testExceptionWhenGetUuid()
     {
-        $eventService = $this->getMockBuilder(EventService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $passwordEncoder = $this->getMockBuilder(UserPasswordEncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $entityManager = $this->getMockBuilder(EntityManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $uuidService = $this->getMockBuilder(UuidService::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $eventService = $this->getMockBuilder(EventService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $passwordEncoder = $this->getMockBuilder(UserPasswordEncoderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $flashBag = $this->getMockBuilder(FlashBagService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityService = new EntityService($entityManager, $uuidService);
 
         $userService = new UserService(
             $eventService,
             $passwordEncoder,
-            $entityManager,
-            $uuidService
+            $entityService,
+            $flashBag
         );
 
         $uuidService->expects($this->once())

@@ -9,7 +9,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Interfaces\EntityInterface;
 use App\Repository\LanguageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=LanguageRepository::class)
  * @ApiResource
  */
-class Language
+class Language implements EntityInterface
 {
     /**
      * @ORM\Id()
@@ -25,6 +27,13 @@ class Language
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ApiProperty(identifier=true)
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -60,6 +69,11 @@ class Language
      * @ORM\Column(type="json", nullable=true)
      */
     private $iso6393 = [];
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $archived;
 
     public function getId(): ?int
     {
@@ -146,6 +160,30 @@ class Language
     public function setIso6393(?array $iso6393): self
     {
         $this->iso6393 = $iso6393;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(?bool $archived): self
+    {
+        $this->archived = $archived;
 
         return $this;
     }

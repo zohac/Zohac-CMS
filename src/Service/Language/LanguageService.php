@@ -6,6 +6,7 @@ use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Interfaces\Service\ServiceInterface;
@@ -26,11 +27,6 @@ class LanguageService implements ServiceInterface
      * @var string
      */
     private $formType;
-
-    /**
-     * @var string
-     */
-    private $entityName;
 
     /**
      * @var DtoInterface
@@ -91,12 +87,14 @@ class LanguageService implements ServiceInterface
 
         $language = $this->entityService->populateEntityWithDto($language, $languageDto);
 
-        $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, ['language' => $language]);
+        $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
+            $this->getEntityNameToLower() => $language,
+        ]);
 
         $this->flashBagService->addAndTransFlashMessage(
             'Language',
             'Language successfully created.',
-            'language'
+            $this->getEntityNameToLower()
         );
 
         return $language;
@@ -130,12 +128,14 @@ class LanguageService implements ServiceInterface
     {
         $language = $this->entityService->populateEntityWithDto($language, $languageDto);
 
-        $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, ['language' => $language]);
+        $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, [
+            $this->getEntityNameToLower() => $language,
+        ]);
 
         $this->flashBagService->addAndTransFlashMessage(
             'Language',
             'Language successfully updated.',
-            'language'
+            $this->getEntityNameToLower()
         );
 
         return $language;
@@ -194,6 +194,14 @@ class LanguageService implements ServiceInterface
     }
 
     /**
+     * @return string
+     */
+    public function getEntityNamePlural(): string
+    {
+        return strtolower($this->reflectionClass->getShortName().'s');
+    }
+
+    /**
      * @return DtoInterface
      */
     public function getDto(): DtoInterface
@@ -242,19 +250,19 @@ class LanguageService implements ServiceInterface
     }
 
     /**
-     * @return Language
+     * @return EntityInterface
      */
-    public function getEntity()
+    public function getEntity(): EntityInterface
     {
         return $this->language;
     }
 
     /**
-     * @param Language $language
+     * @param EntityInterface $language
      *
      * @return $this
      */
-    public function setEntity($language): self
+    public function setEntity(EntityInterface $language): self
     {
         $this->language = $language;
 
