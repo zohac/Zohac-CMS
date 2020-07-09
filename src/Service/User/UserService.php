@@ -6,22 +6,39 @@ use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Exception\UuidException;
+use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\Event\EventInterface;
+use App\Interfaces\Event\ViewEventInterface;
+use App\Interfaces\Service\ServiceInterface;
+use App\Service\EntityService;
 use App\Service\EventService;
+use App\Service\FlashBagService;
 use App\Service\UuidService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserService
+class UserService implements ServiceInterface
 {
+    const ENTITY_NAME = User::class;
+
+    /**
+     * @var User|null
+     */
+    private $user = null;
+
+    /**
+     * @var string
+     */
+    private $formType;
+
     /**
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
 
     /**
-     * @var EntityManagerInterface
+     * @var EntityService
      */
-    private $entityManager;
+    private $entityService;
 
     /**
      * @var UuidService
@@ -34,29 +51,48 @@ class UserService
     private $eventService;
 
     /**
+     * @var \ReflectionClass
+     */
+    private $reflectionClass;
+
+    /**
+     * @var FlashBagService
+     */
+    private $flashBagService;
+
+    /**
      * UserService constructor.
      *
      * @param EventService                 $eventService
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface       $entityManager
+     * @param EntityService                $entityService
      * @param UuidService                  $uuidService
+     * @param FlashBagService              $flashBagService
+     *
+     * @throws \ReflectionException
      */
     public function __construct(
         EventService $eventService,
         UserPasswordEncoderInterface $passwordEncoder,
-        EntityManagerInterface $entityManager,
-        UuidService $uuidService
+        EntityService $entityService,
+        UuidService $uuidService,
+        FlashBagService $flashBagService
     ) {
         $this->eventService = $eventService;
         $this->passwordEncoder = $passwordEncoder;
-        $this->entityManager = $entityManager;
+        $this->entityService = $entityService;
         $this->uuidService = $uuidService;
+
+        $this->reflectionClass = $this->entityService->getNewReflectionClass(self::ENTITY_NAME);
+        $this->flashBagService = $flashBagService;
     }
 
     /**
      * @param UserDto $userDto
      *
      * @return User
+     *
+     * @throws UuidException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
@@ -65,6 +101,12 @@ class UserService
         $user = $this->populateUserWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully created.',
+            'user'
+        );
 
         return $user;
     }
@@ -89,8 +131,9 @@ class UserService
             $user->setPassword($password);
         }
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->entityService
+            ->persist($user)
+            ->flush();
 
         return $user;
     }
@@ -133,12 +176,20 @@ class UserService
      * @param User    $user
      *
      * @return User
+     *
+     * @throws UuidException
      */
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
         $user = $this->populateUserWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully updated.',
+            'user'
+        );
 
         return $user;
     }
@@ -150,10 +201,115 @@ class UserService
      */
     public function deleteUser(User $user): self
     {
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+        $this->entityService
+            ->remove($user)
+            ->flush();
 
         $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType(): string
+    {
+        return $this->formType;
+    }
+
+    /**
+     * @param $formType
+     *
+     * @return $this
+     */
+    public function setFormType(string $formType): self
+    {
+        $this->formType = $formType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityName(): string
+    {
+        return $this->reflectionClass->getShortName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityNameToLower(): string
+    {
+        return strtolower($this->reflectionClass->getShortName());
+    }
+
+    /**
+     * @return DtoInterface
+     */
+    public function getDto(): DtoInterface
+    {
+        return $this->dto;
+    }
+
+    /**
+     * @param DtoInterface $dto
+     *
+     * @return $this
+     */
+    public function setDto(DtoInterface $dto): self
+    {
+        $this->dto = $dto;
+
+        return $this;
+    }
+
+    /**
+     * @return EventService
+     */
+    public function getEventService(): EventService
+    {
+        return $this->eventService;
+    }
+
+    /**
+     * @return EventInterface
+     */
+    public function getEvent(): EventInterface
+    {
+        $events = $this->getEventService()->getEvents();
+
+        return $events[$this->getEntityName()];
+    }
+
+    /**
+     * @return ViewEventInterface
+     */
+    public function getViewEvent(): ViewEventInterface
+    {
+        $viewEvents = $this->getEventService()->getViewEvents();
+
+        return $viewEvents[$this->getEntityName()];
+    }
+
+    /**
+     * @return User
+     */
+    public function getEntity()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return $this
+     */
+    public function setEntity($user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

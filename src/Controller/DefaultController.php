@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
-use App\Exception\EventException;
 use App\Interfaces\Service\ServiceInterface;
 use App\Service\EventService;
 use App\Service\FlashBagService;
@@ -113,20 +112,19 @@ class DefaultController extends AbstractController
 
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entityName
+     * @param ServiceInterface                 $service
      *
      * @return Response
-     *
-     * @throws EventException
      */
-    public function list(ServiceEntityRepositoryInterface $repository, string $entityName): Response
+    public function list(ServiceEntityRepositoryInterface $repository, ServiceInterface $service): Response
     {
-        $entityName = strtolower($entityName);
-        $list = $this->getViewService()->getListConstant($entityName);
+        $list = $this->getViewService()->getListConstant($service->getEntityNameToLower());
 
         $entities = $repository->findAll();
 
-        $this->getViewService()->setData($entityName.'/index.html.twig', [$entityName.'s' => $entities]);
+        $this->getViewService()->setData($service->getEntityNameToLower().'/index.html.twig', [
+            $service->getEntityNameToLower().'s' => $entities,
+        ]);
 
         $this->dispatchEvent($list, [ViewService::NAME => $this->getViewService()]);
 
@@ -134,19 +132,18 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param object|null $entity
-     * @param string      $entityName
+     * @param object           $entity
+     * @param ServiceInterface $service
      *
      * @return Response
-     *
-     * @throws EventException
      */
-    public function detail(object $entity, string $entityName): Response
+    public function detail(object $entity, ServiceInterface $service): Response
     {
-        $entityName = strtolower($entityName);
-        $detail = $this->getViewService()->getDetailConstant($entityName);
+        $detail = $this->getViewService()->getDetailConstant($service->getEntityNameToLower());
 
-        $this->getViewService()->setData($entityName.'/detail.html.twig', [$entityName => $entity]);
+        $this->getViewService()->setData($service->getEntityNameToLower().'/detail.html.twig', [
+            $service->getEntityNameToLower() => $entity,
+        ]);
 
         $this->dispatchEvent($detail, [ViewService::NAME => $this->getViewService()]);
 
@@ -161,14 +158,12 @@ class DefaultController extends AbstractController
      */
     public function create(Request $request, ServiceInterface $service): Response
     {
-        $form = $this->createForm($service->getFormType(), null, [
-            'action' => $this->generateUrl($service->getEntityName().'s.create'),
-        ]);
+        $event = $service->getEvent();
+        $viewEvent = $service->getViewEvent();
 
-        $events = $service->getEventService()->getEvents();
-        $event = $events[ucfirst($service->getEntityName())];
-        $viewEvents = $service->getEventService()->getViewEvents();
-        $viewEvent = $viewEvents[ucfirst($service->getEntityName())];
+        $form = $this->createForm($service->getFormType(), $service->getDto(), [
+            'action' => $this->generateUrl($service->getEntityNameToLower().'s.create'),
+        ]);
 
         $this->dispatchEvent($event::PRE_CREATE, [
             'form' => $form,
@@ -179,12 +174,14 @@ class DefaultController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent($event::CREATE, [$service->getEntityName().'Dto' => $service->getDto()]);
 
-            $redirection = 'redirectTo'.ucfirst($service->getEntityName()).'List';
+            $redirection = 'redirectTo'.$service->getEntityName().'List';
 
             return $this->$redirection();
         }
 
-        $this->getViewService()->setData($service->getEntityName().'/type.html.twig', ['form' => $form->createView()]);
+        $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
+            'form' => $form->createView(),
+        ]);
 
         $this->dispatchEvent($viewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
 
@@ -199,10 +196,8 @@ class DefaultController extends AbstractController
      */
     public function update(Request $request, ServiceInterface $service): Response
     {
-        $events = $service->getEventService()->getEvents();
-        $event = $events[ucfirst($service->getEntityName())];
-        $viewEvents = $service->getEventService()->getViewEvents();
-        $viewEvent = $viewEvents[ucfirst($service->getEntityName())];
+        $event = $service->getEvent();
+        $viewEvent = $service->getViewEvent();
 
         $form = $this->createForm($service->getFormType(), $service->getDto(), [
             'action' => $this->generateUrl($service->getEntityName().'s.update', [
@@ -223,19 +218,14 @@ class DefaultController extends AbstractController
                 $service->getEntityName() => $service->getEntity(),
             ]);
 
-            $this->addAndTransFlashMessage(
-                FlashBagService::FLASH_SUCCESS,
-                'Language',
-                'Language successfully updated.',
-                'language'
-            );
-
-            $redirection = 'redirectTo'.ucfirst($service->getEntityName()).'List';
+            $redirection = 'redirectTo'.$service->getEntityName().'List';
 
             return $this->$redirection();
         }
 
-        $this->getViewService()->setData($service->getEntityName().'/type.html.twig', ['form' => $form->createView()]);
+        $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
+            'form' => $form->createView(),
+            ]);
 
         $this->dispatchEvent($viewEvent::UPDATE, [ViewService::NAME => $this->getViewService()]);
 

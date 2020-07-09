@@ -23,14 +23,13 @@ class LanguageController extends DefaultController
      * @Route("/languages", name="languages.list")
      *
      * @param LanguageRepository $languageRepository
+     * @param LanguageService    $languageService
      *
      * @return Response
-     *
-     * @throws EventException
      */
-    public function languageList(LanguageRepository $languageRepository): Response
+    public function languageList(LanguageRepository $languageRepository, LanguageService $languageService): Response
     {
-        return $this->list($languageRepository, 'language');
+        return $this->list($languageRepository, $languageService);
     }
 
     /**
@@ -40,19 +39,20 @@ class LanguageController extends DefaultController
      *     requirements={"id"="\d+"}
      * )
      *
-     * @param Language|null $language
+     * @param LanguageService $languageService
+     * @param Language|null   $language
      *
      * @return Response
      *
      * @throws EventException
      */
-    public function languageDetail(?Language $language = null): Response
+    public function languageDetail(LanguageService $languageService, ?Language $language = null): Response
     {
         if (!$language) {
             return $this->languageNotFound();
         }
 
-        return $this->detail($language, 'language');
+        return $this->detail($language, $languageService);
     }
 
     /**
@@ -94,7 +94,6 @@ class LanguageController extends DefaultController
     ): Response {
         $languageService
             ->setFormType(LanguageType::class)
-            ->setEntityName('language')
             ->setDto($languageDto);
 
         return $this->create($request, $languageService);
@@ -126,7 +125,6 @@ class LanguageController extends DefaultController
 
         $languageService
             ->setFormType(LanguageType::class)
-            ->setEntityName('language')
             ->setDto($languageDto)
             ->setEntity($language);
 

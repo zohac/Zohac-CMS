@@ -25,12 +25,13 @@ class UserController extends DefaultController
      * @Route("/users", name="users.list")
      *
      * @param UserRepository $userRepository
+     * @param UserService    $userService
      *
      * @return Response
      */
-    public function userList(UserRepository $userRepository): Response
+    public function userList(UserRepository $userRepository, UserService $userService): Response
     {
-        return $this->list($userRepository, 'user');
+        return $this->list($userRepository, $userService);
     }
 
     /**
@@ -40,17 +41,20 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param User|null $user
+     * @param UserService $userService
+     * @param User|null   $user
      *
      * @return Response
+     *
+     * @throws \App\Exception\EventException
      */
-    public function userDetail(?User $user = null): Response
+    public function userDetail(UserService $userService, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        return $this->detail($user, 'user');
+        return $this->detail($user, $userService);
     }
 
     /**
@@ -74,41 +78,19 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request $request
-     * @param UserDto $userDto
+     * @param Request     $request
+     * @param UserDto     $userDto
+     * @param UserService $userService
      *
      * @return Response
      */
-    public function userCreate(Request $request, UserDto $userDto): Response
+    public function userCreate(Request $request, UserDto $userDto, UserService $userService): Response
     {
-        $form = $this->createForm(UserType::class, $userDto, [
-            'action' => $this->generateUrl('users.create'),
-        ]);
+        $userService
+            ->setFormType(UserType::class)
+            ->setDto($userDto);
 
-        $this->dispatchEvent(UserEvent::PRE_CREATE, [
-            'form' => $form,
-            'userDto' => $userDto,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(UserEvent::CREATE, ['userDto' => $userDto]);
-
-            $this->addAndTransFlashMessage(
-                FlashBagService::FLASH_SUCCESS,
-                'User',
-                'User successfully created.',
-                'user'
-            );
-
-            return $this->redirectToUserList();
-        }
-
-        $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
-
-        $this->dispatchEvent(UserViewEvent::CREATE, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->create($request, $userService);
     }
 
     /**
@@ -131,38 +113,13 @@ class UserController extends DefaultController
         }
 
         $userDto = $userService->createUserDtoFromUser($user);
-        $form = $this->createForm(UserType::class, $userDto, [
-            'action' => $this->generateUrl('users.update', ['uuid' => $user->getUuid()]),
-        ]);
 
-        $this->dispatchEvent(UserEvent::PRE_UPDATE, [
-            'form' => $form,
-            'userDto' => $userDto,
-            'user' => $user,
-        ]);
+        $userService
+            ->setFormType(UserType::class)
+            ->setDto($userDto)
+            ->setEntity($user);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(UserEvent::UPDATE, [
-                'userDto' => $userDto,
-                'user' => $user,
-            ]);
-
-            $this->addAndTransFlashMessage(
-                FlashBagService::FLASH_SUCCESS,
-                'User',
-                'User successfully updated.',
-                'user'
-            );
-
-            return $this->redirectToUserList();
-        }
-
-        $this->getViewService()->setData('user/type.html.twig', ['form' => $form->createView()]);
-
-        $this->dispatchEvent(UserViewEvent::UPDATE, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->create($request, $userService);
     }
 
     /**

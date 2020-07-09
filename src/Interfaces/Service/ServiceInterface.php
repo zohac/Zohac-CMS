@@ -3,6 +3,8 @@
 namespace App\Interfaces\Service;
 
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\Event\EventInterface;
+use App\Interfaces\Event\ViewEventInterface;
 use App\Service\EventService;
 
 interface ServiceInterface
@@ -18,6 +20,11 @@ interface ServiceInterface
     public function getEntityName(): string;
 
     /**
+     * @return string
+     */
+    public function getEntityNameToLower(): string;
+
+    /**
      * @return DtoInterface
      */
     public function getDto(): DtoInterface;
@@ -26,4 +33,14 @@ interface ServiceInterface
      * @return EventService
      */
     public function getEventService(): EventService;
+
+    /**
+     * @return EventInterface
+     */
+    public function getEvent(): EventInterface;
+
+    /**
+     * @return ViewEventInterface
+     */
+    public function getViewEvent(): ViewEventInterface;
 }

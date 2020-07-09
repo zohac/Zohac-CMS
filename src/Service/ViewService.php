@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Exception\EventException;
 use App\Interfaces\Event\ViewEventInterface;
 
 class ViewService
@@ -102,46 +101,19 @@ class ViewService
      * @param string $entityName
      *
      * @return string
-     *
-     * @throws EventException
      */
     public function getListConstant(string $entityName): string
     {
-        return $this->viewEvents[ucfirst($entityName)]::list;
-//        if (defined($this->viewEvents[ucfirst($entityName)]::LIST)) {
-//            return $this->viewEvents[ucfirst($entityName)]::LIST;
-//        }
-//        if (defined($this->viewEvents[strtoupper($entityName)]::LIST)) {
-//            return $this->viewEvents[strtoupper($entityName)]::LIST;
-//        }
-//        if (defined($this->viewEvents[strtolower($entityName)]::LIST)) {
-//            return $this->viewEvents[strtolower($entityName)]::LIST;
-//        }
-
-//        throw new EventException('La constante de class LIST demandé n\'existe pas.');
+        return $this->viewEvents[ucfirst($entityName)]::LIST;
     }
 
     /**
      * @param string $entityName
      *
      * @return string
-     *
-     * @throws EventException
      */
     public function getDetailConstant(string $entityName): string
     {
         return $this->viewEvents[ucfirst($entityName)]::DETAIL;
-
-//        if (defined($this->viewEvents[ucfirst($entityName)]::DETAIL)) {
-//          return $this->viewEvents[ucfirst($entityName)]::DETAIL;
-//        }
-//        if (defined($this->viewEvents[strtoupper($entityName)]::DETAIL)) {
-//          return $this->viewEvents[strtoupper($entityName)]::DETAIL;
-//        }
-//        if (defined($this->viewEvents[strtolower($entityName)]::DETAIL)) {
-//          return $this->viewEvents[strtolower($entityName)]::DETAIL;
-//        }
-
-//        throw new EventException('La constante de class DETAIL demandé n\'existe pas.');
     }
 }
