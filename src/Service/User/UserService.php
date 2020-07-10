@@ -14,6 +14,7 @@ use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
+use ReflectionException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService implements ServiceInterface
@@ -63,7 +64,7 @@ class UserService implements ServiceInterface
      * @param EntityService                $entityService
      * @param FlashBagService              $flashBagService
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(
         EventService $eventService,
@@ -84,13 +85,18 @@ class UserService implements ServiceInterface
      *
      * @return User
      *
+     * @throws ReflectionException
      * @throws UuidException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
         $user = new User();
 
-        $user = $this->populateUserWithDto($user, $userDto);
+        /** @var User $user */
+        $user = $this->entityService->populateEntityWithDto($user, $userDto);
+
+        $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
+        $user->setPassword($password);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
@@ -104,61 +110,18 @@ class UserService implements ServiceInterface
     }
 
     /**
-     * @param User    $user
-     * @param UserDto $userDto
-     *
-     * @return User
-     *
-     * @throws UuidException
-     */
-    public function populateUserWithDto(User $user, UserDto $userDto): User
-    {
-        $user->setUuid($this->getUuid());
-        $user->setEmail($userDto->email);
-        $user->setRoles($userDto->roles);
-        $user->setLocale($userDto->locale);
-
-        if (null !== $userDto->password) {
-            $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-            $user->setPassword($password);
-        }
-
-        $this->entityService
-            ->persist($user)
-            ->flush();
-
-        return $user;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws UuidException
-     */
-    public function getUuid(): string
-    {
-        $uuid = $this->entityService->getUuidService()->create();
-
-        if (!$uuid) {
-            throw new UuidException('L\'application ne parviens pas à générer un uuid.');
-        }
-
-        return $uuid;
-    }
-
-    /**
      * @param User $user
      *
      * @return UserDto
+     *
+     * @throws ReflectionException
      */
     public function createUserDtoFromUser(User $user): UserDto
     {
         $userDto = new UserDto();
 
-        $userDto->uuid = $user->getUuid();
-        $userDto->email = $user->getEmail();
-        $userDto->roles = $user->getRoles();
-        $userDto->locale = $user->getLocale();
+        /** @var UserDto $userDto */
+        $userDto = $this->entityService->populateDtoWithEntity($user, $userDto);
 
         return $userDto;
     }
@@ -169,11 +132,16 @@ class UserService implements ServiceInterface
      *
      * @return User
      *
+     * @throws ReflectionException
      * @throws UuidException
      */
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
-        $user = $this->populateUserWithDto($user, $userDto);
+        if (null !== $userDto->password) {
+            $userDto->password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
+        }
+
+        $user = $this->entityService->populateEntityWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
 
@@ -225,14 +193,6 @@ class UserService implements ServiceInterface
     /**
      * @return string
      */
-    public function getEntityName(): string
-    {
-        return $this->reflectionClass->getShortName();
-    }
-
-    /**
-     * @return string
-     */
     public function getEntityNameToLower(): string
     {
         return strtolower($this->reflectionClass->getShortName());
@@ -267,6 +227,16 @@ class UserService implements ServiceInterface
     }
 
     /**
+     * @return EventInterface
+     */
+    public function getEvent(): EventInterface
+    {
+        $events = $this->getEventService()->getEvents();
+
+        return $events[$this->getEntityName()];
+    }
+
+    /**
      * @return EventService
      */
     public function getEventService(): EventService
@@ -275,13 +245,11 @@ class UserService implements ServiceInterface
     }
 
     /**
-     * @return EventInterface
+     * @return string
      */
-    public function getEvent(): EventInterface
+    public function getEntityName(): string
     {
-        $events = $this->getEventService()->getEvents();
-
-        return $events[$this->getEntityName()];
+        return $this->reflectionClass->getShortName();
     }
 
     /**

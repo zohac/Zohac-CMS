@@ -5,6 +5,7 @@ namespace App\Service\Language;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
+use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
@@ -13,6 +14,7 @@ use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
+use ReflectionException;
 
 class LanguageService implements ServiceInterface
 {
@@ -60,7 +62,7 @@ class LanguageService implements ServiceInterface
      * @param FlashBagService $flashBagService
      * @param EntityService   $entityService
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(
         EventService $eventService,
@@ -79,7 +81,7 @@ class LanguageService implements ServiceInterface
      *
      * @return Language
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
@@ -101,11 +103,19 @@ class LanguageService implements ServiceInterface
     }
 
     /**
+     * @return string
+     */
+    public function getEntityNameToLower(): string
+    {
+        return strtolower($this->reflectionClass->getShortName());
+    }
+
+    /**
      * @param Language $language
      *
      * @return LanguageDto
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function createLanguageDtoFromLanguage(Language $language): LanguageDto
     {
@@ -122,7 +132,8 @@ class LanguageService implements ServiceInterface
      *
      * @return Language
      *
-     * @throws \ReflectionException
+     * @throws UuidException
+     * @throws ReflectionException
      */
     public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
     {
@@ -180,22 +191,6 @@ class LanguageService implements ServiceInterface
     /**
      * @return string
      */
-    public function getEntityName(): string
-    {
-        return $this->reflectionClass->getShortName();
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityNameToLower(): string
-    {
-        return strtolower($this->reflectionClass->getShortName());
-    }
-
-    /**
-     * @return string
-     */
     public function getEntityNamePlural(): string
     {
         return strtolower($this->reflectionClass->getShortName().'s');
@@ -222,6 +217,16 @@ class LanguageService implements ServiceInterface
     }
 
     /**
+     * @return EventInterface
+     */
+    public function getEvent(): EventInterface
+    {
+        $events = $this->getEventService()->getEvents();
+
+        return $events[$this->getEntityName()];
+    }
+
+    /**
      * @return EventService
      */
     public function getEventService(): EventService
@@ -230,13 +235,11 @@ class LanguageService implements ServiceInterface
     }
 
     /**
-     * @return EventInterface
+     * @return string
      */
-    public function getEvent(): EventInterface
+    public function getEntityName(): string
     {
-        $events = $this->getEventService()->getEvents();
-
-        return $events[$this->getEntityName()];
+        return $this->reflectionClass->getShortName();
     }
 
     /**

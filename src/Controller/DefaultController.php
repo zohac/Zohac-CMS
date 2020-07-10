@@ -219,7 +219,7 @@ class DefaultController extends AbstractController
 
         $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
             'form' => $form->createView(),
-            ]);
+        ]);
 
         $this->dispatchEvent($service->getViewEvent()::UPDATE, [ViewService::NAME => $this->getViewService()]);
 

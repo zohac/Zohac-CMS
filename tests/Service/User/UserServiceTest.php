@@ -149,51 +149,6 @@ class UserServiceTest extends KernelTestCase
         $this->assertEquals(null, $user);
     }
 
-    public function testGetUuid()
-    {
-        $uuid = $this->userService->getUuid();
-
-        $this->assertRegExp(
-            '/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/',
-            $uuid
-        );
-    }
-
-    public function testExceptionWhenGetUuid()
-    {
-        $entityManager = $this->getMockBuilder(EntityManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $uuidService = $this->getMockBuilder(UuidService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $eventService = $this->getMockBuilder(EventService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $passwordEncoder = $this->getMockBuilder(UserPasswordEncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $flashBag = $this->getMockBuilder(FlashBagService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityService = new EntityService($entityManager, $uuidService);
-
-        $userService = new UserService(
-            $eventService,
-            $passwordEncoder,
-            $entityService,
-            $flashBag
-        );
-
-        $uuidService->expects($this->once())
-            ->method('create')
-            ->willReturn(false);
-
-        $this->expectException(UuidException::class);
-
-        $userService->getUuid();
-    }
 
     protected function tearDown(): void
     {

@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
+use ReflectionException;
 
 class EntityService
 {
@@ -29,14 +33,15 @@ class EntityService
     }
 
     /**
-     * @param $entity
-     * @param DtoInterface $dto
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
      *
-     * @return mixed
+     * @return EntityInterface
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws UuidException
      */
-    public function populateEntityWithDto($entity, DtoInterface $dto)
+    public function populateEntityWithDto(EntityInterface $entity, DtoInterface $dto)
     {
         $reflectionDto = $this->getNewReflectionClass($dto);
         $reflectionEntity = $this->getNewReflectionClass($entity);
@@ -45,7 +50,14 @@ class EntityService
             $propertyName = $property->getName();
             $setMethod = 'set'.ucfirst($propertyName);
 
-            if ($reflectionEntity->hasMethod($setMethod)) {
+            if (
+                $reflectionEntity->hasMethod($setMethod) &&
+                !($reflectionDto->hasProperty('password') && null === $dto->password)
+            ) {
+                if ('uuid' === $propertyName && null === $dto->$propertyName) {
+                    $dto->$propertyName = $this->getUuid();
+                }
+
                 $entity->$setMethod($dto->$propertyName);
             }
         }
@@ -59,24 +71,40 @@ class EntityService
     /**
      * @param object|string $object
      *
-     * @return \ReflectionClass
+     * @return ReflectionClass
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function getNewReflectionClass($object): \ReflectionClass
+    public function getNewReflectionClass($object): ReflectionClass
     {
-        return new \ReflectionClass($object);
+        return new ReflectionClass($object);
     }
 
     /**
-     * @param $entity
-     * @param DtoInterface $dto
+     * @return string
+     *
+     * @throws UuidException
+     */
+    public function getUuid(): string
+    {
+        $uuid = $this->uuidService->create();
+
+        if (!$uuid) {
+            throw new UuidException('L\'application ne parviens pas à générer un uuid.');
+        }
+
+        return $uuid;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
      *
      * @return DtoInterface
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function populateDtoWithEntity($entity, DtoInterface $dto): DtoInterface
+    public function populateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
         $reflectionDto = $this->getNewReflectionClass($dto);
         $reflectionEntity = $this->getNewReflectionClass($entity);
@@ -125,13 +153,5 @@ class EntityService
         $this->entityManager->flush();
 
         return $this;
-    }
-
-    /**
-     * @return UuidService
-     */
-    public function getUuidService(): UuidService
-    {
-        return $this->uuidService;
     }
 }
