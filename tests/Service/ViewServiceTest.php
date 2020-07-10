@@ -17,8 +17,6 @@ class ViewServiceTest extends KernelTestCase
     {
         self::bootKernel(['debug' => 0]);
         $this->viewService = self::$container->get(ViewService::class);
-
-        $this->loadUsers();
     }
 
     public function testSetData()
@@ -27,7 +25,7 @@ class ViewServiceTest extends KernelTestCase
         $this->assertInstanceOf(ViewService::class, $return);
 
         $this->assertEquals('view', $this->viewService->getView());
-        $this->assertTrue(is_array($viewService->getOptions()));
+        $this->assertTrue(is_array($this->viewService->getOptions()));
     }
 
     public function testSetView()
