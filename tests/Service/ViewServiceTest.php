@@ -4,8 +4,9 @@ namespace App\Tests\Service;
 
 use App\Service\ViewService;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ViewServiceTest extends TestCase
+class ViewServiceTest extends KernelTestCase
 {
     /**
      * @var ViewService
