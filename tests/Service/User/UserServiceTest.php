@@ -4,17 +4,12 @@ namespace App\Tests\Service\User;
 
 use App\Dto\User\UserDto;
 use App\Entity\User;
-use App\Exception\UuidException;
 use App\Repository\UserRepository;
-use App\Service\EntityService;
-use App\Service\EventService;
-use App\Service\FlashBagService;
 use App\Service\User\UserService;
 use App\Service\UuidService;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserServiceTest extends KernelTestCase
 {
@@ -35,11 +30,17 @@ class UserServiceTest extends KernelTestCase
      */
     private $userRepository;
 
+    private $uuidService;
+
+    private $entityManager;
+
     public function setUp(): void
     {
         self::bootKernel(['debug' => 0]);
         $this->userService = self::$container->get(UserService::class);
         $this->userRepository = self::$container->get(UserRepository::class);
+        $this->uuidService = self::$container->get(UuidService::class);
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->loadUsers();
     }
@@ -49,6 +50,13 @@ class UserServiceTest extends KernelTestCase
         $this->users = $this->loadFixtureFiles([
             __DIR__.'/../../DataFixtures/UserFixtures.yaml',
         ]);
+
+        foreach ($this->users as $user) {
+            $user->setUuid($this->uuidService->create());
+
+            $this->entityManager->persist($user);
+        }
+        $this->entityManager->flush();
     }
 
     public function testCreateUserDtoFromUser()
@@ -148,7 +156,6 @@ class UserServiceTest extends KernelTestCase
         $user = $this->userRepository->findOneById($userId);
         $this->assertEquals(null, $user);
     }
-
 
     protected function tearDown(): void
     {

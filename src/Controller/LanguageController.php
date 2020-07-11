@@ -13,6 +13,7 @@ use App\Repository\LanguageRepository;
 use App\Service\FlashBagService;
 use App\Service\Language\LanguageService;
 use App\Service\ViewService;
+use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -108,9 +109,11 @@ class LanguageController extends DefaultController
      *
      * @param Request         $request
      * @param LanguageService $languageService
-     * @param Language        $language
+     * @param Language|null   $language
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
     public function languageUpdate(
         Request $request,
@@ -128,7 +131,7 @@ class LanguageController extends DefaultController
             ->setDto($languageDto)
             ->setEntity($language);
 
-        return $this->create($request, $languageService);
+        return $this->update($request, $languageService);
     }
 
     /**

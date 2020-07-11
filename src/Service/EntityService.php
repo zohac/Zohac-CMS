@@ -50,15 +50,13 @@ class EntityService
             $propertyName = $property->getName();
             $setMethod = 'set'.ucfirst($propertyName);
 
-            if (
-                $reflectionEntity->hasMethod($setMethod) &&
-                !($reflectionDto->hasProperty('password') && null === $dto->password)
-            ) {
+            if ($reflectionEntity->hasMethod($setMethod)) {
                 if ('uuid' === $propertyName && null === $dto->$propertyName) {
                     $dto->$propertyName = $this->getUuid();
                 }
-
-                $entity->$setMethod($dto->$propertyName);
+                if (null !== $dto->$propertyName) {
+                    $entity->$setMethod($dto->$propertyName);
+                }
             }
         }
 

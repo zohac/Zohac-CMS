@@ -138,7 +138,7 @@ class UserService implements ServiceInterface
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
         if (null !== $userDto->password) {
-            $userDto->password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
+            $userDto->password = $this->passwordEncoder->encodePassword($user, $userDto->password);
         }
 
         $user = $this->entityService->populateEntityWithDto($user, $userDto);

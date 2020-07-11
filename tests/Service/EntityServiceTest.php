@@ -2,19 +2,11 @@
 
 namespace App\Tests\Service;
 
-use App\Dto\User\UserDto;
-use App\Entity\User;
 use App\Exception\UuidException;
-use App\Repository\UserRepository;
 use App\Service\EntityService;
-use App\Service\EventService;
-use App\Service\FlashBagService;
-use App\Service\User\UserService;
 use App\Service\UuidService;
 use Doctrine\ORM\EntityManagerInterface;
-use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class EntityServiceTest extends KernelTestCase
 {

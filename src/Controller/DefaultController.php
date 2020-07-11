@@ -195,12 +195,12 @@ class DefaultController extends AbstractController
     {
         $form = $this->createForm($service->getFormType(), $service->getDto(), [
             'action' => $this->generateUrl($service->getEntityNamePlural().'.update', [
-                'id' => $service->getEntity()->getId(),
+                'uuid' => $service->getEntity()->getUuid(),
             ]),
         ]);
 
         $this->dispatchEvent($service->getEvent()::PRE_UPDATE, [
-            'form' => $service->getFormType(),
+            'form' => $form,
             $service->getEntityName().'Dto' => $service->getDto(),
             $service->getEntityName() => $service->getEntity(),
         ]);

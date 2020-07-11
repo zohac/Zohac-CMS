@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Service\FlashBagService;
 use App\Service\User\UserService;
 use App\Service\ViewService;
+use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -102,9 +103,11 @@ class UserController extends DefaultController
      *
      * @param Request     $request
      * @param UserService $userService
-     * @param User        $user
+     * @param User|null   $user
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
     public function userUpdate(Request $request, UserService $userService, ?User $user = null): Response
     {
@@ -119,7 +122,7 @@ class UserController extends DefaultController
             ->setDto($userDto)
             ->setEntity($user);
 
-        return $this->create($request, $userService);
+        return $this->update($request, $userService);
     }
 
     /**
