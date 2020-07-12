@@ -5,7 +5,6 @@ namespace App\Service\Language;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
-use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
@@ -14,6 +13,7 @@ use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
+use ReflectionClass;
 use ReflectionException;
 
 class LanguageService implements EntityServiceInterface
@@ -51,7 +51,7 @@ class LanguageService implements EntityServiceInterface
     private $entityService;
 
     /**
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     private $reflectionClass;
 
@@ -80,9 +80,6 @@ class LanguageService implements EntityServiceInterface
      * @param LanguageDto $languageDto
      *
      * @return Language
-     *
-     * @throws ReflectionException
-     * @throws UuidException
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
@@ -133,9 +130,6 @@ class LanguageService implements EntityServiceInterface
      * @param Language    $language
      *
      * @return Language
-     *
-     * @throws UuidException
-     * @throws ReflectionException
      */
     public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
     {
