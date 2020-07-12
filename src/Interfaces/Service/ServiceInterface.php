@@ -35,6 +35,9 @@ interface ServiceInterface
      */
     public function getDto(): DtoInterface;
 
+    /**
+     * @return EntityInterface
+     */
     public function getEntity(): EntityInterface;
 
     /**
@@ -51,4 +54,9 @@ interface ServiceInterface
      * @return ViewEventInterface
      */
     public function getViewEvent(): ViewEventInterface;
+
+    /**
+     * @return string
+     */
+    public function getDeleteMessage(): string;
 }

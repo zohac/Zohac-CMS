@@ -82,11 +82,13 @@ class LanguageService implements ServiceInterface
      * @return Language
      *
      * @throws ReflectionException
+     * @throws UuidException
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
         $language = new Language();
 
+        /** @var Language $language */
         $language = $this->entityService->populateEntityWithDto($language, $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
@@ -137,6 +139,7 @@ class LanguageService implements ServiceInterface
      */
     public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
     {
+        /** @var Language $language */
         $language = $this->entityService->populateEntityWithDto($language, $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, [
@@ -162,6 +165,12 @@ class LanguageService implements ServiceInterface
         $this->entityService
             ->remove($language)
             ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully deleted.',
+            $this->getEntityNameToLower()
+        );
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
 
@@ -270,5 +279,14 @@ class LanguageService implements ServiceInterface
         $this->language = $language;
 
         return $this;
+    }
+
+    public function getDeleteMessage(): string
+    {
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this language (%language%) ?',
+            $this->getEntityNameToLower(),
+            [$this->getEntityNameToLower() => $this->language->getIso6391()]
+        );
     }
 }

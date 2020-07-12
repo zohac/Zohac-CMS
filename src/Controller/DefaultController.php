@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
+use App\Form\DeleteType;
 use App\Interfaces\Service\ServiceInterface;
 use App\Service\EventService;
 use App\Service\FlashBagService;
@@ -171,9 +172,7 @@ class DefaultController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent($service->getEvent()::CREATE, [$service->getEntityName().'Dto' => $service->getDto()]);
 
-            $redirection = 'redirectTo'.$service->getEntityName().'List';
-
-            return $this->$redirection();
+            return $this->redirectToList($service);
         }
 
         $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
@@ -183,6 +182,16 @@ class DefaultController extends AbstractController
         $this->dispatchEvent($service->getViewEvent()::CREATE, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @param ServiceInterface $service
+     *
+     * @return Response
+     */
+    public function redirectToList(ServiceInterface $service): Response
+    {
+        return $this->redirectToRoute($service->getEntityNamePlural().'.list');
     }
 
     /**
@@ -212,9 +221,7 @@ class DefaultController extends AbstractController
                 $service->getEntityName() => $service->getEntity(),
             ]);
 
-            $redirection = 'redirectTo'.$service->getEntityName().'List';
-
-            return $this->$redirection();
+            return $this->redirectToList($service);
         }
 
         $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
@@ -222,6 +229,44 @@ class DefaultController extends AbstractController
         ]);
 
         $this->dispatchEvent($service->getViewEvent()::UPDATE, [ViewService::NAME => $this->getViewService()]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param Request          $request
+     * @param ServiceInterface $service
+     *
+     * @return Response
+     */
+    public function delete(Request $request, ServiceInterface $service): Response
+    {
+        $form = $this->createForm(DeleteType::class, null, [
+            'action' => $this->generateUrl($service->getEntityNamePlural().'.delete', [
+                'uuid' => $service->getEntity()->getUuid(),
+            ]),
+        ]);
+
+        $this->dispatchEvent($service->getEvent()::PRE_DELETE, [
+            'form' => $form,
+            $service->getEntityNameToLower() => $service->getEntity(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->dispatchEvent($service->getEvent()::DELETE, [
+                $service->getEntityNameToLower() => $service->getEntity(),
+            ]);
+
+            return $this->redirectToList($service);
+        }
+
+        $this->getViewService()->setData('delete.html.twig', [
+            'form' => $form->createView(),
+            'message' => $service->getDeleteMessage(),
+        ]);
+
+        $this->dispatchEvent($service->getViewEvent()::DELETE, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }

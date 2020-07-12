@@ -4,15 +4,10 @@ namespace App\Controller;
 
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
-use App\Event\Language\LanguageEvent;
-use App\Event\Language\LanguageViewEvent;
-use App\Exception\EventException;
-use App\Form\DeleteType;
 use App\Form\LanguageType;
 use App\Repository\LanguageRepository;
 use App\Service\FlashBagService;
 use App\Service\Language\LanguageService;
-use App\Service\ViewService;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,17 +30,15 @@ class LanguageController extends DefaultController
 
     /**
      * @Route(
-     *     "/languages/{id}",
+     *     "/languages/{uuid}",
      *     name="languages.detail",
-     *     requirements={"id"="\d+"}
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
      * @param LanguageService $languageService
      * @param Language|null   $language
      *
      * @return Response
-     *
-     * @throws EventException
      */
     public function languageDetail(LanguageService $languageService, ?Language $language = null): Response
     {
@@ -65,17 +58,9 @@ class LanguageController extends DefaultController
             FlashBagService::FLASH_ERROR,
             'Language',
             'The language was not found.',
-            $this->getEntityNameToLower()
+            'language'
         );
 
-        return $this->redirectToLanguageList();
-    }
-
-    /**
-     * @return Response
-     */
-    public function redirectToLanguageList(): Response
-    {
         return $this->redirectToRoute('languages.list');
     }
 
@@ -102,9 +87,9 @@ class LanguageController extends DefaultController
 
     /**
      * @Route(
-     *     "/languages/{id}/update",
+     *     "/languages/{uuid}/update",
      *     name="languages.update",
-     *     requirements={"id"="\d+"}
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
      * @param Request         $request
@@ -136,56 +121,28 @@ class LanguageController extends DefaultController
 
     /**
      * @Route(
-     *     "/languages/{id}/delete",
+     *     "/languages/{uuid}/delete",
      *     name="languages.delete",
-     *     requirements={"id"="\d+"}
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param Request       $request
-     * @param Language|null $language
+     * @param Request         $request
+     * @param LanguageService $languageService
+     * @param Language|null   $language
      *
      * @return Response
      */
-    public function delete(Request $request, ?Language $language = null): Response
-    {
+    public function languageDelete(
+        Request $request,
+        LanguageService $languageService,
+        ?Language $language = null
+    ): Response {
         if (!$language) {
             return $this->languageNotFound();
         }
 
-        $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl('languages.delete', ['id' => $language->getId()]),
-        ]);
+        $languageService->setEntity($language);
 
-        $this->dispatchEvent(LanguageEvent::PRE_DELETE, [
-            'form' => $form,
-            $this->getEntityNameToLower() => $language,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(LanguageEvent::DELETE, [$this->getEntityNameToLower() => $language]);
-
-            $this->addAndTransFlashMessage(
-                FlashBagService::FLASH_SUCCESS,
-                'Language',
-                'Language successfully deleted.',
-                $this->getEntityNameToLower()
-            );
-
-            return $this->redirectToLanguageList();
-        }
-
-        $this->getViewService()->setData('delete.html.twig', [
-            'form' => $form->createView(),
-            'message' => $this->trans(
-                'Are you sure you want to delete this language (%language%) ?',
-                $this->getEntityNameToLower(),
-                [$this->getEntityNameToLower() => $language->getIso6391()]
-            ),
-        ]);
-
-        $this->dispatchEvent(LanguageViewEvent::DELETE, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->delete($request, $languageService);
     }
 }

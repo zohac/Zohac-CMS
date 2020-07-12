@@ -38,15 +38,41 @@ class EventService
     public function __construct(iterable $handlers, EventDispatcherInterface $eventDispatcher)
     {
         foreach ($handlers as $handler) {
-            if ($handler instanceof ViewEventInterface) {
-                $this->viewEvents[$handler->getRelatedEntity()] = $handler;
-            }
-            if (($handler instanceof EventInterface) && !($handler instanceof ViewEventInterface)) {
-                $this->events[$handler->getRelatedEntity()] = $handler;
-            }
+            $this
+                ->sortByViewEventInterface($handler)
+                ->sortByEventInterface($handler);
+
             $this->allEvents[] = $handler;
         }
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @param $handler
+     *
+     * @return $this
+     */
+    public function sortByEventInterface($handler): self
+    {
+        if (($handler instanceof EventInterface) && !($handler instanceof ViewEventInterface)) {
+            $this->events[$handler->getRelatedEntity()] = $handler;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $handler
+     *
+     * @return $this
+     */
+    public function sortByViewEventInterface($handler): self
+    {
+        if ($handler instanceof ViewEventInterface) {
+            $this->viewEvents[$handler->getRelatedEntity()] = $handler;
+        }
+
+        return $this;
     }
 
     /**

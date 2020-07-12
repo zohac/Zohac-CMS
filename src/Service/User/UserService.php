@@ -141,6 +141,7 @@ class UserService implements ServiceInterface
             $userDto->password = $this->passwordEncoder->encodePassword($user, $userDto->password);
         }
 
+        /** @var User $user */
         $user = $this->entityService->populateEntityWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
@@ -165,9 +166,23 @@ class UserService implements ServiceInterface
             ->remove($user)
             ->flush();
 
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully deleted.',
+            $this->getEntityNameToLower()
+        );
+
         $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityNameToLower(): string
+    {
+        return strtolower($this->reflectionClass->getShortName());
     }
 
     /**
@@ -188,14 +203,6 @@ class UserService implements ServiceInterface
         $this->formType = $formType;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityNameToLower(): string
-    {
-        return strtolower($this->reflectionClass->getShortName());
     }
 
     /**
@@ -280,5 +287,14 @@ class UserService implements ServiceInterface
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getDeleteMessage(): string
+    {
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this user (%email%) ?',
+            'user',
+            ['email' => $this->user->getEmail()]
+        );
     }
 }

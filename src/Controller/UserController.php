@@ -4,14 +4,10 @@ namespace App\Controller;
 
 use App\Dto\User\UserDto;
 use App\Entity\User;
-use App\Event\User\UserEvent;
-use App\Event\User\UserViewEvent;
-use App\Form\DeleteType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\FlashBagService;
 use App\Service\User\UserService;
-use App\Service\ViewService;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,8 +42,6 @@ class UserController extends DefaultController
      * @param User|null   $user
      *
      * @return Response
-     *
-     * @throws \App\Exception\EventException
      */
     public function userDetail(UserService $userService, ?User $user = null): Response
     {
@@ -63,16 +57,13 @@ class UserController extends DefaultController
      */
     public function userNotFound(): Response
     {
-        $this->addAndTransFlashMessage(FlashBagService::FLASH_ERROR, 'User', 'The user was not found.', 'user');
+        $this->addAndTransFlashMessage(
+            FlashBagService::FLASH_ERROR,
+            'User',
+            'The user was not found.',
+            'user'
+        );
 
-        return $this->redirectToUserList();
-    }
-
-    /**
-     * @return Response
-     */
-    public function redirectToUserList(): Response
-    {
         return $this->redirectToRoute('users.list');
     }
 
@@ -132,49 +123,20 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param Request   $request
-     * @param User|null $user
+     * @param Request     $request
+     * @param UserService $userService
+     * @param User|null   $user
      *
      * @return Response
      */
-    public function delete(Request $request, ?User $user = null): Response
+    public function userDelete(Request $request, UserService $userService, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl('users.delete', ['uuid' => $user->getUuid()]),
-        ]);
+        $userService->setEntity($user);
 
-        $this->dispatchEvent(UserEvent::PRE_DELETE, [
-            'form' => $form,
-            'user' => $user,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent(UserEvent::DELETE, ['user' => $user]);
-
-            $this->addAndTransFlashMessage(
-                FlashBagService::FLASH_SUCCESS,
-                'User',
-                'User successfully deleted.',
-                'user'
-            );
-
-            return $this->redirectToUserList();
-        }
-
-        $this->getViewService()->setData('delete.html.twig', [
-            'form' => $form->createView(),
-            'message' => $this->trans('Are you sure you want to delete this user (%email%) ?', 'user', [
-                'email' => $user->getEmail(),
-            ]),
-        ]);
-
-        $this->dispatchEvent(UserViewEvent::DELETE, [ViewService::NAME => $this->getViewService()]);
-
-        return $this->getResponse();
+        return $this->delete($request, $userService);
     }
 }

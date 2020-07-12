@@ -50,14 +50,7 @@ class EntityService
             $propertyName = $property->getName();
             $setMethod = 'set'.ucfirst($propertyName);
 
-            if ($reflectionEntity->hasMethod($setMethod)) {
-                if ('uuid' === $propertyName && null === $dto->$propertyName) {
-                    $dto->$propertyName = $this->getUuid();
-                }
-                if (null !== $dto->$propertyName) {
-                    $entity->$setMethod($dto->$propertyName);
-                }
-            }
+            $this->populate($reflectionEntity, $setMethod, $propertyName, $dto, $entity);
         }
 
         $this->entityManager->persist($entity);
@@ -76,6 +69,27 @@ class EntityService
     public function getNewReflectionClass($object): ReflectionClass
     {
         return new ReflectionClass($object);
+    }
+
+    /**
+     * @param ReflectionClass $reflectionEntity
+     * @param string          $setMethod
+     * @param string          $propertyName
+     * @param DtoInterface    $dto
+     * @param EntityInterface $entity
+     *
+     * @throws UuidException
+     */
+    public function populate(ReflectionClass $reflectionEntity, string $setMethod, string $propertyName, DtoInterface $dto, EntityInterface $entity): void
+    {
+        if ($reflectionEntity->hasMethod($setMethod)) {
+            if ('uuid' === $propertyName && null === $dto->$propertyName) {
+                $dto->$propertyName = $this->getUuid();
+            }
+            if (null !== $dto->$propertyName) {
+                $entity->$setMethod($dto->$propertyName);
+            }
+        }
     }
 
     /**
