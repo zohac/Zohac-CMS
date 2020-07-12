@@ -14,7 +14,7 @@ trait ControllerTrait
 {
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param EntityServiceInterface                 $service
+     * @param EntityServiceInterface           $service
      *
      * @return Response
      */
@@ -35,7 +35,8 @@ trait ControllerTrait
 
     /**
      * @param EntityServiceInterface $service
-     * @param EntityInterface $entity
+     * @param EntityInterface|null   $entity
+     *
      * @return Response
      */
     public function detail(EntityServiceInterface $service, ?EntityInterface $entity = null): Response
@@ -52,7 +53,7 @@ trait ControllerTrait
     }
 
     /**
-     * @param Request          $request
+     * @param Request                $request
      * @param EntityServiceInterface $service
      *
      * @return Response
@@ -85,7 +86,7 @@ trait ControllerTrait
     }
 
     /**
-     * @param Request          $request
+     * @param Request                $request
      * @param EntityServiceInterface $service
      *
      * @return Response
@@ -124,7 +125,7 @@ trait ControllerTrait
     }
 
     /**
-     * @param Request          $request
+     * @param Request                $request
      * @param EntityServiceInterface $service
      *
      * @return Response
