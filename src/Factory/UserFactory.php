@@ -81,8 +81,8 @@ class UserFactory implements EntityFactoryInterface
         string $propertyName,
         DtoInterface $dto,
         string $setMethod,
-        EntityInterface $entity): self
-    {
+        EntityInterface $entity
+    ): self {
         if (null !== $dto->$propertyName) {
             $entity->$setMethod($dto->$propertyName);
         }
