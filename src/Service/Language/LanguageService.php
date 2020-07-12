@@ -10,13 +10,13 @@ use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
-use App\Interfaces\Service\ServiceInterface;
+use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
 
-class LanguageService implements ServiceInterface
+class LanguageService implements EntityServiceInterface
 {
     const ENTITY_NAME = Language::class;
 

@@ -8,7 +8,7 @@ use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Service\EventService;
 
-interface ServiceInterface
+interface EntityServiceInterface
 {
     /**
      * @return string

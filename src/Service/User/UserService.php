@@ -10,14 +10,14 @@ use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
-use App\Interfaces\Service\ServiceInterface;
+use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserService implements ServiceInterface
+class UserService implements EntityServiceInterface
 {
     const ENTITY_NAME = User::class;
 

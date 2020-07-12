@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
-use App\Interfaces\Service\ServiceInterface;
+use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use App\Service\TranslatorService;
@@ -112,11 +112,11 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @param ServiceInterface $service
+     * @param EntityServiceInterface $service
      *
      * @return Response
      */
-    public function redirectToList(ServiceInterface $service): Response
+    public function redirectToList(EntityServiceInterface $service): Response
     {
         return $this->redirectToRoute($service->getEntityNamePlural().'.list');
     }

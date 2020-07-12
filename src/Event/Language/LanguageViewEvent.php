@@ -21,8 +21,6 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
     public const LIST = 'language.list.view';
     public const DETAIL = 'language.detail.view';
 
-    private $relatedEntity = 'Language';
-
     /**
      * @return array|string[]
      */

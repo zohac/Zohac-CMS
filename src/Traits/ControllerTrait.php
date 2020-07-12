@@ -3,7 +3,8 @@
 namespace App\Traits;
 
 use App\Form\DeleteType;
-use App\Interfaces\Service\ServiceInterface;
+use App\Interfaces\EntityInterface;
+use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\ViewService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,11 +14,11 @@ trait ControllerTrait
 {
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param ServiceInterface                 $service
+     * @param EntityServiceInterface                 $service
      *
      * @return Response
      */
-    public function list(ServiceEntityRepositoryInterface $repository, ServiceInterface $service): Response
+    public function list(ServiceEntityRepositoryInterface $repository, EntityServiceInterface $service): Response
     {
         $list = $this->getViewService()->getListConstant($service->getEntityNameToLower());
 
@@ -33,12 +34,11 @@ trait ControllerTrait
     }
 
     /**
-     * @param object           $entity
-     * @param ServiceInterface $service
-     *
+     * @param EntityServiceInterface $service
+     * @param EntityInterface $entity
      * @return Response
      */
-    public function detail(object $entity, ServiceInterface $service): Response
+    public function detail(EntityServiceInterface $service, ?EntityInterface $entity = null): Response
     {
         $detail = $this->getViewService()->getDetailConstant($service->getEntityNameToLower());
 
@@ -53,11 +53,11 @@ trait ControllerTrait
 
     /**
      * @param Request          $request
-     * @param ServiceInterface $service
+     * @param EntityServiceInterface $service
      *
      * @return Response
      */
-    public function create(Request $request, ServiceInterface $service): Response
+    public function create(Request $request, EntityServiceInterface $service): Response
     {
         $form = $this->createForm($service->getFormType(), $service->getDto(), [
             'action' => $this->generateUrl($service->getEntityNamePlural().'.create'),
@@ -86,11 +86,11 @@ trait ControllerTrait
 
     /**
      * @param Request          $request
-     * @param ServiceInterface $service
+     * @param EntityServiceInterface $service
      *
      * @return Response
      */
-    public function update(Request $request, ServiceInterface $service): Response
+    public function update(Request $request, EntityServiceInterface $service): Response
     {
         $form = $this->createForm($service->getFormType(), $service->getDto(), [
             'action' => $this->generateUrl($service->getEntityNamePlural().'.update', [
@@ -125,11 +125,11 @@ trait ControllerTrait
 
     /**
      * @param Request          $request
-     * @param ServiceInterface $service
+     * @param EntityServiceInterface $service
      *
      * @return Response
      */
-    public function delete(Request $request, ServiceInterface $service): Response
+    public function delete(Request $request, EntityServiceInterface $service): Response
     {
         $form = $this->createForm(DeleteType::class, null, [
             'action' => $this->generateUrl($service->getEntityNamePlural().'.delete', [

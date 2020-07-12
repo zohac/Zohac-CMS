@@ -49,7 +49,7 @@ class UserController extends DefaultController
             return $this->userNotFound();
         }
 
-        return $this->detail($user, $userService);
+        return $this->detail($userService, $user);
     }
 
     /**
