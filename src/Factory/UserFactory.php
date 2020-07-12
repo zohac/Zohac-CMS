@@ -33,12 +33,9 @@ class UserFactory implements EntityFactoryInterface
             $setMethod = 'set'.ucfirst($propertyName);
 
             if ($reflectionEntity->hasMethod($setMethod)) {
-                if ('uuid' === $propertyName && null === $dto->$propertyName) {
-                    $dto->$propertyName = $this->getUuid();
-                }
-                if (null !== $dto->$propertyName) {
-                    $entity->$setMethod($dto->$propertyName);
-                }
+                $this
+                    ->uuidProperty($propertyName, $dto)
+                    ->notNullProperty($propertyName, $dto, $setMethod, $entity);
             }
         }
 
@@ -53,5 +50,43 @@ class UserFactory implements EntityFactoryInterface
     public function canHandle(EntityInterface $entity): bool
     {
         return $entity instanceof User;
+    }
+
+    /**
+     * @param string       $propertyName
+     * @param DtoInterface $dto
+     *
+     * @return $this
+     *
+     * @throws UuidException
+     */
+    private function uuidProperty(string $propertyName, DtoInterface $dto): self
+    {
+        if ('uuid' === $propertyName && null === $dto->$propertyName) {
+            $dto->$propertyName = $this->getUuid();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string          $propertyName
+     * @param DtoInterface    $dto
+     * @param string          $setMethod
+     * @param EntityInterface $entity
+     *
+     * @return $this
+     */
+    private function notNullProperty(
+        string $propertyName,
+        DtoInterface $dto,
+        string $setMethod,
+        EntityInterface $entity): self
+    {
+        if (null !== $dto->$propertyName) {
+            $entity->$setMethod($dto->$propertyName);
+        }
+
+        return $this;
     }
 }
