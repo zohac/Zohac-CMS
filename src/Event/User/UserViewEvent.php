@@ -13,13 +13,13 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
     use EventTrait;
     use ViewEventTrait;
 
+    public const RELATED_ENTITY = 'User';
+
     public const CREATE = 'user.create.view';
     public const UPDATE = 'user.update.view';
     public const DELETE = 'user.delete.view';
     public const LIST = 'user.list.view';
     public const DETAIL = 'user.detail.view';
-
-    private $relatedEntity = 'User';
 
     /**
      * @return array|string[]
@@ -40,6 +40,6 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
      */
     public function getRelatedEntity(): string
     {
-        return $this->relatedEntity;
+        return self::RELATED_ENTITY;
     }
 }

@@ -20,14 +20,21 @@ class EntityService
      */
     private $uuidService;
 
+    private $factories;
+
     /**
      * EntityService constructor.
      *
+     * @param iterable               $handlers
      * @param EntityManagerInterface $entityManager
      * @param UuidService            $uuidService
      */
-    public function __construct(EntityManagerInterface $entityManager, UuidService $uuidService)
+    public function __construct(iterable $handlers, EntityManagerInterface $entityManager, UuidService $uuidService)
     {
+        foreach ($handlers as $handler) {
+            $this->factories[$handler->getRelatedEntity()] = $handler;
+        }
+
         $this->entityManager = $entityManager;
         $this->uuidService = $uuidService;
     }

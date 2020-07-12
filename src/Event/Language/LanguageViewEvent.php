@@ -13,6 +13,8 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
     use EventTrait;
     use ViewEventTrait;
 
+    public const RELATED_ENTITY = 'Language';
+
     public const CREATE = 'language.create.view';
     public const UPDATE = 'language.update.view';
     public const DELETE = 'language.delete.view';
@@ -40,6 +42,6 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
      */
     public function getRelatedEntity(): string
     {
-        return $this->relatedEntity;
+        return self::RELATED_ENTITY;
     }
 }

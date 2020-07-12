@@ -40,7 +40,7 @@ class EntityServiceTest extends KernelTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityService = new EntityService($entityManager, $uuidService);
+        $entityService = new EntityService([], $entityManager, $uuidService);
 
         $uuidService->expects($this->once())
             ->method('create')
@@ -55,5 +55,7 @@ class EntityServiceTest extends KernelTestCase
     {
         parent::tearDown();
         // avoid memory leaks
+
+        $this->entityService = null;
     }
 }
