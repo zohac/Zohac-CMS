@@ -5,7 +5,6 @@ namespace App\Service\User;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
-use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
@@ -14,6 +13,7 @@ use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
+use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -47,7 +47,7 @@ class UserService implements EntityServiceInterface
     private $eventService;
 
     /**
-     * @var \ReflectionClass
+     * @var ReflectionClass
      */
     private $reflectionClass;
 
@@ -84,9 +84,6 @@ class UserService implements EntityServiceInterface
      * @param UserDto $userDto
      *
      * @return User
-     *
-     * @throws ReflectionException
-     * @throws UuidException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
@@ -131,9 +128,6 @@ class UserService implements EntityServiceInterface
      * @param User    $user
      *
      * @return User
-     *
-     * @throws ReflectionException
-     * @throws UuidException
      */
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
