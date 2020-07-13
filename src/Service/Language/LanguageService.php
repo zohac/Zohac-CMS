@@ -83,10 +83,8 @@ class LanguageService implements EntityServiceInterface
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
-        $language = new Language();
-
         /** @var Language $language */
-        $language = $this->entityService->populateEntityWithDto($language, $languageDto);
+        $language = $this->entityService->populateEntityWithDto(new Language(), $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
             $this->getEntityNameToLower() => $language,
@@ -120,7 +118,8 @@ class LanguageService implements EntityServiceInterface
     {
         $languageDto = new LanguageDto();
 
-        $this->entityService->populateDtoWithEntity($language, $languageDto);
+        /** @var LanguageDto $languageDto */
+        $languageDto = $this->entityService->populateDtoWithEntity($language, $languageDto);
 
         return $languageDto;
     }

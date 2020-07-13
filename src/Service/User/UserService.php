@@ -92,10 +92,8 @@ class UserService implements EntityServiceInterface
      */
     public function createUserFromDto(UserDto $userDto): User
     {
-        $user = new User();
-
         /** @var User $user */
-        $user = $this->entityService->populateEntityWithDto($user, $userDto);
+        $user = $this->entityService->populateEntityWithDto(new User(), $userDto);
 
         $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
         $user->setPassword($password);
