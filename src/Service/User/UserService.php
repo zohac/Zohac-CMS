@@ -27,6 +27,11 @@ class UserService implements EntityServiceInterface
     private $user = null;
 
     /**
+     * @var UserDto|null
+     */
+    private $dto = null;
+
+    /**
      * @var string
      */
     private $formType;
@@ -234,7 +239,7 @@ class UserService implements EntityServiceInterface
     {
         $events = $this->getEventService()->getEvents();
 
-        return $events[$this->getEntityName()];
+        return $events[self::ENTITY_NAME];
     }
 
     /**
@@ -250,6 +255,14 @@ class UserService implements EntityServiceInterface
      */
     public function getEntityName(): string
     {
+        return $this->reflectionClass->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityShortName(): string
+    {
         return $this->reflectionClass->getShortName();
     }
 
@@ -260,7 +273,7 @@ class UserService implements EntityServiceInterface
     {
         $viewEvents = $this->getEventService()->getViewEvents();
 
-        return $viewEvents[$this->getEntityName()];
+        return $viewEvents[self::ENTITY_NAME];
     }
 
     /**

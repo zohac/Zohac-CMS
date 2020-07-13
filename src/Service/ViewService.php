@@ -96,24 +96,4 @@ class ViewService
     {
         return $this->viewEvents;
     }
-
-    /**
-     * @param string $entityName
-     *
-     * @return string
-     */
-    public function getListConstant(string $entityName): string
-    {
-        return $this->viewEvents[ucfirst($entityName)]::LIST;
-    }
-
-    /**
-     * @param string $entityName
-     *
-     * @return string
-     */
-    public function getDetailConstant(string $entityName): string
-    {
-        return $this->viewEvents[ucfirst($entityName)]::DETAIL;
-    }
 }

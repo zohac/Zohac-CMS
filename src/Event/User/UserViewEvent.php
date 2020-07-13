@@ -2,6 +2,7 @@
 
 namespace App\Event\User;
 
+use App\Entity\User;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Traits\Event\EventTrait;
@@ -13,7 +14,7 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
     use EventTrait;
     use ViewEventTrait;
 
-    public const RELATED_ENTITY = 'User';
+    public const ENTITY_NAME = User::class;
 
     public const CREATE = 'user.create.view';
     public const UPDATE = 'user.update.view';
@@ -40,6 +41,6 @@ class UserViewEvent extends Event implements EventInterface, ViewEventInterface
      */
     public function getRelatedEntity(): string
     {
-        return self::RELATED_ENTITY;
+        return self::ENTITY_NAME;
     }
 }

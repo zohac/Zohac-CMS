@@ -23,6 +23,11 @@ interface EntityServiceInterface
     /**
      * @return string
      */
+    public function getEntityShortName(): string;
+
+    /**
+     * @return string
+     */
     public function getEntityNameToLower(): string;
 
     /**

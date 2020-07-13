@@ -14,8 +14,7 @@ class IndexViewEvent extends Event implements EventInterface, ViewEventInterface
     use ViewEventTrait;
 
     public const INDEX = 'index.view';
-
-    private $relatedEntity = '';
+    const ENTITY_NAME = '';
 
     /**
      * @return array|string[]
@@ -32,6 +31,6 @@ class IndexViewEvent extends Event implements EventInterface, ViewEventInterface
      */
     public function getRelatedEntity(): string
     {
-        return $this->relatedEntity;
+        return self::ENTITY_NAME;
     }
 }

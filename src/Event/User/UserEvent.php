@@ -23,7 +23,7 @@ class UserEvent extends Event implements EventInterface
     public const DELETE = 'user.delete';
     public const POST_DELETE = 'user.post.delete';
 
-    private $relatedEntity = 'User';
+    const ENTITY_NAME = User::class;
 
     /**
      * @var UserDto
@@ -123,6 +123,6 @@ class UserEvent extends Event implements EventInterface
      */
     public function getRelatedEntity(): string
     {
-        return $this->relatedEntity;
+        return self::ENTITY_NAME;
     }
 }

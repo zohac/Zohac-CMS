@@ -2,6 +2,7 @@
 
 namespace App\Event\Language;
 
+use App\Entity\Language;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Traits\Event\EventTrait;
@@ -13,7 +14,7 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
     use EventTrait;
     use ViewEventTrait;
 
-    public const RELATED_ENTITY = 'Language';
+    public const ENTITY_NAME = Language::class;
 
     public const CREATE = 'language.create.view';
     public const UPDATE = 'language.update.view';
@@ -40,6 +41,6 @@ class LanguageViewEvent extends Event implements EventInterface, ViewEventInterf
      */
     public function getRelatedEntity(): string
     {
-        return self::RELATED_ENTITY;
+        return self::ENTITY_NAME;
     }
 }

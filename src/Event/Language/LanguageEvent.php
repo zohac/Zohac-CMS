@@ -13,6 +13,8 @@ class LanguageEvent extends Event implements EventInterface
 {
     use EventTrait;
 
+    const ENTITY_NAME = Language::class;
+
     public const PRE_CREATE = 'language.pre.create';
     public const CREATE = 'language.create';
     public const POST_CREATE = 'language.post.create';
@@ -37,11 +39,6 @@ class LanguageEvent extends Event implements EventInterface
      * @var Language
      */
     private $language;
-
-    /**
-     * @var string
-     */
-    private $relatedEntity = 'Language';
 
     /**
      * @return array|string[]
@@ -123,6 +120,6 @@ class LanguageEvent extends Event implements EventInterface
 
     public function getRelatedEntity(): string
     {
-        return $this->relatedEntity;
+        return self::ENTITY_NAME;
     }
 }

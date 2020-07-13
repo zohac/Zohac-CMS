@@ -20,15 +20,13 @@ trait ControllerTrait
      */
     public function list(ServiceEntityRepositoryInterface $repository, EntityServiceInterface $service): Response
     {
-        $list = $this->getViewService()->getListConstant($service->getEntityNameToLower());
-
         $entities = $repository->findAll();
 
         $this->getViewService()->setData($service->getEntityNameToLower().'/index.html.twig', [
             $service->getEntityNamePlural() => $entities,
         ]);
 
-        $this->dispatchEvent($list, [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($service->getViewEvent()::LIST, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -41,13 +39,11 @@ trait ControllerTrait
      */
     public function detail(EntityServiceInterface $service, ?EntityInterface $entity = null): Response
     {
-        $detail = $this->getViewService()->getDetailConstant($service->getEntityNameToLower());
-
         $this->getViewService()->setData($service->getEntityNameToLower().'/detail.html.twig', [
             $service->getEntityNameToLower() => $entity,
         ]);
 
-        $this->dispatchEvent($detail, [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($service->getViewEvent()::DETAIL, [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -66,12 +62,14 @@ trait ControllerTrait
 
         $this->dispatchEvent($service->getEvent()::PRE_CREATE, [
             'form' => $form,
-            $service->getEntityName().'Dto' => $service->getDto(),
+            $service->getEntityShortName().'Dto' => $service->getDto(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($service->getEvent()::CREATE, [$service->getEntityName().'Dto' => $service->getDto()]);
+            $this->dispatchEvent($service->getEvent()::CREATE, [
+                $service->getEntityShortName().'Dto' => $service->getDto(),
+            ]);
 
             return $this->redirectToList($service);
         }
@@ -101,15 +99,15 @@ trait ControllerTrait
 
         $this->dispatchEvent($service->getEvent()::PRE_UPDATE, [
             'form' => $form,
-            $service->getEntityName().'Dto' => $service->getDto(),
-            $service->getEntityName() => $service->getEntity(),
+            $service->getEntityShortName().'Dto' => $service->getDto(),
+            $service->getEntityShortName() => $service->getEntity(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->dispatchEvent($service->getEvent()::UPDATE, [
-                $service->getEntityName().'Dto' => $service->getDto(),
-                $service->getEntityName() => $service->getEntity(),
+                $service->getEntityShortName().'Dto' => $service->getDto(),
+                $service->getEntityShortName() => $service->getEntity(),
             ]);
 
             return $this->redirectToList($service);

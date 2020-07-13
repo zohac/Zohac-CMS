@@ -226,7 +226,7 @@ class LanguageService implements EntityServiceInterface
     {
         $events = $this->getEventService()->getEvents();
 
-        return $events[$this->getEntityName()];
+        return $events[self::ENTITY_NAME];
     }
 
     /**
@@ -242,6 +242,14 @@ class LanguageService implements EntityServiceInterface
      */
     public function getEntityName(): string
     {
+        return $this->reflectionClass->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityShortName(): string
+    {
         return $this->reflectionClass->getShortName();
     }
 
@@ -252,7 +260,7 @@ class LanguageService implements EntityServiceInterface
     {
         $viewEvents = $this->getEventService()->getViewEvents();
 
-        return $viewEvents[$this->getEntityName()];
+        return $viewEvents[self::ENTITY_NAME];
     }
 
     /**
