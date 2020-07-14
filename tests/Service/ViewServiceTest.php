@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Interfaces\Event\EventInterface;
 use App\Service\ViewService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -47,6 +48,15 @@ class ViewServiceTest extends KernelTestCase
         $this->assertInstanceOf(ViewService::class, $return);
 
         $this->assertEquals('an another option', $this->viewService->getOptions()[0]);
+    }
+
+    public function testGetViewEvents()
+    {
+        $events = $this->viewService->getViewEvents();
+
+        foreach ($events as $event) {
+            $this->assertInstanceOf(EventInterface::class, $event);
+        }
     }
 
     protected function tearDown(): void

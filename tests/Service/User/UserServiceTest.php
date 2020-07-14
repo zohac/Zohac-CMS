@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\User\UserService;
 use App\Service\UuidService;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -30,8 +31,14 @@ class UserServiceTest extends KernelTestCase
      */
     private $userRepository;
 
+    /**
+     * @var UuidService
+     */
     private $uuidService;
 
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
 
     public function setUp(): void
@@ -155,6 +162,11 @@ class UserServiceTest extends KernelTestCase
 
         $user = $this->userRepository->findOneById($userId);
         $this->assertEquals(null, $user);
+    }
+
+    public function testGetEntityName()
+    {
+        $this->assertEquals(User::class, $this->userService->getEntityName());
     }
 
     protected function tearDown(): void
