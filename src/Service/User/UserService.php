@@ -7,8 +7,6 @@ use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Event\EventInterface;
-use App\Interfaces\Event\ViewEventInterface;
 use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
@@ -231,9 +229,11 @@ class UserService implements EntityServiceInterface
     }
 
     /**
-     * @return EventInterface
+     * @param string $eventName
+     *
+     * @return string
      */
-    public function getEvent(): EventInterface
+    public function getEvent(string $eventName): string
     {
         $events = $this->getEventService()->getEvents();
 
@@ -265,9 +265,11 @@ class UserService implements EntityServiceInterface
     }
 
     /**
-     * @return ViewEventInterface
+     * @param string $eventName
+     *
+     * @return string
      */
-    public function getViewEvent(): ViewEventInterface
+    public function getViewEvent(string $eventName): string
     {
         $viewEvents = $this->getEventService()->getViewEvents();
 

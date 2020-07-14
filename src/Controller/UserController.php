@@ -8,7 +8,9 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Service\FlashBagService;
 use App\Service\User\UserService;
+use App\Traits\ControllerTrait;
 use ReflectionException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,19 +18,22 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class UserController.
  */
-class UserController extends DefaultController
+class UserController extends AbstractController
 {
+    use ControllerTrait;
+
     /**
      * @Route("/users", name="users.list")
      *
      * @param UserRepository $userRepository
-     * @param UserService    $userService
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userList(UserRepository $userRepository, UserService $userService): Response
+    public function userList(UserRepository $userRepository): Response
     {
-        return $this->list($userRepository, $userService);
+        return $this->list($userRepository, User::class);
     }
 
     /**
@@ -38,18 +43,19 @@ class UserController extends DefaultController
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
      * )
      *
-     * @param UserService $userService
-     * @param User|null   $user
+     * @param User|null $user
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userDetail(UserService $userService, ?User $user = null): Response
+    public function userDetail(?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        return $this->detail($userService, $user);
+        return $this->detail($user);
     }
 
     /**
@@ -70,19 +76,16 @@ class UserController extends DefaultController
     /**
      * @Route("/users/create", name="users.create")
      *
-     * @param Request     $request
-     * @param UserDto     $userDto
-     * @param UserService $userService
+     * @param Request $request
+     * @param UserDto $userDto
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userCreate(Request $request, UserDto $userDto, UserService $userService): Response
+    public function userCreate(Request $request, UserDto $userDto): Response
     {
-        $userService
-            ->setFormType(UserType::class)
-            ->setDto($userDto);
-
-        return $this->create($request, $userService);
+        return $this->create($request, $userDto, User::class, UserType::class);
     }
 
     /**

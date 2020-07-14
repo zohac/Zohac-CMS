@@ -50,8 +50,8 @@ services:
         arguments:
             - !tagged_iterator app.view.event.interface
 
-    App\Service\EntityService:
-        arguments:
-            - !tagged_iterator app.entity.factory.interface
-            - '@doctrine.orm.default_entity_manager'
-            - '@App\Service\UuidService'
+#    App\Service\EntityService:
+#        arguments:
+#            - !tagged_iterator app.entity.factory.interface
+#            - '@doctrine.orm.default_entity_manager'
+#            - '@App\Service\UuidService'

@@ -4,8 +4,6 @@ namespace App\Interfaces\Service;
 
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Event\EventInterface;
-use App\Interfaces\Event\ViewEventInterface;
 use App\Service\EventService;
 
 interface EntityServiceInterface
@@ -51,14 +49,18 @@ interface EntityServiceInterface
     public function getEventService(): EventService;
 
     /**
-     * @return EventInterface
+     * @param string $eventName
+     *
+     * @return string
      */
-    public function getEvent(): EventInterface;
+    public function getEvent(string $eventName): string;
 
     /**
-     * @return ViewEventInterface
+     * @param string $eventName
+     *
+     * @return string
      */
-    public function getViewEvent(): ViewEventInterface;
+    public function getViewEvent(string $eventName): string;
 
     /**
      * @return string
