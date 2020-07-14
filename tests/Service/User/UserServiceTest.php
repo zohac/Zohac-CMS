@@ -4,15 +4,13 @@ namespace App\Tests\Service\User;
 
 use App\Dto\User\UserDto;
 use App\Entity\User;
-use App\Exception\UuidException;
 use App\Repository\UserRepository;
-use App\Service\EventService;
 use App\Service\User\UserService;
 use App\Service\UuidService;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserServiceTest extends KernelTestCase
 {
@@ -33,11 +31,23 @@ class UserServiceTest extends KernelTestCase
      */
     private $userRepository;
 
+    /**
+     * @var UuidService
+     */
+    private $uuidService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
     public function setUp(): void
     {
         self::bootKernel(['debug' => 0]);
         $this->userService = self::$container->get(UserService::class);
         $this->userRepository = self::$container->get(UserRepository::class);
+        $this->uuidService = self::$container->get(UuidService::class);
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $this->loadUsers();
     }
@@ -47,6 +57,13 @@ class UserServiceTest extends KernelTestCase
         $this->users = $this->loadFixtureFiles([
             __DIR__.'/../../DataFixtures/UserFixtures.yaml',
         ]);
+
+        foreach ($this->users as $user) {
+            $user->setUuid($this->uuidService->create());
+
+            $this->entityManager->persist($user);
+        }
+        $this->entityManager->flush();
     }
 
     public function testCreateUserDtoFromUser()
@@ -147,45 +164,9 @@ class UserServiceTest extends KernelTestCase
         $this->assertEquals(null, $user);
     }
 
-    public function testGetUuid()
+    public function testGetEntityName()
     {
-        $uuid = $this->userService->getUuid();
-
-        $this->assertRegExp(
-            '/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/',
-            $uuid
-        );
-    }
-
-    public function testExceptionWhenGetUuid()
-    {
-        $eventService = $this->getMockBuilder(EventService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $passwordEncoder = $this->getMockBuilder(UserPasswordEncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager = $this->getMockBuilder(EntityManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $uuidService = $this->getMockBuilder(UuidService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $userService = new UserService(
-            $eventService,
-            $passwordEncoder,
-            $entityManager,
-            $uuidService
-        );
-
-        $uuidService->expects($this->once())
-            ->method('create')
-            ->willReturn(false);
-
-        $this->expectException(UuidException::class);
-
-        $userService->getUuid();
+        $this->assertEquals(User::class, $this->userService->getEntityName());
     }
 
     protected function tearDown(): void

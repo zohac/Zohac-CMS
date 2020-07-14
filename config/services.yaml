@@ -35,9 +35,23 @@ services:
     _instanceof:
         App\Interfaces\Event\EventInterface:
             tags: ['app.event.interface']
+        App\Interfaces\Event\ViewEventInterface:
+            tags: ['app.view.event.interface']
+        App\Interfaces\Factory\EntityFactoryInterface:
+            tags: ['app.entity.factory.interface']
 
     App\Service\EventService:
         # inject all services tagged with app.event.interface as first argument
         arguments:
             - !tagged_iterator app.event.interface
             - '@event_dispatcher'
+
+    App\Service\ViewService:
+        arguments:
+            - !tagged_iterator app.view.event.interface
+
+    App\Service\EntityService:
+        arguments:
+            - !tagged_iterator app.entity.factory.interface
+            - '@doctrine.orm.default_entity_manager'
+            - '@App\Service\UuidService'

@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Event\User;
+namespace App\Event\Language;
 
-use App\Dto\User\UserDto;
-use App\Entity\User;
+use App\Dto\Language\LanguageDto;
+use App\Entity\Language;
 use App\Interfaces\Event\EventInterface;
 use App\Traits\Event\EventTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UserEvent extends Event implements EventInterface
+class LanguageEvent extends Event implements EventInterface
 {
     use EventTrait;
 
-    public const PRE_CREATE = 'user.pre.create';
-    public const CREATE = 'user.create';
-    public const POST_CREATE = 'user.post.create';
-    public const PRE_UPDATE = 'user.pre.update';
-    public const UPDATE = 'user.update';
-    public const POST_UPDATE = 'user.post.update';
-    public const PRE_DELETE = 'user.pre.delete';
-    public const DELETE = 'user.delete';
-    public const POST_DELETE = 'user.post.delete';
+    const ENTITY_NAME = Language::class;
 
-    const ENTITY_NAME = User::class;
+    public const PRE_CREATE = 'language.pre.create';
+    public const CREATE = 'language.create';
+    public const POST_CREATE = 'language.post.create';
+    public const PRE_UPDATE = 'language.pre.update';
+    public const UPDATE = 'language.update';
+    public const POST_UPDATE = 'language.post.update';
+    public const PRE_DELETE = 'language.pre.delete';
+    public const DELETE = 'language.delete';
+    public const POST_DELETE = 'language.post.delete';
 
     /**
-     * @var UserDto
+     * @var LanguageDto
      */
-    private $userDto;
+    private $languageDto;
 
     /**
      * @var FormInterface
@@ -36,9 +36,9 @@ class UserEvent extends Event implements EventInterface
     private $form;
 
     /**
-     * @var User
+     * @var Language
      */
-    private $user;
+    private $language;
 
     /**
      * @return array|string[]
@@ -59,21 +59,21 @@ class UserEvent extends Event implements EventInterface
     }
 
     /**
-     * @return UserDto
+     * @return LanguageDto
      */
-    public function getUserDto(): UserDto
+    public function getLanguageDto(): LanguageDto
     {
-        return $this->userDto;
+        return $this->languageDto;
     }
 
     /**
-     * @param UserDto $userDto
+     * @param LanguageDto $languageDto
      *
      * @return $this
      */
-    public function setUserDto(UserDto $userDto): self
+    public function setLanguageDto(LanguageDto $languageDto): self
     {
-        $this->userDto = $userDto;
+        $this->languageDto = $languageDto;
 
         return $this;
     }
@@ -99,28 +99,25 @@ class UserEvent extends Event implements EventInterface
     }
 
     /**
-     * @return User
+     * @return Language
      */
-    public function getUser(): User
+    public function getLanguage(): Language
     {
-        return $this->user;
+        return $this->language;
     }
 
     /**
-     * @param User $user
+     * @param Language $language
      *
      * @return $this
      */
-    public function setUser(User $user): self
+    public function setLanguage(Language $language): self
     {
-        $this->user = $user;
+        $this->language = $language;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRelatedEntity(): string
     {
         return self::ENTITY_NAME;

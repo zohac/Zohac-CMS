@@ -26,6 +26,16 @@ class LocaleSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @return array
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => [['onKernelRequest', 20]],
+        ];
+    }
+
+    /**
      * On kernel Request, we get the user Locale OR set the default Locale.
      *
      * @param RequestEvent $event
@@ -41,15 +51,5 @@ class LocaleSubscriber implements EventSubscriberInterface
             $this->translatorService->setLocale($locale);
             $request->setLocale($locale);
         }
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::REQUEST => [['onKernelRequest', 20]],
-        ];
     }
 }

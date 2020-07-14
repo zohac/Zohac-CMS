@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Event\User;
+namespace App\Event\Language;
 
-use App\Entity\User;
+use App\Entity\Language;
 use App\Interfaces\Event\EventInterface;
 use App\Interfaces\Event\ViewEventInterface;
 use App\Traits\Event\EventTrait;
 use App\Traits\Event\ViewEventTrait;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UserViewEvent extends Event implements EventInterface, ViewEventInterface
+class LanguageViewEvent extends Event implements EventInterface, ViewEventInterface
 {
     use EventTrait;
     use ViewEventTrait;
 
-    public const ENTITY_NAME = User::class;
+    public const ENTITY_NAME = Language::class;
 
-    public const CREATE = 'user.create.view';
-    public const UPDATE = 'user.update.view';
-    public const DELETE = 'user.delete.view';
-    public const LIST = 'user.list.view';
-    public const DETAIL = 'user.detail.view';
+    public const CREATE = 'language.create.view';
+    public const UPDATE = 'language.update.view';
+    public const DELETE = 'language.delete.view';
+    public const LIST = 'language.list.view';
+    public const DETAIL = 'language.detail.view';
 
     /**
      * @return array|string[]

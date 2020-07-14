@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\User;
+namespace App\Service\Language;
 
-use App\Dto\User\UserDto;
-use App\Entity\User;
-use App\Event\User\UserEvent;
+use App\Dto\Language\LanguageDto;
+use App\Entity\Language;
+use App\Event\Language\LanguageEvent;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\EventInterface;
@@ -15,36 +15,10 @@ use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserService implements EntityServiceInterface
+class LanguageService implements EntityServiceInterface
 {
-    const ENTITY_NAME = User::class;
-
-    /**
-     * @var User|null
-     */
-    private $user = null;
-
-    /**
-     * @var UserDto|null
-     */
-    private $dto = null;
-
-    /**
-     * @var string
-     */
-    private $formType;
-
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
-
-    /**
-     * @var EntityService
-     */
-    private $entityService;
+    const ENTITY_NAME = Language::class;
 
     /**
      * @var EventService
@@ -52,9 +26,14 @@ class UserService implements EntityServiceInterface
     private $eventService;
 
     /**
-     * @var ReflectionClass
+     * @var string
      */
-    private $reflectionClass;
+    private $formType;
+
+    /**
+     * @var DtoInterface
+     */
+    private $dto;
 
     /**
      * @var FlashBagService
@@ -62,116 +41,62 @@ class UserService implements EntityServiceInterface
     private $flashBagService;
 
     /**
-     * UserService constructor.
+     * @var Language
+     */
+    private $language;
+
+    /**
+     * @var EntityService
+     */
+    private $entityService;
+
+    /**
+     * @var ReflectionClass
+     */
+    private $reflectionClass;
+
+    /**
+     * LanguageService constructor.
      *
-     * @param EventService                 $eventService
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityService                $entityService
-     * @param FlashBagService              $flashBagService
+     * @param EventService    $eventService
+     * @param FlashBagService $flashBagService
+     * @param EntityService   $entityService
      *
      * @throws ReflectionException
      */
     public function __construct(
         EventService $eventService,
-        UserPasswordEncoderInterface $passwordEncoder,
-        EntityService $entityService,
-        FlashBagService $flashBagService
+        FlashBagService $flashBagService,
+        EntityService $entityService
     ) {
         $this->eventService = $eventService;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->entityService = $entityService;
         $this->flashBagService = $flashBagService;
+        $this->entityService = $entityService;
 
         $this->reflectionClass = $this->entityService->getNewReflectionClass(self::ENTITY_NAME);
     }
 
     /**
-     * @param UserDto $userDto
+     * @param LanguageDto $languageDto
      *
-     * @return User
+     * @return Language
      */
-    public function createUserFromDto(UserDto $userDto): User
+    public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
-        /** @var User $user */
-        $user = $this->entityService->populateEntityWithDto(new User(), $userDto);
+        /** @var Language $language */
+        $language = $this->entityService->populateEntityWithDto(new Language(), $languageDto);
 
-        $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
-        $user->setPassword($password);
-
-        $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
+        $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
+            $this->getEntityNameToLower() => $language,
+        ]);
 
         $this->flashBagService->addAndTransFlashMessage(
-            'User',
-            'User successfully created.',
-            'user'
-        );
-
-        return $user;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return UserDto
-     *
-     * @throws ReflectionException
-     */
-    public function createUserDtoFromUser(User $user): UserDto
-    {
-        $userDto = new UserDto();
-
-        /** @var UserDto $userDto */
-        $userDto = $this->entityService->populateDtoWithEntity($user, $userDto);
-
-        return $userDto;
-    }
-
-    /**
-     * @param UserDto $userDto
-     * @param User    $user
-     *
-     * @return User
-     */
-    public function updateUserFromDto(UserDto $userDto, User $user): User
-    {
-        if (null !== $userDto->password) {
-            $userDto->password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-        }
-
-        /** @var User $user */
-        $user = $this->entityService->populateEntityWithDto($user, $userDto);
-
-        $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
-
-        $this->flashBagService->addAndTransFlashMessage(
-            'User',
-            'User successfully updated.',
-            'user'
-        );
-
-        return $user;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return $this
-     */
-    public function deleteUser(User $user): self
-    {
-        $this->entityService
-            ->remove($user)
-            ->flush();
-
-        $this->flashBagService->addAndTransFlashMessage(
-            'User',
-            'User successfully deleted.',
+            'Language',
+            'Language successfully created.',
             $this->getEntityNameToLower()
         );
 
-        $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
-
-        return $this;
+        return $language;
     }
 
     /**
@@ -180,6 +105,69 @@ class UserService implements EntityServiceInterface
     public function getEntityNameToLower(): string
     {
         return strtolower($this->reflectionClass->getShortName());
+    }
+
+    /**
+     * @param Language $language
+     *
+     * @return LanguageDto
+     *
+     * @throws ReflectionException
+     */
+    public function createLanguageDtoFromLanguage(Language $language): LanguageDto
+    {
+        $languageDto = new LanguageDto();
+
+        /** @var LanguageDto $languageDto */
+        $languageDto = $this->entityService->populateDtoWithEntity($language, $languageDto);
+
+        return $languageDto;
+    }
+
+    /**
+     * @param LanguageDto $languageDto
+     * @param Language    $language
+     *
+     * @return Language
+     */
+    public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
+    {
+        /** @var Language $language */
+        $language = $this->entityService->populateEntityWithDto($language, $languageDto);
+
+        $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, [
+            $this->getEntityNameToLower() => $language,
+        ]);
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully updated.',
+            $this->getEntityNameToLower()
+        );
+
+        return $language;
+    }
+
+    /**
+     * @param Language $language
+     *
+     * @return $this
+     */
+    public function deleteLanguage(Language $language): self
+    {
+        $this->entityService
+            ->remove($language)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully deleted.',
+            $this->getEntityNameToLower()
+        );
+
+        $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
+
+        return $this;
     }
 
     /**
@@ -279,17 +267,17 @@ class UserService implements EntityServiceInterface
      */
     public function getEntity(): EntityInterface
     {
-        return $this->user;
+        return $this->language;
     }
 
     /**
-     * @param EntityInterface $user
+     * @param EntityInterface $language
      *
      * @return $this
      */
-    public function setEntity(EntityInterface $user): self
+    public function setEntity(EntityInterface $language): self
     {
-        $this->user = $user;
+        $this->language = $language;
 
         return $this;
     }
@@ -297,9 +285,9 @@ class UserService implements EntityServiceInterface
     public function getDeleteMessage(): string
     {
         return $this->flashBagService->trans(
-            'Are you sure you want to delete this user (%email%) ?',
-            'user',
-            ['email' => $this->user->getEmail()]
+            'Are you sure you want to delete this language (%language%) ?',
+            $this->getEntityNameToLower(),
+            [$this->getEntityNameToLower() => $this->language->getIso6391()]
         );
     }
 }

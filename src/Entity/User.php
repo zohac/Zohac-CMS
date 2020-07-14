@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Interfaces\EntityInterface;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
 use DateTimeInterface;
@@ -16,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity("uuid")
  */
-class User implements AdvancedUserInterface
+class User implements AdvancedUserInterface, EntityInterface
 {
     /**
      * The unique auto incremented primary key.
