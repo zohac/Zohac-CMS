@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Entity\User;
 use App\Form\DeleteType;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
@@ -17,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
+/**
+ * Trait ControllerTrait.
+ */
 trait ControllerTrait
 {
     /**
@@ -61,17 +63,18 @@ trait ControllerTrait
 
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entity
+     * @param string                           $entity     the class name (Entity::class)
+     * @param bool                             $soft
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function list(ServiceEntityRepositoryInterface $repository, string $entity): Response
+    public function index(ServiceEntityRepositoryInterface $repository, string $entity, bool $soft = false): Response
     {
-        $this->entityService->setEntity(User::class);
+        $this->entityService->setEntity($entity);
 
-        $entities = $repository->findAll();
+        $entities = $soft ? $repository->findAll(['archived' => false]) : $repository->findAll();
 
         $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/index.html.twig', [
             $this->entityService->getEntityNamePlural() => $entities,
@@ -89,7 +92,7 @@ trait ControllerTrait
      *
      * @throws ReflectionException
      */
-    public function detail(?EntityInterface $entity = null): Response
+    public function show(?EntityInterface $entity = null): Response
     {
         $this->entityService->setEntity($entity);
 
@@ -112,15 +115,12 @@ trait ControllerTrait
      *
      * @throws ReflectionException
      */
-    public function create(Request $request, DtoInterface $dto, string $entity, string $formType): Response
+    public function new(Request $request, DtoInterface $dto, string $entity, string $formType): Response
     {
-        $this->entityService
-            ->setDto($dto)
-            ->setEntity($entity)
-            ->setFormType($formType);
+        $this->entityService->setEntity($entity);
 
         $form = $this->createForm($formType, $dto, [
-            'action' => $this->generateUrl($this->entityService->getEntityNamePlural().'.create'),
+            'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.create'),
         ]);
 
         $this->dispatchEvent($this->entityService->getEvent('PRE_CREATE'), [
@@ -154,7 +154,7 @@ trait ControllerTrait
      *
      * @return Response
      */
-    public function update(Request $request, EntityServiceInterface $service): Response
+    public function edit(Request $request, EntityServiceInterface $service): Response
     {
         $form = $this->createForm($service->getFormType(), $service->getDto(), [
             'action' => $this->generateUrl($service->getEntityNamePlural().'.update', [
@@ -268,7 +268,7 @@ trait ControllerTrait
      */
     public function redirectToList(): Response
     {
-        return $this->redirectToRoute($this->entityService->getEntityNamePlural().'.list');
+        return $this->redirectToRoute(strtolower($this->entityService->getEntityShortName()).'.list');
     }
 
     /**

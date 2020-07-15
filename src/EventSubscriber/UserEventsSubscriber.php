@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Event\User\UserEvent;
+use App\Exception\HydratorException;
 use App\Exception\UuidException;
 use App\Service\User\UserService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -39,7 +40,7 @@ class UserEventsSubscriber implements EventSubscriberInterface
     /**
      * @param UserEvent $event
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function onUserCreate(UserEvent $event)
     {

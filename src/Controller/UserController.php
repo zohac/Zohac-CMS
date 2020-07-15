@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Interfaces\ControllerInterface;
 use App\Repository\UserRepository;
 use App\Service\FlashBagService;
 use App\Service\User\UserService;
@@ -17,13 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class UserController.
+ *
+ * @Route("/user")
  */
-class UserController extends AbstractController
+class UserController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
 
     /**
-     * @Route("/users", name="users.list")
+     * @Route("/", name="user.list", methods="GET")
      *
      * @param UserRepository $userRepository
      *
@@ -31,16 +34,17 @@ class UserController extends AbstractController
      *
      * @throws ReflectionException
      */
-    public function userList(UserRepository $userRepository): Response
+    public function userIndex(UserRepository $userRepository): Response
     {
-        return $this->list($userRepository, User::class);
+        return $this->index($userRepository, User::class);
     }
 
     /**
      * @Route(
-     *     "/users/{uuid}",
-     *     name="users.detail",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     *     "/{uuid}",
+     *     name="user.detail",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods="GET"
      * )
      *
      * @param User|null $user
@@ -49,13 +53,13 @@ class UserController extends AbstractController
      *
      * @throws ReflectionException
      */
-    public function userDetail(?User $user = null): Response
+    public function userShow(?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        return $this->detail($user);
+        return $this->show($user);
     }
 
     /**
@@ -70,11 +74,11 @@ class UserController extends AbstractController
             'user'
         );
 
-        return $this->redirectToRoute('users.list');
+        return $this->redirectToRoute('user.list');
     }
 
     /**
-     * @Route("/users/create", name="users.create")
+     * @Route("/create", name="user.create")
      *
      * @param Request $request
      * @param UserDto $userDto
@@ -83,16 +87,17 @@ class UserController extends AbstractController
      *
      * @throws ReflectionException
      */
-    public function userCreate(Request $request, UserDto $userDto): Response
+    public function userNew(Request $request, UserDto $userDto): Response
     {
-        return $this->create($request, $userDto, User::class, UserType::class);
+        return $this->new($request, $userDto, User::class, UserType::class);
     }
 
     /**
      * @Route(
-     *     "/users/{uuid}/update",
-     *     name="users.update",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     *     "/{uuid}/update",
+     *     name="user.update",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods="GET, POST"
      * )
      *
      * @param Request     $request
@@ -103,7 +108,7 @@ class UserController extends AbstractController
      *
      * @throws ReflectionException
      */
-    public function userUpdate(Request $request, UserService $userService, ?User $user = null): Response
+    public function userEdit(Request $request, UserService $userService, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
@@ -116,14 +121,15 @@ class UserController extends AbstractController
             ->setDto($userDto)
             ->setEntity($user);
 
-        return $this->update($request, $userService);
+        return $this->edit($request, $userService);
     }
 
     /**
      * @Route(
-     *     "/users/{uuid}/delete",
-     *     name="users.delete",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     *     "/{uuid}/delete",
+     *     name="user.delete",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods="GET, POST"
      * )
      *
      * @param Request     $request

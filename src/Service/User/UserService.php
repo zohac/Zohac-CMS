@@ -5,6 +5,7 @@ namespace App\Service\User;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
+use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityServiceInterface;
@@ -13,7 +14,6 @@ use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService implements EntityServiceInterface
 {
@@ -33,11 +33,6 @@ class UserService implements EntityServiceInterface
      * @var string
      */
     private $formType;
-
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
 
     /**
      * @var EntityService
@@ -62,21 +57,18 @@ class UserService implements EntityServiceInterface
     /**
      * UserService constructor.
      *
-     * @param EventService                 $eventService
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityService                $entityService
-     * @param FlashBagService              $flashBagService
+     * @param EventService    $eventService
+     * @param EntityService   $entityService
+     * @param FlashBagService $flashBagService
      *
      * @throws ReflectionException
      */
     public function __construct(
         EventService $eventService,
-        UserPasswordEncoderInterface $passwordEncoder,
         EntityService $entityService,
         FlashBagService $flashBagService
     ) {
         $this->eventService = $eventService;
-        $this->passwordEncoder = $passwordEncoder;
         $this->entityService = $entityService;
         $this->flashBagService = $flashBagService;
 
@@ -87,14 +79,13 @@ class UserService implements EntityServiceInterface
      * @param UserDto $userDto
      *
      * @return User
+     *
+     * @throws HydratorException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
         /** @var User $user */
-        $user = $this->entityService->populateEntityWithDto(new User(), $userDto);
-
-        $password = $this->passwordEncoder->encodePassword($user, $user->getPassword());
-        $user->setPassword($password);
+        $user = $this->entityService->createEntityWithDto(new User(), $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 

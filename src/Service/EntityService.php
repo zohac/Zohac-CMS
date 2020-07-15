@@ -2,10 +2,10 @@
 
 namespace App\Service;
 
+use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\ViewEventInterface;
-use App\Interfaces\Factory\EntityFactoryInterface;
 use App\Interfaces\Service\EntityServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -17,11 +17,6 @@ class EntityService implements EntityServiceInterface
      * @var EntityManagerInterface
      */
     private $entityManager;
-
-    /**
-     * @var EntityFactoryInterface[]
-     */
-    private $factories;
 
     /**
      * @var EntityInterface
@@ -47,17 +42,26 @@ class EntityService implements EntityServiceInterface
      * @var ReflectionClass
      */
     private $reflectionClass;
+    /**
+     * @var HydratorService
+     */
+    private $hydratorService;
 
     /**
      * EntityService constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param EventService           $eventService
+     * @param HydratorService        $hydratorService
      */
-    public function __construct(EntityManagerInterface $entityManager, EventService $eventService)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventService $eventService,
+        HydratorService $hydratorService
+    ) {
         $this->entityManager = $entityManager;
         $this->eventService = $eventService;
+        $this->hydratorService = $hydratorService;
     }
 
     /**
@@ -65,14 +69,12 @@ class EntityService implements EntityServiceInterface
      * @param DtoInterface    $dto
      *
      * @return EntityInterface
+     *
+     * @throws HydratorException
      */
-    public function populateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
+    public function createEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        foreach ($this->factories as $factory) {
-            if ($factory->canHandle($entity)) {
-                $entity = $factory->populateEntityWithDto($entity, $dto);
-            }
-        }
+        $entity = $this->hydratorService->hydrateEntityWithDto($entity, $dto);
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();

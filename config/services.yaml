@@ -23,6 +23,9 @@ services:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
+    App\Service\UuidService:
+        public: true
+
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
@@ -37,8 +40,8 @@ services:
             tags: ['app.event.interface']
         App\Interfaces\Event\ViewEventInterface:
             tags: ['app.view.event.interface']
-        App\Interfaces\Factory\EntityFactoryInterface:
-            tags: ['app.entity.factory.interface']
+        App\Interfaces\Service\EntityHydratorInterface:
+            tags: ['app.entity.hydrator.interface']
 
     App\Service\EventService:
         # inject all services tagged with app.event.interface as first argument
@@ -50,8 +53,6 @@ services:
         arguments:
             - !tagged_iterator app.view.event.interface
 
-#    App\Service\EntityService:
-#        arguments:
-#            - !tagged_iterator app.entity.factory.interface
-#            - '@doctrine.orm.default_entity_manager'
-#            - '@App\Service\UuidService'
+    App\Service\HydratorService:
+        arguments:
+            - !tagged_iterator app.entity.hydrator.interface
