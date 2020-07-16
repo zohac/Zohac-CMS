@@ -4,7 +4,6 @@ namespace App\Interfaces\Service;
 
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use ReflectionClass;
 
 interface EntityHydratorInterface
 {
@@ -12,13 +11,6 @@ interface EntityHydratorInterface
      * @return string
      */
     public function getUuid(): string;
-
-    /**
-     * @param object|string $object
-     *
-     * @return ReflectionClass
-     */
-    public function getNewReflectionClass($object): ReflectionClass;
 
     /**
      * @param EntityInterface $entity

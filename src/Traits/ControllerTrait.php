@@ -65,23 +65,53 @@ trait ControllerTrait
     /**
      * @param ServiceEntityRepositoryInterface $repository
      * @param string                           $entity     the class name (Entity::class)
-     * @param bool                             $soft
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function index(ServiceEntityRepositoryInterface $repository, string $entity, bool $soft = false): Response
+    public function index(ServiceEntityRepositoryInterface $repository, string $entity): Response
     {
         $this->entityService->setEntity($entity);
 
-        $entities = $soft ? $repository->findAll(['archived' => false]) : $repository->findAll();
+        $entities = $repository->findAll();
 
+        return $this->viewIndex($entities);
+    }
+
+    /**
+     * @param ServiceEntityRepositoryInterface $repository
+     * @param string                           $entity     the class name (Entity::class)
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
+    public function softIndex(ServiceEntityRepositoryInterface $repository, string $entity): Response
+    {
+        $this->entityService->setEntity($entity);
+
+        $entities = $repository->findAll(['archived' => false]);
+
+        return $this->viewIndex($entities);
+    }
+
+    /**
+     * @param EntityInterface[] $entities
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
+    public function viewIndex(array $entities): Response
+    {
         $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/index.html.twig', [
             $this->entityService->getEntityNamePlural() => $entities,
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('LIST'), [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('LIST'), [
+            ViewService::NAME => $this->getViewService(),
+        ]);
 
         return $this->getResponse();
     }
@@ -101,7 +131,9 @@ trait ControllerTrait
             $this->entityService->getEntityNameToLower() => $entity,
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('DETAIL'), [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('DETAIL'), [
+            ViewService::NAME => $this->getViewService(),
+        ]);
 
         return $this->getResponse();
     }
@@ -162,9 +194,7 @@ trait ControllerTrait
      */
     public function edit(Request $request, EntityInterface $entity, string $formType): Response
     {
-        $this->entityService
-            ->setEntity($entity)
-            ->getAndHydrateDto();
+        $this->entityService->setEntity($entity)->getAndHydrateDto();
 
         $form = $this->createForm($formType, $this->entityService->getDto(), [
             'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.update', [
@@ -192,7 +222,9 @@ trait ControllerTrait
             'form' => $form->createView(),
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('UPDATE'), [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('UPDATE'), [
+            ViewService::NAME => $this->getViewService(),
+        ]);
 
         return $this->getResponse();
     }
@@ -234,7 +266,58 @@ trait ControllerTrait
             'message' => $this->entityService->getDeleteMessage(),
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [
+            ViewService::NAME => $this->getViewService(),
+        ]);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param Request         $request
+     * @param EntityInterface $entity
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
+    public function softDelete(Request $request, EntityInterface $entity): Response
+    {
+        $this->entityService->setEntity($entity);
+
+        $form = $this->createForm(DeleteType::class, null, [
+            'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.delete', [
+                'uuid' => $this->entityService->getEntity()->getUuid(),
+            ]),
+        ]);
+
+        $this->dispatchEvent($this->entityService->getEvent('PRE_DELETE'), [
+            'form' => $form,
+            $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->dispatchEvent($this->entityService->getEvent('DELETE'), [
+                $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
+            ]);
+
+            $entity->setArchived(true);
+            $this->entityService
+                ->persist($entity)
+                ->flush();
+
+            return $this->redirectToList();
+        }
+
+        $this->getViewService()->setData('delete.html.twig', [
+            'form' => $form->createView(),
+            'message' => $this->entityService->getDeleteMessage(),
+        ]);
+
+        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [
+            ViewService::NAME => $this->getViewService(),
+        ]);
 
         return $this->getResponse();
     }

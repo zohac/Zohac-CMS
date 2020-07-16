@@ -11,11 +11,6 @@ interface EntityServiceInterface
     /**
      * @return string
      */
-    public function getFormType(): string;
-
-    /**
-     * @return string
-     */
     public function getEntityName(): string;
 
     /**

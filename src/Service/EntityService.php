@@ -218,26 +218,6 @@ class EntityService implements EntityServiceInterface
     /**
      * @return string
      */
-    public function getFormType(): string
-    {
-        return $this->formType;
-    }
-
-    /**
-     * @param string $formType
-     *
-     * @return $this
-     */
-    public function setFormType(string $formType): self
-    {
-        $this->formType = $formType;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getEntityName(): string
     {
         return $this->reflectionClass->getName();
