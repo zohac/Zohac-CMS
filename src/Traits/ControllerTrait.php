@@ -2,10 +2,11 @@
 
 namespace App\Traits;
 
+use App\Exception\DtoHandlerException;
+use App\Exception\HydratorException;
 use App\Form\DeleteType;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Service\EntityServiceInterface;
 use App\Service\EntityService;
 use App\Service\FlashBagService;
 use App\Service\TranslatorService;
@@ -149,67 +150,80 @@ trait ControllerTrait
     }
 
     /**
-     * @param Request                $request
-     * @param EntityServiceInterface $service
+     * @param Request         $request
+     * @param EntityInterface $entity
+     * @param string          $formType
      *
      * @return Response
+     *
+     * @throws HydratorException
+     * @throws ReflectionException
+     * @throws DtoHandlerException
      */
-    public function edit(Request $request, EntityServiceInterface $service): Response
+    public function edit(Request $request, EntityInterface $entity, string $formType): Response
     {
-        $form = $this->createForm($service->getFormType(), $service->getDto(), [
-            'action' => $this->generateUrl($service->getEntityNamePlural().'.update', [
-                'uuid' => $service->getEntity()->getUuid(),
+        $this->entityService
+            ->setEntity($entity)
+            ->getAndHydrateDto();
+
+        $form = $this->createForm($formType, $this->entityService->getDto(), [
+            'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.update', [
+                'uuid' => $this->entityService->getEntity()->getUuid(),
             ]),
         ]);
 
-        $this->dispatchEvent($service->getEvent()::PRE_UPDATE, [
+        $this->dispatchEvent($this->entityService->getEvent('PRE_UPDATE'), [
             'form' => $form,
-            $service->getEntityShortName().'Dto' => $service->getDto(),
-            $service->getEntityShortName() => $service->getEntity(),
+            $this->entityService->getEntityShortName().'Dto' => $this->entityService->getDto(),
+            $this->entityService->getEntityShortName() => $this->entityService->getEntity(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($service->getEvent()::UPDATE, [
-                $service->getEntityShortName().'Dto' => $service->getDto(),
-                $service->getEntityShortName() => $service->getEntity(),
+            $this->dispatchEvent($this->entityService->getEvent('UPDATE'), [
+                $this->entityService->getEntityShortName().'Dto' => $this->entityService->getDto(),
+                $this->entityService->getEntityShortName() => $this->entityService->getEntity(),
             ]);
 
             return $this->redirectToList();
         }
 
-        $this->getViewService()->setData($service->getEntityNameToLower().'/type.html.twig', [
+        $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/type.html.twig', [
             'form' => $form->createView(),
         ]);
 
-        $this->dispatchEvent($service->getViewEvent()::UPDATE, [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('UPDATE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
 
     /**
-     * @param Request                $request
-     * @param EntityServiceInterface $service
+     * @param Request         $request
+     * @param EntityInterface $entity
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function delete(Request $request, EntityServiceInterface $service): Response
+    public function delete(Request $request, EntityInterface $entity): Response
     {
+        $this->entityService->setEntity($entity);
+
         $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl($service->getEntityNamePlural().'.delete', [
-                'uuid' => $service->getEntity()->getUuid(),
+            'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.delete', [
+                'uuid' => $this->entityService->getEntity()->getUuid(),
             ]),
         ]);
 
-        $this->dispatchEvent($service->getEvent()::PRE_DELETE, [
+        $this->dispatchEvent($this->entityService->getEvent('PRE_DELETE'), [
             'form' => $form,
-            $service->getEntityNameToLower() => $service->getEntity(),
+            $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($service->getEvent()::DELETE, [
-                $service->getEntityNameToLower() => $service->getEntity(),
+            $this->dispatchEvent($this->entityService->getEvent('DELETE'), [
+                $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
             ]);
 
             return $this->redirectToList();
@@ -217,10 +231,10 @@ trait ControllerTrait
 
         $this->getViewService()->setData('delete.html.twig', [
             'form' => $form->createView(),
-            'message' => $service->getDeleteMessage(),
+            'message' => $this->entityService->getDeleteMessage(),
         ]);
 
-        $this->dispatchEvent($service->getViewEvent()::DELETE, [ViewService::NAME => $this->getViewService()]);
+        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }

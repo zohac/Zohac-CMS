@@ -5,6 +5,7 @@ namespace App\Service\User;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
+use App\Exception\DtoHandlerException;
 use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
@@ -85,7 +86,7 @@ class UserService implements EntityServiceInterface
     public function createUserFromDto(UserDto $userDto): User
     {
         /** @var User $user */
-        $user = $this->entityService->createEntityWithDto(new User(), $userDto);
+        $user = $this->entityService->hydrateEntityWithDto(new User(), $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
@@ -103,16 +104,12 @@ class UserService implements EntityServiceInterface
      *
      * @return UserDto
      *
-     * @throws ReflectionException
+     * @throws HydratorException
+     * @throws DtoHandlerException
      */
     public function createUserDtoFromUser(User $user): UserDto
     {
-        $userDto = new UserDto();
-
-        /** @var UserDto $userDto */
-        $userDto = $this->entityService->populateDtoWithEntity($user, $userDto);
-
-        return $userDto;
+        return $this->entityService->getAndHydrateDto($user);
     }
 
     /**
@@ -120,15 +117,13 @@ class UserService implements EntityServiceInterface
      * @param User    $user
      *
      * @return User
+     *
+     * @throws HydratorException
      */
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
-        if (null !== $userDto->password) {
-            $userDto->password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-        }
-
         /** @var User $user */
-        $user = $this->entityService->populateEntityWithDto($user, $userDto);
+        $user = $this->entityService->hydrateEntityWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
 

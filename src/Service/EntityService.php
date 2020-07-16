@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exception\DtoHandlerException;
 use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
@@ -48,20 +49,28 @@ class EntityService implements EntityServiceInterface
     private $hydratorService;
 
     /**
+     * @var DtoHandler
+     */
+    private $dtoHandler;
+
+    /**
      * EntityService constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param EventService           $eventService
      * @param HydratorService        $hydratorService
+     * @param DtoHandler             $dtoHandler
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         EventService $eventService,
-        HydratorService $hydratorService
+        HydratorService $hydratorService,
+        DtoHandler $dtoHandler
     ) {
         $this->entityManager = $entityManager;
         $this->eventService = $eventService;
         $this->hydratorService = $hydratorService;
+        $this->dtoHandler = $dtoHandler;
     }
 
     /**
@@ -72,7 +81,7 @@ class EntityService implements EntityServiceInterface
      *
      * @throws HydratorException
      */
-    public function createEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
+    public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
         $entity = $this->hydratorService->hydrateEntityWithDto($entity, $dto);
 
@@ -80,6 +89,19 @@ class EntityService implements EntityServiceInterface
         $this->entityManager->flush();
 
         return $entity;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
+     *
+     * @return DtoInterface
+     *
+     * @throws HydratorException
+     */
+    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
+    {
+        return $this->hydratorService->hydrateDtoWithEntity($entity, $dto);
     }
 
     /**
@@ -95,28 +117,32 @@ class EntityService implements EntityServiceInterface
     }
 
     /**
-     * @param EntityInterface $entity
-     * @param DtoInterface    $dto
-     *
      * @return DtoInterface
      *
-     * @throws ReflectionException
+     * @throws DtoHandlerException
      */
-    public function populateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
+    public function getDto(): DtoInterface
     {
-        $reflectionDto = $this->getNewReflectionClass($dto);
-        $reflectionEntity = $this->getNewReflectionClass($entity);
-
-        foreach ($reflectionDto->getProperties() as $property) {
-            $propertyName = $property->getName();
-            $getMethod = 'get'.ucfirst($propertyName);
-
-            if ($reflectionEntity->hasMethod($getMethod)) {
-                $dto->$propertyName = $entity->$getMethod();
-            }
+        if (null === $this->dto || !$this->dto instanceof DtoInterface) {
+            $this->dto = $this->dtoHandler->getDtoInterface($this->entity);
         }
 
-        return $dto;
+        return $this->dto;
+    }
+
+    /**
+     * @return DtoInterface
+     *
+     * @throws DtoHandlerException
+     * @throws HydratorException
+     */
+    public function getAndHydrateDto(): DtoInterface
+    {
+        $this->getDto();
+
+        $this->hydrateDtoWithEntity($this->entity, $this->dto);
+
+        return $this->dto;
     }
 
     /**
@@ -175,14 +201,6 @@ class EntityService implements EntityServiceInterface
         $this->reflectionClass = $this->getNewReflectionClass($entity);
 
         return $this;
-    }
-
-    /**
-     * @return DtoInterface
-     */
-    public function getDto(): DtoInterface
-    {
-        return $this->dto;
     }
 
     /**

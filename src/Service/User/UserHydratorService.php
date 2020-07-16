@@ -9,8 +9,6 @@ use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
 use App\Service\UuidService;
-use ReflectionClass;
-use ReflectionException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserHydratorService implements EntityHydratorInterface
@@ -19,6 +17,7 @@ class UserHydratorService implements EntityHydratorInterface
      * @var UuidService
      */
     private $uuidService;
+
     /**
      * @var UserPasswordEncoderInterface
      */
@@ -49,11 +48,33 @@ class UserHydratorService implements EntityHydratorInterface
     /**
      * {@inheritdoc}
      *
-     * @throws ReflectionException
+     * @var User
+     * @var UserDto $dto
+     *
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
+     *
+     * @return EntityInterface
+     *
+     * @throws UuidException
      */
-    public function getNewReflectionClass($object): ReflectionClass
+    public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        return new ReflectionClass($object);
+        $uuid = null !== $dto->uuid ? $dto->uuid : $this->getUuid();
+
+        $entity->setUuid($uuid);
+        $entity->setEmail($dto->email);
+        $entity->setRoles($dto->roles);
+        $entity->setLocale($dto->locale);
+        $entity->setToken($dto->tokenValidity);
+        $entity->setTokenValidity($dto->tokenValidity);
+
+        if (null !== $dto->password) {
+            $password = $this->passwordEncoder->encodePassword($entity, $dto->password);
+            $entity->setPassword($password);
+        }
+
+        return $entity;
     }
 
     /**
@@ -61,78 +82,17 @@ class UserHydratorService implements EntityHydratorInterface
      *
      * @var User
      * @var UserDto $dto
-     *
-     * @throws ReflectionException
-     * @throws UuidException
-     */
-    public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
-    {
-        $reflectionDto = $this->getNewReflectionClass($dto);
-        $reflectionEntity = $this->getNewReflectionClass($entity);
-
-        foreach ($reflectionDto->getProperties() as $property) {
-            $propertyName = $property->getName();
-            $setMethod = 'set'.ucfirst($propertyName);
-
-            if ($reflectionEntity->hasMethod($setMethod)) {
-                $this
-                    ->uuidProperty($propertyName, $dto)
-                    ->notNullProperty($propertyName, $dto, $setMethod, $entity);
-            }
-        }
-
-        $password = $this->passwordEncoder->encodePassword($entity, $entity->getPassword());
-        $entity->setPassword($password);
-
-        return $entity;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-        // TODO: Implement hydrateDtoWithEntity() method.
+        $dto->uuid = $entity->getUuid();
+        $dto->email = $entity->getEmail();
+        $dto->roles = $entity->getRoles();
+        $dto->locale = $entity->getLocale();
+        $dto->token = $entity->getToken();
+        $dto->tokenValidity = $entity->getTokenValidity();
 
         return $dto;
-    }
-
-    /**
-     * @param string       $propertyName
-     * @param DtoInterface $dto
-     *
-     * @return $this
-     *
-     * @throws UuidException
-     */
-    private function uuidProperty(string $propertyName, DtoInterface $dto): self
-    {
-        if ('uuid' === $propertyName && null === $dto->$propertyName) {
-            $dto->$propertyName = $this->getUuid();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string          $propertyName
-     * @param DtoInterface    $dto
-     * @param string          $setMethod
-     * @param EntityInterface $entity
-     *
-     * @return $this
-     */
-    private function notNullProperty(
-        string $propertyName,
-        DtoInterface $dto,
-        string $setMethod,
-        EntityInterface $entity
-    ): self {
-        if (null !== $dto->$propertyName) {
-            $entity->$setMethod($dto->$propertyName);
-        }
-
-        return $this;
     }
 
     /**

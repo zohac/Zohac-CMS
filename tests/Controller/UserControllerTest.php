@@ -81,7 +81,7 @@ class UserControllerTest extends WebTestCase
      */
     public function testCreateUserWithBadCredential($badCredential)
     {
-        $crawler = $this->client->request('POST', '/user/create');
+        $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form($badCredential);
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -90,7 +90,7 @@ class UserControllerTest extends WebTestCase
 
     public function testCreateUser()
     {
-        $crawler = $this->client->request('POST', '/user/create');
+        $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
@@ -98,72 +98,71 @@ class UserControllerTest extends WebTestCase
             'user[locale]' => 'en',
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/user');
+        $this->assertResponseRedirects('/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
     }
 
-//
-//    /**
-//     * @dataProvider provideBadUserCredentials
-//     *
-//     * @param $badCredential array
-//     */
-//    public function testUpdateUserWithBadCredentials($badCredential)
-//    {
-//        $uri = sprintf('/users/%s/update', $this->users['user1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('user[save]')->form($badCredential);
-//        $this->client->submit($form);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-//        $this->assertSelectorExists('.form-error-wrapper');
-//    }
-//
-//    public function testUpdateUser()
-//    {
-//        $uri = sprintf('/users/%s/update', $this->users['user1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('user[save]')->form([
-//            'user[email]' => uniqid().'@test.com',
-//            'user[password][first]' => '123456',
-//            'user[password][second]' => '123456',
-//            'user[locale]' => 'en',
-//        ]);
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/users');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
-//    }
-//
-//    public function testDeleteUser()
-//    {
-//        $uri = sprintf('/users/%s/delete', $this->users['user1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('delete[delete]')->form();
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/users');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
-//    }
+    /**
+     * @dataProvider provideBadUserCredentials
+     *
+     * @param $badCredential array
+     */
+    public function testUpdateUserWithBadCredentials($badCredential)
+    {
+        $uri = sprintf('/user/%s/update/', $this->users['user1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('user[save]')->form($badCredential);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorExists('.form-error-wrapper');
+    }
+
+    public function testUpdateUser()
+    {
+        $uri = sprintf('/user/%s/update/', $this->users['user1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('user[save]')->form([
+            'user[email]' => uniqid().'@test.com',
+            'user[password][first]' => '123456',
+            'user[password][second]' => '123456',
+            'user[locale]' => 'en',
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/user/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
+    }
+
+    public function testDeleteUser()
+    {
+        $uri = sprintf('/user/%s/delete/', $this->users['user1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('delete[delete]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/user/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
+    }
 
     public function provideUrls()
     {
         yield ['/'];
-        yield ['/user'];
-        yield ['/user/%s'];
-        yield ['/user/create'];
-//        yield ['/users/%s/update'];
-//        yield ['/users/%s/delete'];
+        yield ['/user/'];
+        yield ['/user/%s/'];
+        yield ['/user/create/'];
+        yield ['/user/%s/update/'];
+        yield ['/user/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/user/%s'];
-//        yield ['/user/%s/update'];
-//        yield ['/user/%s/delete'];
+        yield ['/user/%s/'];
+        yield ['/user/%s/update/'];
+        yield ['/user/%s/delete/'];
     }
 
     public function provideBadUserCredentials()

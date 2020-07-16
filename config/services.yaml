@@ -42,6 +42,8 @@ services:
             tags: ['app.view.event.interface']
         App\Interfaces\Service\EntityHydratorInterface:
             tags: ['app.entity.hydrator.interface']
+        App\Interfaces\Dto\DtoInterface:
+            tags: ['app.dto.interface']
 
     App\Service\EventService:
         # inject all services tagged with app.event.interface as first argument
@@ -56,3 +58,7 @@ services:
     App\Service\HydratorService:
         arguments:
             - !tagged_iterator app.entity.hydrator.interface
+
+    App\Service\DtoHandler:
+        arguments:
+            - !tagged_iterator app.dto.interface

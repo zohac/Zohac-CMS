@@ -2,7 +2,9 @@
 
 namespace App\Dto\Language;
 
+use App\Entity\Language;
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class LanguageDto implements DtoInterface
@@ -73,4 +75,14 @@ class LanguageDto implements DtoInterface
     public $iso6392B;
 
     public $iso6393 = [];
+
+    /**
+     * @param EntityInterface $entity
+     *
+     * @return bool
+     */
+    public function canHandle(EntityInterface $entity): bool
+    {
+        return $entity instanceof Language;
+    }
 }
