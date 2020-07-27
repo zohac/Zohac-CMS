@@ -19,5 +19,5 @@ interface EntityInterface
      *
      * @return EntityInterface
      */
-    public function setArchived(bool $archived): EntityInterface;
+    public function setArchived(bool $archived);
 }

@@ -64,34 +64,21 @@ trait ControllerTrait
 
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entity     the class name (Entity::class)
+     * @param string                           $entity            the class name (Entity::class)
+     * @param array|null                       $repositoryOptions
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function index(ServiceEntityRepositoryInterface $repository, string $entity): Response
-    {
+    public function index(
+        ServiceEntityRepositoryInterface $repository,
+        string $entity,
+        ?array $repositoryOptions = []
+    ): Response {
         $this->entityService->setEntity($entity);
 
-        $entities = $repository->findAll();
-
-        return $this->viewIndex($entities);
-    }
-
-    /**
-     * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entity     the class name (Entity::class)
-     *
-     * @return Response
-     *
-     * @throws ReflectionException
-     */
-    public function softIndex(ServiceEntityRepositoryInterface $repository, string $entity): Response
-    {
-        $this->entityService->setEntity($entity);
-
-        $entities = $repository->findAll(['archived' => false]);
+        $entities = $repository->findAll($repositoryOptions);
 
         return $this->viewIndex($entities);
     }

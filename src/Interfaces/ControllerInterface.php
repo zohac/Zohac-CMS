@@ -11,19 +11,16 @@ interface ControllerInterface
 {
     /**
      * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entity     the class name (Entity::class)
+     * @param string                           $entity            the class name (Entity::class)
+     * @param array|null                       $repositoryOptions
      *
      * @return Response
      */
-    public function index(ServiceEntityRepositoryInterface $repository, string $entity): Response;
-
-    /**
-     * @param ServiceEntityRepositoryInterface $repository
-     * @param string                           $entity     the class name (Entity::class)
-     *
-     * @return Response
-     */
-    public function softIndex(ServiceEntityRepositoryInterface $repository, string $entity): Response;
+    public function index(
+        ServiceEntityRepositoryInterface $repository,
+        string $entity,
+        ?array $repositoryOptions = []
+    ): Response;
 
     /**
      * @param EntityInterface|null $entity

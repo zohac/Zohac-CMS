@@ -19,10 +19,10 @@
                         <li>{{ iso6393 }}</li>
                     {% endfor %}
                 </ul>
-                <a href="{{ path('languages.detail', {'id': language.id}) }}">{% trans from 'global' %}Detail{% endtrans %}</a>
+                <a href="{{ path('language.detail', {'uuid': language.uuid}) }}">{% trans from 'global' %}Detail{% endtrans %}</a>
             </div>
         {% endfor %}
 
     </div>
-    <a href="{{ path('languages.create') }}">{% trans from 'global' %}Create{% endtrans %}</a>
+    <a href="{{ path('language.create') }}">{% trans from 'global' %}Create{% endtrans %}</a>
 {% endblock %}

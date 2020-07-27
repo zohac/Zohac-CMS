@@ -199,7 +199,7 @@ class User implements AdvancedUserInterface, EntityInterface
         return $this;
     }
 
-    public function isArchived(): ?bool
+    public function isArchived(): bool
     {
         return $this->archived;
     }
