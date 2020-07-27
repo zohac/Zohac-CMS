@@ -150,7 +150,6 @@ class LanguageControllerTest extends WebTestCase
 
     public function provideUrls()
     {
-        yield ['/'];
         yield ['/language/'];
 //        yield ['/language/%s/'];
 //        yield ['/language/create/'];
