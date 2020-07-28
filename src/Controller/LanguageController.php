@@ -39,9 +39,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
     {
         $repositoryOptions = [];
 
-//        if ($soft) {
-//            $repositoryOptions = ['archived' => false];
-//        }
+        // TODO: if $soft, $repositoryOptions = ['archived' => false];
 
         return $this->index($languageRepository, Language::class, $repositoryOptions);
     }

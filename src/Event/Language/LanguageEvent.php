@@ -23,6 +23,7 @@ class LanguageEvent extends Event implements EventInterface
     public const POST_UPDATE = 'language.post.update';
     public const PRE_DELETE = 'language.pre.delete';
     public const DELETE = 'language.delete';
+    public const SOFT_DELETE = 'language.soft.delete';
     public const POST_DELETE = 'language.post.delete';
 
     /**

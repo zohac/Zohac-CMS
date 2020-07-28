@@ -7,6 +7,7 @@ use App\Exception\HydratorException;
 use App\Form\DeleteType;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
+use App\Interfaces\Event\ViewEventInterface;
 use App\Service\EntityService;
 use App\Service\FlashBagService;
 use App\Service\TranslatorService;
@@ -63,6 +64,30 @@ trait ControllerTrait
     }
 
     /**
+     * @param string $eventName
+     *
+     * @return ViewEventInterface
+     *
+     * @throws ReflectionException
+     */
+    public function getViewEvent(string $eventName): string
+    {
+        return $this->entityService->getViewEvent($eventName);
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return string
+     *
+     * @throws ReflectionException
+     */
+    public function getEvent(string $eventName): string
+    {
+        return $this->entityService->getEvent($eventName);
+    }
+
+    /**
      * @param ServiceEntityRepositoryInterface $repository
      * @param string                           $entity            the class name (Entity::class)
      * @param array|null                       $repositoryOptions
@@ -96,9 +121,7 @@ trait ControllerTrait
             $this->entityService->getEntityNamePlural() => $entities,
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('LIST'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
+        $this->dispatchEvent($this->getViewEvent('LIST'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -156,9 +179,7 @@ trait ControllerTrait
             $this->entityService->getEntityNameToLower() => $entity,
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('DETAIL'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
+        $this->dispatchEvent($this->getViewEvent('DETAIL'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -181,14 +202,14 @@ trait ControllerTrait
             'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.create'),
         ]);
 
-        $this->dispatchEvent($this->entityService->getEvent('PRE_CREATE'), [
+        $this->dispatchEvent($this->getEvent('PRE_CREATE'), [
             'form' => $form,
             $this->entityService->getEntityShortName().'Dto' => $dto,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($this->entityService->getEvent('CREATE'), [
+            $this->dispatchEvent($this->getEvent('CREATE'), [
                 $this->entityService->getEntityShortName().'Dto' => $dto,
             ]);
 
@@ -199,9 +220,7 @@ trait ControllerTrait
             'form' => $form->createView(),
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('CREATE'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
+        $this->dispatchEvent($this->getViewEvent('CREATE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -235,7 +254,7 @@ trait ControllerTrait
             ]),
         ]);
 
-        $this->dispatchEvent($this->entityService->getEvent('PRE_UPDATE'), [
+        $this->dispatchEvent($this->getEvent('PRE_UPDATE'), [
             'form' => $form,
             $this->entityService->getEntityShortName().'Dto' => $this->entityService->getDto(),
             $this->entityService->getEntityShortName() => $this->entityService->getEntity(),
@@ -243,7 +262,7 @@ trait ControllerTrait
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($this->entityService->getEvent('UPDATE'), [
+            $this->dispatchEvent($this->getEvent('UPDATE'), [
                 $this->entityService->getEntityShortName().'Dto' => $this->entityService->getDto(),
                 $this->entityService->getEntityShortName() => $this->entityService->getEntity(),
             ]);
@@ -255,9 +274,7 @@ trait ControllerTrait
             'form' => $form->createView(),
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('UPDATE'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
+        $this->dispatchEvent($this->getViewEvent('UPDATE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }
@@ -265,12 +282,13 @@ trait ControllerTrait
     /**
      * @param Request         $request
      * @param EntityInterface $entity
+     * @param string          $option
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function delete(Request $request, EntityInterface $entity): Response
+    public function delete(Request $request, EntityInterface $entity, ?string $option = null): Response
     {
         $this->entityService->setEntity($entity);
 
@@ -280,14 +298,16 @@ trait ControllerTrait
             ]),
         ]);
 
-        $this->dispatchEvent($this->entityService->getEvent('PRE_DELETE'), [
+        $this->dispatchEvent($this->getEvent('PRE_DELETE'), [
             'form' => $form,
             $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($this->entityService->getEvent('DELETE'), [
+            $eventName = ('soft' === $option) ? 'SOFT_DELETE' : 'DELETE';
+
+            $this->dispatchEvent($this->getEvent($eventName), [
                 $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
             ]);
 
@@ -299,58 +319,7 @@ trait ControllerTrait
             'message' => $this->entityService->getDeleteMessage(),
         ]);
 
-        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
-
-        return $this->getResponse();
-    }
-
-    /**
-     * @param Request         $request
-     * @param EntityInterface $entity
-     *
-     * @return Response
-     *
-     * @throws ReflectionException
-     */
-    public function softDelete(Request $request, EntityInterface $entity): Response
-    {
-        $this->entityService->setEntity($entity);
-
-        $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl(strtolower($this->entityService->getEntityShortName()).'.delete', [
-                'uuid' => $this->entityService->getEntity()->getUuid(),
-            ]),
-        ]);
-
-        $this->dispatchEvent($this->entityService->getEvent('PRE_DELETE'), [
-            'form' => $form,
-            $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatchEvent($this->entityService->getEvent('DELETE'), [
-                $this->entityService->getEntityNameToLower() => $this->entityService->getEntity(),
-            ]);
-
-            $entity->setArchived(true);
-            $this->entityService
-                ->persist($entity)
-                ->flush();
-
-            return $this->redirectToList();
-        }
-
-        $this->getViewService()->setData('delete.html.twig', [
-            'form' => $form->createView(),
-            'message' => $this->entityService->getDeleteMessage(),
-        ]);
-
-        $this->dispatchEvent($this->entityService->getViewEvent('DELETE'), [
-            ViewService::NAME => $this->getViewService(),
-        ]);
+        $this->dispatchEvent($this->getViewEvent('DELETE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
     }

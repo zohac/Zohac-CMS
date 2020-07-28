@@ -39,9 +39,7 @@ class UserController extends AbstractController implements ControllerInterface
     {
         $repositoryOptions = [];
 
-//        if ($soft) {
-//            $repositoryOptions = ['archived' => false];
-//        }
+        // TODO: if $soft, $repositoryOptions = ['archived' => false];
 
         return $this->index($userRepository, User::class, $repositoryOptions);
     }

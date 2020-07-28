@@ -121,6 +121,33 @@ class LanguageService
         return $this;
     }
 
+    /**
+     * @param Language $language
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
+    public function deleteSoftLanguage(Language $language)
+    {
+        $language->setArchived(true);
+
+        $this->entityService
+            ->setEntity($language)
+            ->persist($language)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
+
+        $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
+
+        return $this;
+    }
+
     public function getDeleteMessage(Language $language): string
     {
         return $this->flashBagService->trans(

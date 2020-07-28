@@ -117,6 +117,33 @@ class UserService
         return $this;
     }
 
+    /**
+     * @param User $user
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
+    public function deleteSoftUser(User $user): self
+    {
+        $user->setArchived(true);
+
+        $this->entityService
+            ->setEntity($user)
+            ->persist($user)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
+
+        $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
+
+        return $this;
+    }
+
     public function getDeleteMessage(User $user): string
     {
         return $this->flashBagService->trans(

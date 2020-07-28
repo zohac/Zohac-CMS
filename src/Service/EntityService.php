@@ -6,7 +6,6 @@ use App\Exception\DtoHandlerException;
 use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Event\ViewEventInterface;
 use App\Interfaces\Service\EntityServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
@@ -28,11 +27,6 @@ class EntityService implements EntityServiceInterface
      * @var DtoInterface
      */
     private $dto;
-
-    /**
-     * @var string
-     */
-    private $formType;
 
     /**
      * @var EventService
@@ -274,7 +268,7 @@ class EntityService implements EntityServiceInterface
     /**
      * @param string $eventName
      *
-     * @return ViewEventInterface
+     * @return string
      *
      * @throws ReflectionException
      */

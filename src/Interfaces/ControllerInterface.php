@@ -3,12 +3,27 @@
 namespace App\Interfaces;
 
 use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\Event\ViewEventInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 interface ControllerInterface
 {
+    /**
+     * @param string $eventName
+     *
+     * @return ViewEventInterface
+     */
+    public function getViewEvent(string $eventName): string;
+
+    /**
+     * @param string $eventName
+     *
+     * @return ViewEventInterface
+     */
+    public function getEvent(string $eventName): string;
+
     /**
      * @param ServiceEntityRepositoryInterface $repository
      * @param string                           $entity            the class name (Entity::class)
@@ -51,16 +66,9 @@ interface ControllerInterface
     /**
      * @param Request         $request
      * @param EntityInterface $entity
+     * @param string|null     $option
      *
      * @return Response
      */
-    public function delete(Request $request, EntityInterface $entity): Response;
-
-    /**
-     * @param Request         $request
-     * @param EntityInterface $entity
-     *
-     * @return Response
-     */
-    public function softDelete(Request $request, EntityInterface $entity): Response;
+    public function delete(Request $request, EntityInterface $entity, ?string $option = null): Response;
 }
