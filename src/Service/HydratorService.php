@@ -44,18 +44,6 @@ class HydratorService implements HydratorInterface
      *
      * @throws HydratorException
      */
-    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
-    {
-        $hydrator = $this->handleHydrator($entity);
-
-        return $hydrator->hydrateDtoWithEntity($entity, $dto);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws HydratorException
-     */
     public function handleHydrator(EntityInterface $entity): EntityHydratorInterface
     {
         foreach ($this->hydrators as $hydrator) {
@@ -65,5 +53,17 @@ class HydratorService implements HydratorInterface
         }
 
         throw new HydratorException('No hydrator for this entity.');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws HydratorException
+     */
+    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
+    {
+        $hydrator = $this->handleHydrator($entity);
+
+        return $hydrator->hydrateDtoWithEntity($entity, $dto);
     }
 }

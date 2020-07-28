@@ -38,25 +38,15 @@ class UserHydratorService implements EntityHydratorInterface
     /**
      * {@inheritdoc}
      *
-     * @throws UuidException
-     */
-    public function getUuid(): string
-    {
-        return $this->uuidService->create();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @var User
-     * @var UserDto $dto
-     *
      * @param EntityInterface $entity
      * @param DtoInterface    $dto
      *
      * @return EntityInterface
      *
      * @throws UuidException
+     *
+     * @var User
+     * @var UserDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
@@ -75,6 +65,16 @@ class UserHydratorService implements EntityHydratorInterface
         }
 
         return $entity;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws UuidException
+     */
+    public function getUuid(): string
+    {
+        return $this->uuidService->create();
     }
 
     /**

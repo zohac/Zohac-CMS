@@ -104,6 +104,44 @@ trait ControllerTrait
     }
 
     /**
+     * @return ViewService
+     */
+    public function getViewService(): ViewService
+    {
+        return $this->viewService;
+    }
+
+    /**
+     * @param string     $eventName
+     * @param array|null $data
+     */
+    public function dispatchEvent(string $eventName, ?array $data = [])
+    {
+        $this->entityService->getEventService()->dispatchEvent($eventName, $data);
+    }
+
+    /**
+     * @param string|null   $view
+     * @param array         $options
+     * @param Response|null $response
+     *
+     * @return Response
+     */
+    public function getResponse(?string $view = null, array $options = [], Response $response = null): Response
+    {
+        if (null === $view && null === $this->viewService->getView()) {
+            return new Response();
+        }
+
+        if (null === $view && null !== $this->viewService->getView()) {
+            $view = $this->viewService->getView();
+            $options = $this->viewService->getOptions();
+        }
+
+        return $this->render($view, $options, $response);
+    }
+
+    /**
      * @param EntityInterface|null $entity
      *
      * @return Response
@@ -166,6 +204,14 @@ trait ControllerTrait
         ]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @return Response
+     */
+    public function redirectToList(): Response
+    {
+        return $this->redirectToRoute(strtolower($this->entityService->getEntityShortName()).'.list');
     }
 
     /**
@@ -307,52 +353,6 @@ trait ControllerTrait
         ]);
 
         return $this->getResponse();
-    }
-
-    /**
-     * @return ViewService
-     */
-    public function getViewService(): ViewService
-    {
-        return $this->viewService;
-    }
-
-    /**
-     * @param string     $eventName
-     * @param array|null $data
-     */
-    public function dispatchEvent(string $eventName, ?array $data = [])
-    {
-        $this->entityService->getEventService()->dispatchEvent($eventName, $data);
-    }
-
-    /**
-     * @param string|null   $view
-     * @param array         $options
-     * @param Response|null $response
-     *
-     * @return Response
-     */
-    public function getResponse(?string $view = null, array $options = [], Response $response = null): Response
-    {
-        if (null === $view && null === $this->viewService->getView()) {
-            return new Response();
-        }
-
-        if (null === $view && null !== $this->viewService->getView()) {
-            $view = $this->viewService->getView();
-            $options = $this->viewService->getOptions();
-        }
-
-        return $this->render($view, $options, $response);
-    }
-
-    /**
-     * @return Response
-     */
-    public function redirectToList(): Response
-    {
-        return $this->redirectToRoute(strtolower($this->entityService->getEntityShortName()).'.list');
     }
 
     /**

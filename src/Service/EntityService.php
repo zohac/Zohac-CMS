@@ -92,28 +92,18 @@ class EntityService implements EntityServiceInterface
     }
 
     /**
-     * @param EntityInterface $entity
-     * @param DtoInterface    $dto
-     *
      * @return DtoInterface
      *
+     * @throws DtoHandlerException
      * @throws HydratorException
      */
-    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
+    public function getAndHydrateDto(): DtoInterface
     {
-        return $this->hydratorService->hydrateDtoWithEntity($entity, $dto);
-    }
+        $this->getDto();
 
-    /**
-     * @param object|string $object
-     *
-     * @return ReflectionClass
-     *
-     * @throws ReflectionException
-     */
-    public function getNewReflectionClass($object): ReflectionClass
-    {
-        return new ReflectionClass($object);
+        $this->hydrateDtoWithEntity($this->entity, $this->dto);
+
+        return $this->dto;
     }
 
     /**
@@ -131,18 +121,28 @@ class EntityService implements EntityServiceInterface
     }
 
     /**
+     * @param DtoInterface $dto
+     *
+     * @return $this
+     */
+    public function setDto(DtoInterface $dto): self
+    {
+        $this->dto = $dto;
+
+        return $this;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
+     *
      * @return DtoInterface
      *
-     * @throws DtoHandlerException
      * @throws HydratorException
      */
-    public function getAndHydrateDto(): DtoInterface
+    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-        $this->getDto();
-
-        $this->hydrateDtoWithEntity($this->entity, $this->dto);
-
-        return $this->dto;
+        return $this->hydratorService->hydrateDtoWithEntity($entity, $dto);
     }
 
     /**
@@ -204,15 +204,15 @@ class EntityService implements EntityServiceInterface
     }
 
     /**
-     * @param DtoInterface $dto
+     * @param object|string $object
      *
-     * @return $this
+     * @return ReflectionClass
+     *
+     * @throws ReflectionException
      */
-    public function setDto(DtoInterface $dto): self
+    public function getNewReflectionClass($object): ReflectionClass
     {
-        $this->dto = $dto;
-
-        return $this;
+        return new ReflectionClass($object);
     }
 
     /**
@@ -248,14 +248,6 @@ class EntityService implements EntityServiceInterface
     }
 
     /**
-     * @return EventService
-     */
-    public function getEventService(): EventService
-    {
-        return $this->eventService;
-    }
-
-    /**
      * @param string $eventName
      *
      * @return string
@@ -269,6 +261,14 @@ class EntityService implements EntityServiceInterface
         $reflection = $this->getNewReflectionClass($events[$this->reflectionClass->getName()]);
 
         return $reflection->getConstant($eventName);
+    }
+
+    /**
+     * @return EventService
+     */
+    public function getEventService(): EventService
+    {
+        return $this->eventService;
     }
 
     /**
