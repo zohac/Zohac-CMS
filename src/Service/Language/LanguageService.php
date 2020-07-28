@@ -5,6 +5,7 @@ namespace App\Service\Language;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
+use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityServiceInterface;
@@ -76,13 +77,13 @@ class LanguageService implements EntityServiceInterface
 
     /**
      * @param LanguageDto $languageDto
-     *
      * @return Language
+     * @throws HydratorException
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
         /** @var Language $language */
-        $language = $this->entityService->populateEntityWithDto(new Language(), $languageDto);
+        $language = $this->entityService->hydrateEntityWithDto(new Language(), $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
             $this->getEntityNameToLower() => $language,
@@ -124,14 +125,14 @@ class LanguageService implements EntityServiceInterface
 
     /**
      * @param LanguageDto $languageDto
-     * @param Language    $language
-     *
+     * @param Language $language
      * @return Language
+     * @throws HydratorException
      */
     public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
     {
         /** @var Language $language */
-        $language = $this->entityService->populateEntityWithDto($language, $languageDto);
+        $language = $this->entityService->hydrateEntityWithDto($language, $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, [
             $this->getEntityNameToLower() => $language,

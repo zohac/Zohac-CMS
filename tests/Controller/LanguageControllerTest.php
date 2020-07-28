@@ -64,97 +64,101 @@ class LanguageControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-//    /**
-//     * @dataProvider provideUrlsForRedirection
-//     */
-//    public function testPageIsRedirectedIfLanguageIsNotInDB($url)
-//    {
-//        $url = sprintf($url, $this->uuidService->create());
-//        $this->client->request('GET', $url);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-//    }
+    /**
+     * @dataProvider provideUrlsForRedirection
+     */
+    public function testPageIsRedirectedIfLanguageIsNotInDB($url)
+    {
+        $url = sprintf($url, $this->uuidService->create());
+        $this->client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
 
-//    /**
-//     * @dataProvider provideBadLanguageCredentials
-//     *
-//     * @param $badCredential array
-//     */
-//    public function testCreateLanguageWithBadCredential($badCredential)
-//    {
-//        $crawler = $this->client->request('POST', '/language/create/');
-//        $form = $crawler->selectButton('language[save]')->form($badCredential);
-//        $this->client->submit($form);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-//        $this->assertSelectorExists('.form-error-wrapper');
-//    }
-//
-//    public function testCreateLanguage()
-//    {
-//        $crawler = $this->client->request('POST', '/language/create/');
-//        $form = $crawler->selectButton('language[save]')->form([
-//            'language[email]' => uniqid().'@test.com',
-//            'language[password][first]' => '123456',
-//            'language[password][second]' => '123456',
-//            'language[locale]' => 'en',
-//        ]);
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/language/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
-//    }
+    /**
+     * @dataProvider provideBadLanguageCredentials
+     *
+     * @param $badCredential array
+     */
+    public function testCreateLanguageWithBadCredential($badCredential)
+    {
+        $crawler = $this->client->request('POST', '/language/create/');
+        $form = $crawler->selectButton('language[save]')->form($badCredential);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorExists('.form-error-wrapper');
+    }
 
-//    /**
-//     * @dataProvider provideBadLanguageCredentials
-//     *
-//     * @param $badCredential array
-//     */
-//    public function testUpdateLanguageWithBadCredentials($badCredential)
-//    {
-//        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('language[save]')->form($badCredential);
-//        $this->client->submit($form);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-//        $this->assertSelectorExists('.form-error-wrapper');
-//    }
+    public function testCreateLanguage()
+    {
+        $crawler = $this->client->request('POST', '/language/create/');
+        $form = $crawler->selectButton('language[save]')->form([
+            'language[name]' => 'test',
+            'language[alternateName]' => 'Test',
+            'language[description]' => 'a language test',
+            'language[iso6391]' => 'ts',
+            'language[iso6392T]' => 'tes',
+            'language[iso6392B]' => 'tes',
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/language/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Langue créée avec succès.');
+    }
 
-//    public function testUpdateLanguage()
-//    {
-//        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('language[save]')->form([
-//            'language[email]' => uniqid().'@test.com',
-//            'language[password][first]' => '123456',
-//            'language[password][second]' => '123456',
-//            'language[locale]' => 'en',
-//        ]);
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/language/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
-//    }
+    /**
+     * @dataProvider provideBadLanguageCredentials
+     *
+     * @param $badCredential array
+     */
+    public function testUpdateLanguageWithBadCredentials($badCredential)
+    {
+        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('language[save]')->form($badCredential);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorExists('.form-error-wrapper');
+    }
 
-//    public function testDeleteLanguage()
-//    {
-//        $uri = sprintf('/language/%s/delete/', $this->languages['language1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('delete[delete]')->form();
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/language/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
-//    }
+    public function testUpdateLanguage()
+    {
+        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('language[save]')->form([
+            'language[name]' => 'test_update',
+            'language[alternateName]' => 'Test_update',
+            'language[description]' => 'a language test update',
+            'language[iso6391]' => 'ts',
+            'language[iso6392T]' => 'tes',
+            'language[iso6392B]' => 'tes',
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/language/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Langue mise à jour avec succès.');
+    }
+
+    public function testDeleteLanguage()
+    {
+        $uri = sprintf('/language/%s/delete/', $this->languages['language1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('delete[delete]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/language/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Langue supprimée avec succès.');
+    }
 
     public function provideUrls()
     {
         yield ['/language/'];
-//        yield ['/language/%s/'];
-//        yield ['/language/create/'];
-//        yield ['/language/%s/update/'];
-//        yield ['/language/%s/delete/'];
+        yield ['/language/%s/'];
+        yield ['/language/create/'];
+        yield ['/language/%s/update/'];
+        yield ['/language/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
@@ -164,25 +168,27 @@ class LanguageControllerTest extends WebTestCase
         yield ['/language/%s/delete/'];
     }
 
-//    public function provideBadLanguageCredentials()
-//    {
-//        yield [
-//            [
-//                'language[email]' => 'test@test.com',
-//                'language[password][first]' => '132456',
-//                'language[password][second]' => '1324655',
-//                'language[locale]' => 'fr',
-//            ],
-//        ];
-//        yield [
-//            [
-//                'language[email]' => 'notAnEmail',
-//                'language[password][first]' => '132456',
-//                'language[password][second]' => '132456',
-//                'language[locale]' => 'fr',
-//            ],
-//        ];
-//    }
+    public function provideBadLanguageCredentials()
+    {
+        yield [
+            [
+                'language[name]' => '',
+                'language[alternateName]' => 'Test',
+                'language[iso6391]' => 't',
+                'language[iso6392T]' => 't',
+                'language[iso6392B]' => 't',
+            ],
+        ];
+        yield [
+            [
+                'language[name]' => '',
+                'language[alternateName]' => 'Test',
+                'language[iso6391]' => 't',
+                'language[iso6392T]' => 't',
+                'language[iso6392B]' => 't',
+            ],
+        ];
+    }
 
     protected function tearDown(): void
     {

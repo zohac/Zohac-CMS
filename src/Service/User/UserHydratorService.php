@@ -60,14 +60,14 @@ class UserHydratorService implements EntityHydratorInterface
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        $uuid = null !== $dto->uuid ? $dto->uuid : $this->getUuid();
+        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
-        $entity->setUuid($uuid);
-        $entity->setEmail($dto->email);
-        $entity->setRoles($dto->roles);
-        $entity->setLocale($dto->locale);
-        $entity->setToken($dto->tokenValidity);
-        $entity->setTokenValidity($dto->tokenValidity);
+        $entity->setUuid($uuid)
+            ->setEmail($dto->email)
+            ->setRoles($dto->roles)
+            ->setLocale($dto->locale)
+            ->setToken($dto->tokenValidity)
+            ->setTokenValidity($dto->tokenValidity);
 
         if (null !== $dto->password) {
             $password = $this->passwordEncoder->encodePassword($entity, $dto->password);

@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Event\Language\LanguageEvent;
+use App\Exception\HydratorException;
 use App\Service\Language\LanguageService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -34,6 +35,7 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param LanguageEvent $event
+     * @throws HydratorException
      */
     public function onLanguageCreate(LanguageEvent $event)
     {
@@ -42,6 +44,7 @@ class LanguageEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param LanguageEvent $event
+     * @throws HydratorException
      */
     public function onLanguageUpdate(LanguageEvent $event)
     {
