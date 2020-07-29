@@ -6,12 +6,14 @@ use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
 use App\Exception\HydratorException;
+use App\Interfaces\EntityInterface;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
 
-class UserService
+class UserService implements ServiceInterface
 {
     /**
      * @var EntityService
@@ -144,12 +146,13 @@ class UserService
         return $this;
     }
 
-    public function getDeleteMessage(User $user): string
+    public function getDeleteMessage(EntityInterface $entity): string
     {
+        /** @var User $user */
         return $this->flashBagService->trans(
             'Are you sure you want to delete this user (%email%) ?',
             'user',
-            ['email' => $user->getEmail()]
+            ['email' => $entity->getEmail()]
         );
     }
 }

@@ -4,6 +4,7 @@ namespace App\Interfaces;
 
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\Event\ViewEventInterface;
+use App\Interfaces\Service\ServiceInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,11 +65,12 @@ interface ControllerInterface
     public function edit(Request $request, EntityInterface $entity, string $formType): Response;
 
     /**
-     * @param Request         $request
-     * @param EntityInterface $entity
-     * @param string|null     $option
+     * @param Request          $request
+     * @param EntityInterface  $entity
+     * @param ServiceInterface $service
+     * @param string|null      $option
      *
      * @return Response
      */
-    public function delete(Request $request, EntityInterface $entity, ?string $option = null): Response;
+    public function delete(Request $request, EntityInterface $entity, ServiceInterface $service, ?string $option = null): Response;
 }

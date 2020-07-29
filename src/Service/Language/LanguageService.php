@@ -6,12 +6,14 @@ use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
 use App\Exception\HydratorException;
+use App\Interfaces\EntityInterface;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
 
-class LanguageService
+class LanguageService implements ServiceInterface
 {
     /**
      * @var EventService
@@ -148,12 +150,17 @@ class LanguageService
         return $this;
     }
 
-    public function getDeleteMessage(Language $language): string
+    /**
+     * @param EntityInterface $entity
+     * @return string
+     */
+    public function getDeleteMessage(EntityInterface $entity): string
     {
+        /** @var Language $entity */
         return $this->flashBagService->trans(
             'Are you sure you want to delete this language (%language%) ?',
             'language',
-            ['language' => $language->getName()]
+            ['language' => $entity->getName()]
         );
     }
 }

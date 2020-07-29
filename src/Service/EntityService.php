@@ -37,6 +37,7 @@ class EntityService implements EntityServiceInterface
      * @var ReflectionClass
      */
     private $reflectionClass;
+
     /**
      * @var HydratorService
      */

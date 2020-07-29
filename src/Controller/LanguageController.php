@@ -10,6 +10,7 @@ use App\Form\LanguageType;
 use App\Interfaces\ControllerInterface;
 use App\Repository\LanguageRepository;
 use App\Service\FlashBagService;
+use App\Service\Language\LanguageService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -131,19 +132,20 @@ class LanguageController extends AbstractController implements ControllerInterfa
      *     methods={"GET", "POST"}
      * )
      *
-     * @param Request       $request
-     * @param Language|null $language
+     * @param Request         $request
+     * @param LanguageService $service
+     * @param Language|null   $language
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function languageDelete(Request $request, ?Language $language = null): Response
+    public function languageDelete(Request $request, LanguageService $service, ?Language $language = null): Response
     {
         if (!$language) {
             return $this->languageNotFound();
         }
 
-        return $this->delete($request, $language);
+        return $this->delete($request, $language, $service);
     }
 }

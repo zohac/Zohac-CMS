@@ -10,6 +10,7 @@ use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
 use App\Repository\UserRepository;
 use App\Service\FlashBagService;
+use App\Service\User\UserService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -131,19 +132,20 @@ class UserController extends AbstractController implements ControllerInterface
      *     methods={"GET", "POST"}
      * )
      *
-     * @param Request   $request
-     * @param User|null $user
+     * @param Request     $request
+     * @param UserService $service
+     * @param User|null   $user
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function userDelete(Request $request, ?User $user = null): Response
+    public function userDelete(Request $request, UserService $service, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        return $this->delete($request, $user);
+        return $this->delete($request, $user, $service);
     }
 }

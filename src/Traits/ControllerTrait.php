@@ -8,6 +8,7 @@ use App\Form\DeleteType;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Event\ViewEventInterface;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\FlashBagService;
 use App\Service\TranslatorService;
@@ -280,15 +281,16 @@ trait ControllerTrait
     }
 
     /**
-     * @param Request         $request
-     * @param EntityInterface $entity
-     * @param string          $option
+     * @param Request          $request
+     * @param EntityInterface  $entity
+     * @param ServiceInterface $service
+     * @param string|null      $option
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function delete(Request $request, EntityInterface $entity, ?string $option = null): Response
+    public function delete(Request $request, EntityInterface $entity, ServiceInterface $service, ?string $option = null): Response
     {
         $this->entityService->setEntity($entity);
 
@@ -316,7 +318,7 @@ trait ControllerTrait
 
         $this->getViewService()->setData('delete.html.twig', [
             'form' => $form->createView(),
-            'message' => $this->entityService->getDeleteMessage(),
+            'message' => $service->getDeleteMessage($entity),
         ]);
 
         $this->dispatchEvent($this->getViewEvent('DELETE'), [ViewService::NAME => $this->getViewService()]);
