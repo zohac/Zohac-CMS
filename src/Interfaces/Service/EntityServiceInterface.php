@@ -56,9 +56,4 @@ interface EntityServiceInterface
      * @return string
      */
     public function getViewEvent(string $eventName): string;
-
-    /**
-     * @return string
-     */
-    public function getDeleteMessage(): string;
 }

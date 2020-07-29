@@ -281,12 +281,4 @@ class EntityService implements EntityServiceInterface
 
         return $reflection->getConstant($eventName);
     }
-
-    /**
-     * @return string
-     */
-    public function getDeleteMessage(): string
-    {
-        return 'delete Message';
-    }
 }
