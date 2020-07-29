@@ -14,10 +14,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\LanguageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Entity(repositoryClass=LanguageRepository::class)
  * @ApiResource
+ *
+ * @ORM\Entity(repositoryClass=LanguageRepository::class)
+ * @UniqueEntity("uuid")
  */
 class Language implements EntityInterface
 {

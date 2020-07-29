@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
+ * @ApiResource
+ *
  * @ORM\Entity(repositoryClass=RoleRepository::class)
+ * @UniqueEntity("uuid")
  */
 class Role
 {
@@ -18,6 +24,13 @@ class Role
     private $id;
 
     /**
+     * @ApiProperty(identifier=true)
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $uuid;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -25,16 +38,23 @@ class Role
     /**
      * @ORM\OneToOne(targetEntity=Translatable::class, cascade={"persist", "remove"})
      */
-    private $Translatable;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $uuid;
+    private $translatable;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -51,24 +71,12 @@ class Role
 
     public function getTranslatable(): ?Translatable
     {
-        return $this->Translatable;
+        return $this->translatable;
     }
 
-    public function setTranslatable(?Translatable $Translatable): self
+    public function setTranslatable(?Translatable $translatable): self
     {
-        $this->Translatable = $Translatable;
-
-        return $this;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
+        $this->translatable = $translatable;
 
         return $this;
     }
