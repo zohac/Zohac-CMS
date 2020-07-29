@@ -148,7 +148,7 @@ class UserService implements ServiceInterface
 
     public function getDeleteMessage(EntityInterface $entity): string
     {
-        /** @var User $user */
+        /* @var User $user */
         return $this->flashBagService->trans(
             'Are you sure you want to delete this user (%email%) ?',
             'user',

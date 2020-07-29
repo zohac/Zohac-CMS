@@ -8,6 +8,7 @@ interface ServiceInterface
 {
     /**
      * @param EntityInterface $entity
+     *
      * @return string
      */
     public function getDeleteMessage(EntityInterface $entity): string;

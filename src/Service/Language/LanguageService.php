@@ -152,11 +152,12 @@ class LanguageService implements ServiceInterface
 
     /**
      * @param EntityInterface $entity
+     *
      * @return string
      */
     public function getDeleteMessage(EntityInterface $entity): string
     {
-        /** @var Language $entity */
+        /* @var Language $entity */
         return $this->flashBagService->trans(
             'Are you sure you want to delete this language (%language%) ?',
             'language',

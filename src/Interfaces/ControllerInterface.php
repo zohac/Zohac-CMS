@@ -72,5 +72,10 @@ interface ControllerInterface
      *
      * @return Response
      */
-    public function delete(Request $request, EntityInterface $entity, ServiceInterface $service, ?string $option = null): Response;
+    public function delete(
+        Request $request,
+        EntityInterface $entity,
+        ServiceInterface $service,
+        ?string $option = null
+    ): Response;
 }

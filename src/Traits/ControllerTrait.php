@@ -290,8 +290,12 @@ trait ControllerTrait
      *
      * @throws ReflectionException
      */
-    public function delete(Request $request, EntityInterface $entity, ServiceInterface $service, ?string $option = null): Response
-    {
+    public function delete(
+        Request $request,
+        EntityInterface $entity,
+        ServiceInterface $service,
+        ?string $option = null
+    ): Response {
         $this->entityService->setEntity($entity);
 
         $form = $this->createForm(DeleteType::class, null, [
