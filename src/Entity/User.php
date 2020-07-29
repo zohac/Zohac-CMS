@@ -27,7 +27,7 @@ class User implements AdvancedUserInterface, EntityInterface
      *
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer", options={"unsigned": true})
+     * @ORM\Column(type="integer", options={"unsigned"=true})
      */
     private $id;
 
