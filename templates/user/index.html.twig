@@ -14,9 +14,9 @@
                         <li>{{ role }}</li>
                     {% endfor %}
                 </ul>
-                <a href="{{ path('users.detail', {'uuid': user.uuid}) }}">Detail</a>
+                <a href="{{ path('user.detail', {'uuid': user.uuid}) }}">Detail</a>
             </div>
         {% endfor %}
     </div>
-    <a href="{{ path('users.create') }}">Create</a>
+    <a href="{{ path('user.create') }}">Create</a>
 {% endblock %}

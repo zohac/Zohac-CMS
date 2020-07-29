@@ -21,6 +21,7 @@ class UserEvent extends Event implements EventInterface
     public const POST_UPDATE = 'user.post.update';
     public const PRE_DELETE = 'user.pre.delete';
     public const DELETE = 'user.delete';
+    public const SOFT_DELETE = 'user.soft.delete';
     public const POST_DELETE = 'user.post.delete';
 
     const ENTITY_NAME = User::class;

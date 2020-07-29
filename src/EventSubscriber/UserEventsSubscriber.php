@@ -3,8 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Event\User\UserEvent;
-use App\Exception\UuidException;
+use App\Exception\HydratorException;
 use App\Service\User\UserService;
+use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -33,13 +34,14 @@ class UserEventsSubscriber implements EventSubscriberInterface
             UserEvent::PRE_UPDATE => ['onUserPreUpdate', 0],
             UserEvent::UPDATE => ['onUserUpdate', 0],
             UserEvent::DELETE => ['onUserDelete', 0],
+            UserEvent::SOFT_DELETE => ['onUserSoftDelete', 0],
         ];
     }
 
     /**
      * @param UserEvent $event
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function onUserCreate(UserEvent $event)
     {
@@ -62,7 +64,7 @@ class UserEventsSubscriber implements EventSubscriberInterface
     /**
      * @param UserEvent $event
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function onUserUpdate(UserEvent $event)
     {
@@ -71,9 +73,21 @@ class UserEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param UserEvent $event
+     *
+     * @throws ReflectionException
      */
     public function onUserDelete(UserEvent $event)
     {
         $this->userService->deleteUser($event->getUser());
+    }
+
+    /**
+     * @param UserEvent $event
+     *
+     * @throws ReflectionException
+     */
+    public function onUserSoftDelete(UserEvent $event)
+    {
+        $this->userService->deleteSoftUser($event->getUser());
     }
 }

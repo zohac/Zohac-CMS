@@ -4,17 +4,10 @@ namespace App\Interfaces\Service;
 
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Event\EventInterface;
-use App\Interfaces\Event\ViewEventInterface;
 use App\Service\EventService;
 
 interface EntityServiceInterface
 {
-    /**
-     * @return string
-     */
-    public function getFormType(): string;
-
     /**
      * @return string
      */
@@ -51,17 +44,16 @@ interface EntityServiceInterface
     public function getEventService(): EventService;
 
     /**
-     * @return EventInterface
-     */
-    public function getEvent(): EventInterface;
-
-    /**
-     * @return ViewEventInterface
-     */
-    public function getViewEvent(): ViewEventInterface;
-
-    /**
+     * @param string $eventName
+     *
      * @return string
      */
-    public function getDeleteMessage(): string;
+    public function getEvent(string $eventName): string;
+
+    /**
+     * @param string $eventName
+     *
+     * @return string
+     */
+    public function getViewEvent(string $eventName): string;
 }

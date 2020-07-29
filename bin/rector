@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+if (!file_exists(dirname(__DIR__).'/vendor/rector/rector-prefixed/rector')) {
+    echo "Unable to find the `rector.php` script in `vendor/rector/rector-prefixed/`.\n";
+    exit(1);
+}
+
+require dirname(__DIR__).'/vendor/rector/rector-prefixed/rector';

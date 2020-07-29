@@ -66,18 +66,6 @@ class UserServiceTest extends KernelTestCase
         $this->entityManager->flush();
     }
 
-    public function testCreateUserDtoFromUser()
-    {
-        $user = $this->users['user1'];
-
-        $userDto = $this->userService->createUserDtoFromUser($user);
-
-        $this->assertInstanceOf(UserDto::class, $userDto);
-        $this->assertEquals($user->getUuid(), $userDto->uuid);
-        $this->assertEquals($user->getEmail(), $userDto->email);
-        $this->assertEquals($user->getRoles(), $userDto->roles);
-    }
-
     public function testCreateUserFromDto()
     {
         $userDto = $this->getUserDto(true);
@@ -162,11 +150,6 @@ class UserServiceTest extends KernelTestCase
 
         $user = $this->userRepository->findOneById($userId);
         $this->assertEquals(null, $user);
-    }
-
-    public function testGetEntityName()
-    {
-        $this->assertEquals(User::class, $this->userService->getEntityName());
     }
 
     protected function tearDown(): void

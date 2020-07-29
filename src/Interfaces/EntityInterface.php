@@ -10,7 +10,14 @@ interface EntityInterface
     public function getUuid(): ?string;
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function isArchived(): ?bool;
+    public function isArchived(): bool;
+
+    /**
+     * @param bool $archived
+     *
+     * @return EntityInterface
+     */
+    public function setArchived(bool $archived);
 }

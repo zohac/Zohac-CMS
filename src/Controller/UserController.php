@@ -4,52 +4,68 @@ namespace App\Controller;
 
 use App\Dto\User\UserDto;
 use App\Entity\User;
+use App\Exception\DtoHandlerException;
+use App\Exception\HydratorException;
 use App\Form\UserType;
+use App\Interfaces\ControllerInterface;
 use App\Repository\UserRepository;
 use App\Service\FlashBagService;
 use App\Service\User\UserService;
+use App\Traits\ControllerTrait;
 use ReflectionException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class UserController.
+ *
+ * @Route("/user")
  */
-class UserController extends DefaultController
+class UserController extends AbstractController implements ControllerInterface
 {
+    use ControllerTrait;
+
     /**
-     * @Route("/users", name="users.list")
+     * @Route("/", name="user.list", methods={"GET"})
      *
      * @param UserRepository $userRepository
-     * @param UserService    $userService
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userList(UserRepository $userRepository, UserService $userService): Response
+    public function userIndex(UserRepository $userRepository): Response
     {
-        return $this->list($userRepository, $userService);
+        $repositoryOptions = [];
+
+        // TODO: if $soft, $repositoryOptions = ['archived' => false];
+
+        return $this->index($userRepository, User::class, $repositoryOptions);
     }
 
     /**
      * @Route(
-     *     "/users/{uuid}",
-     *     name="users.detail",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     *     "/{uuid}/",
+     *     name="user.detail",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET"}
      * )
      *
-     * @param UserService $userService
-     * @param User|null   $user
+     * @param User|null $user
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userDetail(UserService $userService, ?User $user = null): Response
+    public function userShow(?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        return $this->detail($userService, $user);
+        return $this->show($user);
     }
 
     /**
@@ -64,79 +80,72 @@ class UserController extends DefaultController
             'user'
         );
 
-        return $this->redirectToRoute('users.list');
+        return $this->redirectToRoute('user.list');
     }
 
     /**
-     * @Route("/users/create", name="users.create")
+     * @Route("/create/", name="user.create", methods={"GET", "POST"})
      *
-     * @param Request     $request
-     * @param UserDto     $userDto
-     * @param UserService $userService
+     * @param Request $request
+     * @param UserDto $userDto
      *
      * @return Response
+     *
+     * @throws ReflectionException
      */
-    public function userCreate(Request $request, UserDto $userDto, UserService $userService): Response
+    public function userNew(Request $request, UserDto $userDto): Response
     {
-        $userService
-            ->setFormType(UserType::class)
-            ->setDto($userDto);
-
-        return $this->create($request, $userService);
+        return $this->new($request, $userDto, User::class, UserType::class);
     }
 
     /**
      * @Route(
-     *     "/users/{uuid}/update",
-     *     name="users.update",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
+     *     "/{uuid}/update/",
+     *     name="user.update",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET", "POST"}
+     * )
+     *
+     * @param Request   $request
+     * @param User|null $user
+     *
+     * @return Response
+     *
+     * @throws HydratorException
+     * @throws ReflectionException
+     * @throws DtoHandlerException
+     */
+    public function userEdit(Request $request, ?User $user = null): Response
+    {
+        if (!$user) {
+            return $this->userNotFound();
+        }
+
+        return $this->edit($request, $user, UserType::class);
+    }
+
+    /**
+     * @Route(
+     *     "/{uuid}/delete/",
+     *     name="user.delete",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET", "POST"}
      * )
      *
      * @param Request     $request
-     * @param UserService $userService
+     * @param UserService $service
      * @param User|null   $user
      *
      * @return Response
      *
      * @throws ReflectionException
      */
-    public function userUpdate(Request $request, UserService $userService, ?User $user = null): Response
+    public function userDelete(Request $request, UserService $service, ?User $user = null): Response
     {
         if (!$user) {
             return $this->userNotFound();
         }
 
-        $userDto = $userService->createUserDtoFromUser($user);
-
-        $userService
-            ->setFormType(UserType::class)
-            ->setDto($userDto)
-            ->setEntity($user);
-
-        return $this->update($request, $userService);
-    }
-
-    /**
-     * @Route(
-     *     "/users/{uuid}/delete",
-     *     name="users.delete",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"}
-     * )
-     *
-     * @param Request     $request
-     * @param UserService $userService
-     * @param User|null   $user
-     *
-     * @return Response
-     */
-    public function userDelete(Request $request, UserService $userService, ?User $user = null): Response
-    {
-        if (!$user) {
-            return $this->userNotFound();
-        }
-
-        $userService->setEntity($user);
-
-        return $this->delete($request, $userService);
+        return $this->delete($request, $user, $service);
     }
 }

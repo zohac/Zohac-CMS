@@ -5,35 +5,20 @@ namespace App\Service\Language;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Event\Language\LanguageEvent;
-use App\Interfaces\Dto\DtoInterface;
+use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Event\EventInterface;
-use App\Interfaces\Event\ViewEventInterface;
-use App\Interfaces\Service\EntityServiceInterface;
+use App\Interfaces\Service\ServiceInterface;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
-use ReflectionClass;
 use ReflectionException;
 
-class LanguageService implements EntityServiceInterface
+class LanguageService implements ServiceInterface
 {
-    const ENTITY_NAME = Language::class;
-
     /**
      * @var EventService
      */
     private $eventService;
-
-    /**
-     * @var string
-     */
-    private $formType;
-
-    /**
-     * @var DtoInterface
-     */
-    private $dto;
 
     /**
      * @var FlashBagService
@@ -41,19 +26,9 @@ class LanguageService implements EntityServiceInterface
     private $flashBagService;
 
     /**
-     * @var Language
-     */
-    private $language;
-
-    /**
      * @var EntityService
      */
     private $entityService;
-
-    /**
-     * @var ReflectionClass
-     */
-    private $reflectionClass;
 
     /**
      * LanguageService constructor.
@@ -61,8 +36,6 @@ class LanguageService implements EntityServiceInterface
      * @param EventService    $eventService
      * @param FlashBagService $flashBagService
      * @param EntityService   $entityService
-     *
-     * @throws ReflectionException
      */
     public function __construct(
         EventService $eventService,
@@ -72,56 +45,31 @@ class LanguageService implements EntityServiceInterface
         $this->eventService = $eventService;
         $this->flashBagService = $flashBagService;
         $this->entityService = $entityService;
-
-        $this->reflectionClass = $this->entityService->getNewReflectionClass(self::ENTITY_NAME);
     }
 
     /**
      * @param LanguageDto $languageDto
      *
      * @return Language
+     *
+     * @throws HydratorException
      */
     public function createLanguageFromDto(LanguageDto $languageDto): Language
     {
         /** @var Language $language */
-        $language = $this->entityService->populateEntityWithDto(new Language(), $languageDto);
+        $language = $this->entityService->hydrateEntityWithDto(new Language(), $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_CREATE, [
-            $this->getEntityNameToLower() => $language,
+            'language' => $language,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
             'Language',
             'Language successfully created.',
-            $this->getEntityNameToLower()
+            'language'
         );
 
         return $language;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityNameToLower(): string
-    {
-        return strtolower($this->reflectionClass->getShortName());
-    }
-
-    /**
-     * @param Language $language
-     *
-     * @return LanguageDto
-     *
-     * @throws ReflectionException
-     */
-    public function createLanguageDtoFromLanguage(Language $language): LanguageDto
-    {
-        $languageDto = new LanguageDto();
-
-        /** @var LanguageDto $languageDto */
-        $languageDto = $this->entityService->populateDtoWithEntity($language, $languageDto);
-
-        return $languageDto;
     }
 
     /**
@@ -129,20 +77,22 @@ class LanguageService implements EntityServiceInterface
      * @param Language    $language
      *
      * @return Language
+     *
+     * @throws HydratorException
      */
     public function updateLanguageFromDto(LanguageDto $languageDto, Language $language): Language
     {
         /** @var Language $language */
-        $language = $this->entityService->populateEntityWithDto($language, $languageDto);
+        $language = $this->entityService->hydrateEntityWithDto($language, $languageDto);
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_UPDATE, [
-            $this->getEntityNameToLower() => $language,
+            'language' => $language,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
             'Language',
             'Language successfully updated.',
-            $this->getEntityNameToLower()
+            'language'
         );
 
         return $language;
@@ -152,17 +102,20 @@ class LanguageService implements EntityServiceInterface
      * @param Language $language
      *
      * @return $this
+     *
+     * @throws ReflectionException
      */
     public function deleteLanguage(Language $language): self
     {
         $this->entityService
+            ->setEntity($language)
             ->remove($language)
             ->flush();
 
         $this->flashBagService->addAndTransFlashMessage(
             'Language',
             'Language successfully deleted.',
-            $this->getEntityNameToLower()
+            $this->entityService->getEntityNameToLower()
         );
 
         $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
@@ -171,123 +124,44 @@ class LanguageService implements EntityServiceInterface
     }
 
     /**
-     * @return string
-     */
-    public function getFormType(): string
-    {
-        return $this->formType;
-    }
-
-    /**
-     * @param $formType
+     * @param Language $language
      *
      * @return $this
+     *
+     * @throws ReflectionException
      */
-    public function setFormType(string $formType): self
+    public function deleteSoftLanguage(Language $language)
     {
-        $this->formType = $formType;
+        $language->setArchived(true);
+
+        $this->entityService
+            ->setEntity($language)
+            ->persist($language)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'Language',
+            'Language successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
+
+        $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
 
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getEntityNamePlural(): string
-    {
-        return strtolower($this->reflectionClass->getShortName().'s');
-    }
-
-    /**
-     * @return DtoInterface
-     */
-    public function getDto(): DtoInterface
-    {
-        return $this->dto;
-    }
-
-    /**
-     * @param DtoInterface $dto
+     * @param EntityInterface $entity
      *
-     * @return $this
-     */
-    public function setDto(DtoInterface $dto): self
-    {
-        $this->dto = $dto;
-
-        return $this;
-    }
-
-    /**
-     * @return EventInterface
-     */
-    public function getEvent(): EventInterface
-    {
-        $events = $this->getEventService()->getEvents();
-
-        return $events[self::ENTITY_NAME];
-    }
-
-    /**
-     * @return EventService
-     */
-    public function getEventService(): EventService
-    {
-        return $this->eventService;
-    }
-
-    /**
      * @return string
      */
-    public function getEntityName(): string
+    public function getDeleteMessage(EntityInterface $entity): string
     {
-        return $this->reflectionClass->getName();
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityShortName(): string
-    {
-        return $this->reflectionClass->getShortName();
-    }
-
-    /**
-     * @return ViewEventInterface
-     */
-    public function getViewEvent(): ViewEventInterface
-    {
-        $viewEvents = $this->getEventService()->getViewEvents();
-
-        return $viewEvents[self::ENTITY_NAME];
-    }
-
-    /**
-     * @return EntityInterface
-     */
-    public function getEntity(): EntityInterface
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param EntityInterface $language
-     *
-     * @return $this
-     */
-    public function setEntity(EntityInterface $language): self
-    {
-        $this->language = $language;
-
-        return $this;
-    }
-
-    public function getDeleteMessage(): string
-    {
+        /* @var Language $entity */
         return $this->flashBagService->trans(
             'Are you sure you want to delete this language (%language%) ?',
-            $this->getEntityNameToLower(),
-            [$this->getEntityNameToLower() => $this->language->getIso6391()]
+            'language',
+            ['language' => $entity->getName()]
         );
     }
 }

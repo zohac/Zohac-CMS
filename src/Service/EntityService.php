@@ -2,14 +2,16 @@
 
 namespace App\Service;
 
+use App\Exception\DtoHandlerException;
+use App\Exception\HydratorException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use App\Interfaces\Factory\EntityFactoryInterface;
+use App\Interfaces\Service\EntityServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use ReflectionException;
 
-class EntityService
+class EntityService implements EntityServiceInterface
 {
     /**
      * @var EntityManagerInterface
@@ -17,23 +19,53 @@ class EntityService
     private $entityManager;
 
     /**
-     * @var EntityFactoryInterface[]
+     * @var EntityInterface
      */
-    private $factories;
+    private $entity;
+
+    /**
+     * @var DtoInterface
+     */
+    private $dto;
+
+    /**
+     * @var EventService
+     */
+    private $eventService;
+
+    /**
+     * @var ReflectionClass
+     */
+    private $reflectionClass;
+
+    /**
+     * @var HydratorService
+     */
+    private $hydratorService;
+
+    /**
+     * @var DtoHandler
+     */
+    private $dtoHandler;
 
     /**
      * EntityService constructor.
      *
-     * @param iterable               $handlers
      * @param EntityManagerInterface $entityManager
+     * @param EventService           $eventService
+     * @param HydratorService        $hydratorService
+     * @param DtoHandler             $dtoHandler
      */
-    public function __construct(iterable $handlers, EntityManagerInterface $entityManager)
-    {
-        foreach ($handlers as $handler) {
-            $this->factories[] = $handler;
-        }
-
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventService $eventService,
+        HydratorService $hydratorService,
+        DtoHandler $dtoHandler
+    ) {
         $this->entityManager = $entityManager;
+        $this->eventService = $eventService;
+        $this->hydratorService = $hydratorService;
+        $this->dtoHandler = $dtoHandler;
     }
 
     /**
@@ -41,14 +73,12 @@ class EntityService
      * @param DtoInterface    $dto
      *
      * @return EntityInterface
+     *
+     * @throws HydratorException
      */
-    public function populateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
+    public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        foreach ($this->factories as $factory) {
-            if ($factory->canHandle($entity)) {
-                $entity = $factory->populateEntityWithDto($entity, $dto);
-            }
-        }
+        $entity = $this->hydratorService->hydrateEntityWithDto($entity, $dto);
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
@@ -57,15 +87,44 @@ class EntityService
     }
 
     /**
-     * @param object|string $object
+     * @return DtoInterface
      *
-     * @return ReflectionClass
-     *
-     * @throws ReflectionException
+     * @throws DtoHandlerException
+     * @throws HydratorException
      */
-    public function getNewReflectionClass($object): ReflectionClass
+    public function getAndHydrateDto(): DtoInterface
     {
-        return new ReflectionClass($object);
+        $this->getDto();
+
+        $this->hydrateDtoWithEntity($this->entity, $this->dto);
+
+        return $this->dto;
+    }
+
+    /**
+     * @return DtoInterface
+     *
+     * @throws DtoHandlerException
+     */
+    public function getDto(): DtoInterface
+    {
+        if (null === $this->dto || !$this->dto instanceof DtoInterface) {
+            $this->dto = $this->dtoHandler->getDtoInterface($this->entity);
+        }
+
+        return $this->dto;
+    }
+
+    /**
+     * @param DtoInterface $dto
+     *
+     * @return $this
+     */
+    public function setDto(DtoInterface $dto): self
+    {
+        $this->dto = $dto;
+
+        return $this;
     }
 
     /**
@@ -74,23 +133,11 @@ class EntityService
      *
      * @return DtoInterface
      *
-     * @throws ReflectionException
+     * @throws HydratorException
      */
-    public function populateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
+    public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-        $reflectionDto = $this->getNewReflectionClass($dto);
-        $reflectionEntity = $this->getNewReflectionClass($entity);
-
-        foreach ($reflectionDto->getProperties() as $property) {
-            $propertyName = $property->getName();
-            $getMethod = 'get'.ucfirst($propertyName);
-
-            if ($reflectionEntity->hasMethod($getMethod)) {
-                $dto->$propertyName = $entity->$getMethod();
-            }
-        }
-
-        return $dto;
+        return $this->hydratorService->hydrateDtoWithEntity($entity, $dto);
     }
 
     /**
@@ -125,5 +172,113 @@ class EntityService
         $this->entityManager->flush();
 
         return $this;
+    }
+
+    /**
+     * @return EntityInterface
+     */
+    public function getEntity(): EntityInterface
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param EntityInterface|string $entity
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
+    public function setEntity($entity): self
+    {
+        $this->entity = $entity;
+
+        $this->reflectionClass = $this->getNewReflectionClass($entity);
+
+        return $this;
+    }
+
+    /**
+     * @param object|string $object
+     *
+     * @return ReflectionClass
+     *
+     * @throws ReflectionException
+     */
+    public function getNewReflectionClass($object): ReflectionClass
+    {
+        return new ReflectionClass($object);
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityName(): string
+    {
+        return $this->reflectionClass->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityShortName(): string
+    {
+        return $this->reflectionClass->getShortName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityNameToLower(): string
+    {
+        return strtolower($this->reflectionClass->getShortName());
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityNamePlural(): string
+    {
+        return strtolower($this->reflectionClass->getShortName().'s');
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return string
+     *
+     * @throws ReflectionException
+     */
+    public function getEvent(string $eventName): string
+    {
+        $events = $this->getEventService()->getEvents();
+
+        $reflection = $this->getNewReflectionClass($events[$this->reflectionClass->getName()]);
+
+        return $reflection->getConstant($eventName);
+    }
+
+    /**
+     * @return EventService
+     */
+    public function getEventService(): EventService
+    {
+        return $this->eventService;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return string
+     *
+     * @throws ReflectionException
+     */
+    public function getViewEvent(string $eventName): string
+    {
+        $viewEvents = $this->getEventService()->getViewEvents();
+
+        $reflection = $this->getNewReflectionClass($viewEvents[$this->reflectionClass->getName()]);
+
+        return $reflection->getConstant($eventName);
     }
 }

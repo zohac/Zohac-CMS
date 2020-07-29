@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Service;
-
 
 use App\Service\TranslatorService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

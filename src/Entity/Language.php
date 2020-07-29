@@ -176,12 +176,12 @@ class Language implements EntityInterface
         return $this;
     }
 
-    public function isArchived(): ?bool
+    public function isArchived(): bool
     {
         return $this->archived;
     }
 
-    public function setArchived(?bool $archived): self
+    public function setArchived(bool $archived): self
     {
         $this->archived = $archived;
 
