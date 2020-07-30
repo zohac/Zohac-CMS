@@ -62,3 +62,9 @@ services:
     App\Service\DtoHandler:
         arguments:
             - !tagged_iterator app.dto.interface
+
+    App\Command\src\Helper\DoctrineHelper:
+        arguments: ['@?doctrine']
+
+    App\Command\src\Helper\CrudHelper:
+        arguments: ['@App\Command\src\Helper\DoctrineHelper', '@maker.generator']
