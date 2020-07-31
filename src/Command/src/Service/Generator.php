@@ -47,7 +47,7 @@ class Generator
 
     /**
      * @param string $templatePath
-     * @param array $options
+     * @param array  $options
      *
      * @return string
      *
@@ -63,8 +63,10 @@ class Generator
     /**
      * @param string $className
      * @param string $templatePath
-     * @param array $options
+     * @param array  $options
+     *
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError

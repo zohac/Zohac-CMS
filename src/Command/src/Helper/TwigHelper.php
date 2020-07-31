@@ -6,7 +6,6 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Twig\TemplateWrapper;
 
 /**
  * Class TwigEnvironmentService.
@@ -32,7 +31,8 @@ class TwigHelper
      * Renders a template.
      *
      * @param string $template
-     * @param array $options An array of parameters to pass to the template
+     * @param array  $options  An array of parameters to pass to the template
+     *
      * @return string
      *
      * @throws LoaderError
@@ -41,6 +41,6 @@ class TwigHelper
      */
     public function render(string $template, array $options = []): string
     {
-        return $this->twigEnvironment->render($template ,$options);
+        return $this->twigEnvironment->render($template, $options);
     }
 }

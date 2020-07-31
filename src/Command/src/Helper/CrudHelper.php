@@ -9,7 +9,6 @@ use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Inflector\Inflector;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -198,12 +197,12 @@ class CrudHelper
      */
     protected function generateForm()
     {
-
         return $this;
     }
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
