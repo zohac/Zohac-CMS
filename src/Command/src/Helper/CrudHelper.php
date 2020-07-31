@@ -2,14 +2,17 @@
 
 namespace App\Command\src\Helper;
 
+use App\Command\src\Service\Generator;
+use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
-use Symfony\Bundle\MakerBundle\FileManager;
-use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Inflector\Inflector;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CrudHelper
 {
@@ -29,9 +32,9 @@ class CrudHelper
     protected $generator;
 
     /**
-     * @var string Class name only (without namespace)
+     * @var ReflectionClass
      */
-    protected $className;
+    protected $reflectionClass;
 
     /**
      * @var string Full class name (with namespace)
@@ -68,9 +71,6 @@ class CrudHelper
      * @var EntityDetails
      */
     protected $entityDoctrineDetails;
-
-    protected $projectDir;
-    protected $skeletonDir;
 
     protected $entityVarPlural;
     protected $entityVarSingular;
@@ -113,20 +113,7 @@ class CrudHelper
     {
         $this->entityClass = $entityClass;
 
-        $ref = new \ReflectionClass($entityClass);
-        $namespace = $ref->getNamespaceName();
-
-        $this->namespacePrefix = substr($namespace, 0, strpos($namespace, '\Entity'));
-        $this->className = $ref->getShortName();
-
-        // generate (& fix) base route path
-        $routePath = Str::asRoutePath($this->entityClass);
-        $routePath = preg_replace('/(bundle|entity)\//', '', $routePath);
-
-        // use setter to build also route name
-        $this->setRoutePath($routePath);
-
-        $this->buildClassDetails();
+        $this->reflectionClass = new ReflectionClass($entityClass);
 
         return $this;
     }
@@ -182,9 +169,9 @@ class CrudHelper
     }
 
     /**
-     * Generate files.
-     *
-     * @throws \Exception
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function generate()
     {
@@ -193,12 +180,12 @@ class CrudHelper
         }
 
         $this
-            ->generateController()
+            ->generateDto()
+//            ->generateController()
 //            ->generateForm()
 //            ->generateTemplates()
 //            ->generateEvent()
 //            ->generateEventSubscriber()
-//            ->generateDto()
 //            ->generateService()
 //            ->generateHydrator()
         ;
@@ -211,182 +198,50 @@ class CrudHelper
      */
     protected function generateForm()
     {
-        $this->generator->generateClass(
-            $this->formClassDetails->getFullName(),
-            $this->generateTemplatePath('form/Type.tpl.php'),
-            array(
-                'bounded_full_class_name' => $this->entityClassDetails->getFullName(),
-                'bounded_class_name' => $this->entityClassDetails->getShortName(),
-                'form_fields' => $this->entityDoctrineDetails->getFormFields(),
-            )
-        );
-
-        $this->entityVarPlural = lcfirst(Inflector::pluralize($this->entityClassDetails->getShortName()));
-        $this->entityVarSingular = lcfirst(Inflector::singularize($this->entityClassDetails->getShortName()));
-
-        $this->entityTwigVarPlural = Str::asTwigVariable($this->entityVarPlural);
-        $this->entityTwigVarSingular = Str::asTwigVariable($this->entityVarSingular);
 
         return $this;
     }
 
     /**
      * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateDto()
+    {
+        $this->generator->generateDto(
+            $this->reflectionClass->getShortName(),
+            'Dto.skeleton.php.twig',
+            [
+                'entity' => [
+                    'shortName' => $this->reflectionClass->getShortName(),
+                    'properties' => $this->reflectionClass->getProperties(),
+                ],
+            ]);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     protected function generateController()
     {
-        $templatesPath = $this->bundleName.':'.$this->className;
-
-        $repositoryVars = array(
-            'repository_full_class_name' => $this->repositoryClassDetails->getFullName(),
-            'repository_class_name' => $this->repositoryClassDetails->getShortName(),
-            'repository_var' => lcfirst(Inflector::singularize($this->repositoryClassDetails->getShortName())),
-        );
-
         $this->generator->generateController(
-            $this->controllerClassDetails->getFullName(),
-            $this->generateTemplatePath('crud/controller/Controller.tpl.php'),
-            array_merge([
-                'entity_full_class_name' => $this->entityClassDetails->getFullName(),
-                'entity_class_name' => $this->entityClassDetails->getShortName(),
-                'form_full_class_name' => $this->formClassDetails->getFullName(),
-                'form_class_name' => $this->formClassDetails->getShortName(),
-                'route_path' => $this->routePath,
-                'route_name' => $this->routeName,
-                'templates_path' => $templatesPath,
-                'entity_var_plural' => $this->entityVarPlural,
-                'entity_twig_var_plural' => $this->entityTwigVarPlural,
-                'entity_var_singular' => $this->entityVarSingular,
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'format' => $this->format,
-                'roles' => $this->roles,
-            ],
-                $repositoryVars
-            )
-        );
+            $this->reflectionClass->getShortName(),
+            'Controller.skeleton.php.twig',
+            [
+                'entity' => [
+                        'shortName' => $this->reflectionClass->getShortName(),
+                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                    ],
+            ]);
 
         return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function generateTemplates()
-    {
-        // generate templates
-        $templates = [
-            '_delete_form' => [
-                'route_name' => $this->routeName,
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'bundle_name' => $this->bundleName,
-            ],
-            '_form' => [],
-            'edit' => [
-                'entity_class_name' => $this->entityClassDetails->getShortName(),
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'bundle_name' => $this->bundleName,
-                'route_name' => $this->routeName,
-            ],
-            'index' => [
-                'entity_class_name' => $this->entityClassDetails->getShortName(),
-                'entity_twig_var_plural' => $this->entityTwigVarPlural,
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'entity_fields' => $this->entityDoctrineDetails->getDisplayFields(),
-                'bundle_name' => $this->bundleName,
-                'route_name' => $this->routeName,
-            ],
-            'new' => [
-                'entity_class_name' => $this->entityClassDetails->getShortName(),
-                'bundle_name' => $this->bundleName,
-                'route_name' => $this->routeName,
-            ],
-            'show' => [
-                'entity_class_name' => $this->entityClassDetails->getShortName(),
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'entity_fields' => $this->entityDoctrineDetails->getDisplayFields(),
-                'bundle_name' => $this->bundleName,
-                'route_name' => $this->routeName,
-            ],
-        ];
-
-        foreach ($templates as $template => $variables) {
-            $filePath = sprintf('%s/Resources/views/%s/%s.html.twig', $this->bundleDir, $this->className, $template);
-            $templatePath = $this->generateTemplatePath('crud/templates/'.$template.'.tpl.php');
-
-            $this->generator->generateFile($filePath, $templatePath, $variables);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function generateRoutingFiles()
-    {
-        if ('annotation' !== $this->format) {
-            // generate crud routing file
-            $crudRoutingFilePath = sprintf('%s/Resources/config/routing/%s.%s', $this->bundleDir, $this->entityTwigVarSingular, $this->format);
-            $crudRoutingTemplatePath = $this->generateTemplatePath(sprintf('crud/config/routing-crud.%s.tpl.php', $this->format));
-
-            $crudRoutingVars = array(
-                'bundle_name' => $this->bundleName,
-                'entity' => $this->className,
-                'route_name' => $this->routeName,
-                'entity_identifier' => $this->entityDoctrineDetails->getIdentifier(),
-                'format' => $this->format,
-            );
-            $this->generator->generateFile($crudRoutingFilePath, $crudRoutingTemplatePath, $crudRoutingVars);
-
-            // generate or append to include file
-            $routingFilePath = sprintf('%s/Resources/config/routing.%s', $this->bundleDir, $this->format);
-            $routingTemplatePath = $this->generateTemplatePath(sprintf('crud/config/routing.%s.tpl.php', $this->format));
-
-            $routeNameInclude = sprintf('%s_%s', $this->routeName, $this->routeName);
-
-            $routingVars = array(
-                'bundle_name' => $this->bundleName,
-                'route_name' => $this->routeName,
-                'route_path' => $this->routePath,
-                'route_name_include' => $routeNameInclude,
-                'entity_twig_var_singular' => $this->entityTwigVarSingular,
-                'format' => $this->format,
-            );
-
-            // file exists... append
-            if (!file_exists($routingFilePath)) {
-                $this->generator->generateFile($routingFilePath, $routingTemplatePath, $routingVars);
-            } else {
-                $existingContent = file_get_contents($routingFilePath);
-
-                // prepend route include to file
-                if (false === strpos($existingContent, $routeNameInclude)) {
-                    $parsedContent = $this->fileManager->parseTemplate($routingTemplatePath, $routingVars);
-
-                    $newContent = $parsedContent."\r\n\r\n".$existingContent;
-
-                    $this->fileManager->dumpFile($routingFilePath, $newContent);
-                }
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Generate template file path.
-     *
-     * @param $templateName
-     *
-     * @return string
-     */
-    protected function generateTemplatePath($templateName)
-    {
-        return $this->skeletonDir.'/'.$templateName;
     }
 }

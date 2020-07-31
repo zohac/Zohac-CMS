@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Command\src\Helper\CrudHelper;
+use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
@@ -12,6 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CrudCommand extends Command
 {
@@ -73,9 +77,12 @@ class CrudCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return int|void
+     * @return int
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -86,7 +93,7 @@ class CrudCommand extends Command
         $confirmQuestion = new ConfirmationQuestion('Generate?', true, '/^(y)/i');
 
         if ($this->io->askQuestion($confirmQuestion)) {
-//            $this->crudHelper->generate();
+            $this->crudHelper->generate();
 
             $this->io->success('Operation successful!');
 

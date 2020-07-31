@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Dto\{{ entity.shortName }};
+
+use App\Entity\{{ entity.shortName }};
+use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Class {{ entity.shortName }}Dto.
+ */
+class {{ entity.shortName }}Dto implements DtoInterface
+{
+{% for property in entity.properties %}
+{% if 'id' != property.name %}
+    public ${{ property.name }};
+
+{% endif %}
+{% endfor %}
+    /**
+     * @param EntityInterface $entity
+     *
+     * @return bool
+     */
+    public function canHandle(EntityInterface $entity): bool
+    {
+        return $entity instanceof {{ entity.shortName }};
+    }
+}
