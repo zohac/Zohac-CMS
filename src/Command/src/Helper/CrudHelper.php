@@ -96,7 +96,6 @@ class CrudHelper
     public function setIO(SymfonyStyle $io)
     {
         $this->io = $io;
-//        $this->fileManager->setIO($io);
 
         return $this;
     }
@@ -179,14 +178,14 @@ class CrudHelper
         }
 
         $this
-            ->generateDto()
-//            ->generateController()
+//            ->generateDto()
 //            ->generateForm()
-//            ->generateTemplates()
-//            ->generateEvent()
+            ->generateEvent()
 //            ->generateEventSubscriber()
 //            ->generateService()
 //            ->generateHydrator()
+//            ->generateTemplates()
+//            ->generateController()
         ;
 
         $this->generator->writeChanges();
@@ -194,9 +193,24 @@ class CrudHelper
 
     /**
      * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     protected function generateForm()
     {
+        $this->generator->generate(
+            'Form',
+            $this->reflectionClass->getShortName(),
+            'Form.skeleton.php.twig',
+            [
+                'entity' => [
+                    'shortName' => $this->reflectionClass->getShortName(),
+                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                    'properties' => $this->reflectionClass->getProperties(),
+                ],
+            ]);
+
         return $this;
     }
 
@@ -209,7 +223,8 @@ class CrudHelper
      */
     public function generateDto()
     {
-        $this->generator->generateDto(
+        $this->generator->generate(
+            'Dto',
             $this->reflectionClass->getShortName(),
             'Dto.skeleton.php.twig',
             [
@@ -231,7 +246,8 @@ class CrudHelper
      */
     protected function generateController()
     {
-        $this->generator->generateController(
+        $this->generator->generate(
+            'Controller',
             $this->reflectionClass->getShortName(),
             'Controller.skeleton.php.twig',
             [

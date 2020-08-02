@@ -8,6 +8,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use function Couchbase\defaultDecoder;
 
 class Generator
 {
@@ -61,6 +62,7 @@ class Generator
     }
 
     /**
+     * @param string $type
      * @param string $className
      * @param string $templatePath
      * @param array  $options
@@ -71,37 +73,44 @@ class Generator
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generateDto(string $className, string $templatePath, array $options = [])
+    public function generate(string $type, string $className, string $templatePath, array $options = [])
     {
-        $path = $this->kernelProjectDir.'/src/Dto/'.$className.'/'.$className.'Dto.php';
+        if ($path = $this->getPathForType($type, $className)) {
+            $template = $this->render($templatePath, $options);
 
-        $template = $this->render($templatePath, $options);
+            $this->addOperation($path, $template);
 
-        $this->addOperation($path, $template);
+            return $this;
+        }
 
-        return $this;
+        throw new RuntimeCommandException(
+            sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
+        );
     }
 
     /**
-     * @param string $className
-     * @param string $templatePath
-     * @param array  $options
-     *
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @param string $type
+     * @param string $classeName
+     * @return string|null
      */
-    public function generateController(string $className, string $templatePath, array $options = [])
+    public function getPathForType(string $type, string $classeName): ?string
     {
-        $path = $this->kernelProjectDir.'/src/Controller/'.$className.'Controller.php';
+        $path = null;
+        $type = ucfirst($type);
 
-        $template = $this->render($templatePath, $options);
+        switch ($type) {
+            case 'Controller':
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.$type.'.php';
+                break;
+            case 'Form':
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.'Type.php';
+                break;
+            default:
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.$type.'.php';
+                break;
+        }
 
-        $this->addOperation($path, $template);
-
-        return $this;
+        return $path;
     }
 
     public function addOperation(string $path, string $template)
