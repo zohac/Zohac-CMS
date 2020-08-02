@@ -84,8 +84,8 @@ class CrudHelper
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
-     * @param Generator $generator
-     * @param string $kernelProjectDir
+     * @param Generator      $generator
+     * @param string         $kernelProjectDir
      */
     public function __construct(DoctrineHelper $doctrineHelper, Generator $generator, string $kernelProjectDir)
     {
