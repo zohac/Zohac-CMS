@@ -61,8 +61,7 @@ class Generator
     }
 
     /**
-     * @param string $type
-     * @param string $className
+     * @param string $path
      * @param string $templatePath
      * @param array  $options
      *
@@ -72,46 +71,13 @@ class Generator
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generate(string $type, string $className, string $templatePath, array $options = [])
+    public function generate(string $path, string $templatePath, array $options = [])
     {
-        if ($path = $this->getPathForType($type, $className)) {
-            $template = $this->render($templatePath, $options);
+        $template = $this->render($templatePath, $options);
 
-            $this->addOperation($path, $template);
+        $this->addOperation($path, $template);
 
-            return $this;
-        }
-
-        throw new RuntimeCommandException(sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className));
-    }
-
-    /**
-     * @param string $type
-     * @param string $classeName
-     *
-     * @return string|null
-     */
-    public function getPathForType(string $type, string $classeName): ?string
-    {
-        $path = null;
-        $type = ucfirst($type);
-
-        switch ($type) {
-            case 'Controller':
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.$type.'.php';
-                break;
-            case 'Form':
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.'Type.php';
-                break;
-            case 'ViewEvent':
-                $path = $this->kernelProjectDir.'/src/Event/'.$classeName.'/'.$classeName.$type.'.php';
-                break;
-            default:
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.$type.'.php';
-                break;
-        }
-
-        return $path;
+        return $this;
     }
 
     public function addOperation(string $path, string $template)

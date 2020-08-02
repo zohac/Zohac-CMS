@@ -3,9 +3,11 @@
 namespace App\Command\src\Helper;
 
 use App\Command\src\Service\Generator;
+use Exception;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
+use Symfony\Bundle\MakerBundle\Exception\RuntimeCommandException;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Twig\Error\LoaderError;
@@ -74,6 +76,10 @@ class CrudHelper
     protected $entityVarSingular;
     protected $entityTwigVarPlural;
     protected $entityTwigVarSingular;
+    /**
+     * @var string
+     */
+    private $kernelProjectDir;
 
     /**
      * CrudHelper constructor.
@@ -81,10 +87,11 @@ class CrudHelper
      * @param DoctrineHelper $doctrineHelper
      * @param Generator      $generator
      */
-    public function __construct(DoctrineHelper $doctrineHelper, Generator $generator)
+    public function __construct(DoctrineHelper $doctrineHelper, Generator $generator, string $kernelProjectDir)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->generator = $generator;
+        $this->kernelProjectDir = $kernelProjectDir;
     }
 
     /**
@@ -112,14 +119,49 @@ class CrudHelper
     }
 
     /**
+     * @param string $type
+     * @param string $className
+     * @return string
+     */
+    public function getPathForType(string $type, string $className): string
+    {
+        $path = null;
+        $type = ucfirst($type);
+
+        switch ($type) {
+            case 'Controller':
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.$type.'.php';
+                break;
+            case 'Form':
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.'Type.php';
+                break;
+            case 'ViewEvent':
+                $path = $this->kernelProjectDir.'/src/Event/'.$className.'/'.$className.$type.'.php';
+                break;
+            default:
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.$type.'.php';
+                break;
+        }
+
+        if (! $path) {
+            throw new RuntimeCommandException(
+                sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
+            );
+        }
+
+        return $path;
+    }
+
+    /**
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws Exception
      */
     public function generate()
     {
         if (!class_exists($this->entityClass)) {
-            throw new \Exception('Invalid class name: '.$this->entityClass);
+            throw new Exception('Invalid class name: '.$this->entityClass);
         }
 
         $this
@@ -147,8 +189,7 @@ class CrudHelper
     protected function generateForm()
     {
         $this->generator->generate(
-            'Form',
-            $this->reflectionClass->getShortName(),
+            $this->getPathForType('Form', $this->reflectionClass->getShortName()),
             'Form.skeleton.php.twig',
             [
                 'entity' => [
@@ -171,8 +212,7 @@ class CrudHelper
     public function generateDto()
     {
         $this->generator->generate(
-            'Dto',
-            $this->reflectionClass->getShortName(),
+            $this->getPathForType('Dto', $this->reflectionClass->getShortName()),
             'Dto.skeleton.php.twig',
             [
                 'entity' => [
@@ -194,8 +234,7 @@ class CrudHelper
     protected function generateEvent()
     {
         $this->generator->generate(
-            'Event',
-            $this->reflectionClass->getShortName(),
+            $this->getPathForType('Event', $this->reflectionClass->getShortName()),
             'Event.skeleton.php.twig',
             [
                 'entity' => [
@@ -217,8 +256,7 @@ class CrudHelper
     protected function generateViewEvent()
     {
         $this->generator->generate(
-            'ViewEvent',
-            $this->reflectionClass->getShortName(),
+            $this->getPathForType('ViewEvent', $this->reflectionClass->getShortName()),
             'ViewEvent.skeleton.php.twig',
             [
                 'entity' => [
@@ -240,8 +278,7 @@ class CrudHelper
     protected function generateController()
     {
         $this->generator->generate(
-            'Controller',
-            $this->reflectionClass->getShortName(),
+            $this->getPathForType('Controller', $this->reflectionClass->getShortName()),
             'Controller.skeleton.php.twig',
             [
                 'entity' => [
