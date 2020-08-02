@@ -245,6 +245,29 @@ class CrudHelper
      * @throws RuntimeError
      * @throws SyntaxError
      */
+    protected function generateEvent()
+    {
+        $this->generator->generate(
+            'Event',
+            $this->reflectionClass->getShortName(),
+            'Event.skeleton.php.twig',
+            [
+                'entity' => [
+                    'shortName' => $this->reflectionClass->getShortName(),
+                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                ],
+            ]);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     protected function generateController()
     {
         $this->generator->generate(
