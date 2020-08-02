@@ -45,7 +45,6 @@ class CrudHelper
 
     protected $bundleName;
     protected $bundleDir;
-    protected $namespacePrefix;
 
     /**
      * @var ClassNameDetails
@@ -85,7 +84,8 @@ class CrudHelper
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
-     * @param Generator      $generator
+     * @param Generator $generator
+     * @param string $kernelProjectDir
      */
     public function __construct(DoctrineHelper $doctrineHelper, Generator $generator, string $kernelProjectDir)
     {
@@ -161,6 +161,7 @@ class CrudHelper
         $options = [];
 
         switch ($type) {
+            case 'Dto':
             case 'Form':
                 $options = [
                     'entity' => [
@@ -170,14 +171,13 @@ class CrudHelper
                     ],
                 ];
                 break;
-            case 'Dto':
+            case 'Controller':
             case 'Event':
             case 'ViewEvent':
-            case 'Controller':
                 $options = [
                     'entity' => [
                         'shortName' => $this->reflectionClass->getShortName(),
-                        'properties' => $this->reflectionClass->getProperties(),
+                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
                     ],
                 ];
                 break;
