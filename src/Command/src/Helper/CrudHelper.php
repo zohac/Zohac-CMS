@@ -6,7 +6,6 @@ use App\Command\src\Service\Generator;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
-use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Twig\Error\LoaderError;
