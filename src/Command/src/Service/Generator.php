@@ -103,6 +103,9 @@ class Generator
             case 'Form':
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.'Type.php';
                 break;
+            case 'ViewEvent':
+                $path = $this->kernelProjectDir.'/src/Event/'.$classeName.'/'.$classeName.$type.'.php';
+                break;
             default:
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$classeName.'/'.$classeName.$type.'.php';
                 break;

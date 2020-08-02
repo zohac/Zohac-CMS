@@ -89,18 +89,6 @@ class CrudHelper
     }
 
     /**
-     * @param SymfonyStyle $io
-     *
-     * @return $this
-     */
-    public function setIO(SymfonyStyle $io)
-    {
-        $this->io = $io;
-
-        return $this;
-    }
-
-    /**
      * @param $entityClass
      *
      * @return $this
@@ -117,53 +105,11 @@ class CrudHelper
     }
 
     /**
-     * @param $routePath
-     *
-     * @return $this
-     */
-    public function setRoutePath($routePath)
-    {
-        $this->routePath = $routePath;
-
-        // generate (& fix) base route name
-        $this->routeName = Str::asRouteName(trim($this->routePath, '/'));
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getEntitiesForAutocomplete()
     {
         return $this->doctrineHelper->getEntitiesForAutocomplete();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRoutePath()
-    {
-        return $this->routePath;
-    }
-
-    protected function buildClassDetails()
-    {
-        // create entity class details
-        $this->entityClassDetails = new ClassNameDetails($this->entityClass, $this->namespacePrefix.'\\Entity\\', '');
-        $this->entityDoctrineDetails = $this->doctrineHelper->createDoctrineDetails($this->entityClassDetails->getFullName());
-
-        // create form class details
-        $formClass = sprintf('%s\\Form\\%sType', $this->namespacePrefix, $this->className);
-        $this->formClassDetails = new ClassNameDetails($formClass, $this->namespacePrefix.'\\Form\\', 'Type');
-
-        // create repository class details
-        $repositoryClass = sprintf('%s\\Repository\\%sRepository', $this->namespacePrefix, $this->className);
-        $this->repositoryClassDetails = new ClassNameDetails($repositoryClass, $this->namespacePrefix.'\\Repository\\', 'Repository');
-
-        // create controller class details
-        $controllerClass = sprintf('%s\\Controller\\%sController', $this->namespacePrefix, $this->className);
-        $this->controllerClassDetails = new ClassNameDetails($controllerClass, $this->namespacePrefix.'\\Controller\\', 'Controller');
     }
 
     /**
@@ -180,7 +126,8 @@ class CrudHelper
         $this
 //            ->generateDto()
 //            ->generateForm()
-            ->generateEvent()
+//            ->generateEvent()
+            ->generateViewEvent()
 //            ->generateEventSubscriber()
 //            ->generateService()
 //            ->generateHydrator()
@@ -251,6 +198,29 @@ class CrudHelper
             'Event',
             $this->reflectionClass->getShortName(),
             'Event.skeleton.php.twig',
+            [
+                'entity' => [
+                    'shortName' => $this->reflectionClass->getShortName(),
+                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                ],
+            ]);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function generateViewEvent()
+    {
+        $this->generator->generate(
+            'ViewEvent',
+            $this->reflectionClass->getShortName(),
+            'ViewEvent.skeleton.php.twig',
             [
                 'entity' => [
                     'shortName' => $this->reflectionClass->getShortName(),

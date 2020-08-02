@@ -86,9 +86,7 @@ class CrudCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->crudHelper
-            ->setIO($this->io)
-            ->setEntityClass($input->getArgument('entity-class'));
+        $this->crudHelper->setEntityClass($input->getArgument('entity-class'));
 
         $confirmQuestion = new ConfirmationQuestion('Generate?', true, '/^(y)/i');
 
