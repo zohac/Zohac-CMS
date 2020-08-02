@@ -8,7 +8,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use function Couchbase\defaultDecoder;
 
 class Generator
 {
@@ -83,14 +82,13 @@ class Generator
             return $this;
         }
 
-        throw new RuntimeCommandException(
-            sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
-        );
+        throw new RuntimeCommandException(sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className));
     }
 
     /**
      * @param string $type
      * @param string $classeName
+     *
      * @return string|null
      */
     public function getPathForType(string $type, string $classeName): ?string
@@ -116,10 +114,7 @@ class Generator
     public function addOperation(string $path, string $template)
     {
         if ($this->fileManager->exists($path)) {
-            throw new RuntimeCommandException(
-                sprintf('The file "%s" can\'t be generated because it already exists.',
-                    $this->fileManager->makePathRelative($path, $this->kernelProjectDir))
-            );
+            throw new RuntimeCommandException(sprintf('The file "%s" can\'t be generated because it already exists.', $this->fileManager->makePathRelative($path, $this->kernelProjectDir)));
         }
 
         $this->pendingOperations[$path] = $template;

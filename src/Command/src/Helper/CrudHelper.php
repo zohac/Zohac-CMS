@@ -193,6 +193,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
