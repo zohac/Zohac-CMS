@@ -120,13 +120,14 @@ class CrudHelper
 
     /**
      * @param string $type
-     * @param string $className
+     *
      * @return string
      */
-    public function getPathForType(string $type, string $className): string
+    public function getPathForType(string $type): string
     {
         $path = null;
         $type = ucfirst($type);
+        $className = $this->reflectionClass->getShortName();
 
         switch ($type) {
             case 'Controller':
@@ -143,13 +144,46 @@ class CrudHelper
                 break;
         }
 
-        if (! $path) {
-            throw new RuntimeCommandException(
-                sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
-            );
+        if (!$path) {
+            throw new RuntimeCommandException(sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className));
         }
 
         return $path;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return array|array[]
+     */
+    public function getOptionsForType(string $type): array
+    {
+        $options = [];
+
+        switch ($type) {
+            case 'Form':
+                $options = [
+                    'entity' => [
+                        'shortName' => $this->reflectionClass->getShortName(),
+                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                        'properties' => $this->reflectionClass->getProperties(),
+                    ],
+                ];
+                break;
+            case 'Dto':
+            case 'Event':
+            case 'ViewEvent':
+            case 'Controller':
+                $options = [
+                    'entity' => [
+                        'shortName' => $this->reflectionClass->getShortName(),
+                        'properties' => $this->reflectionClass->getProperties(),
+                    ],
+                ];
+                break;
+        }
+
+        return $options;
     }
 
     /**
@@ -165,127 +199,38 @@ class CrudHelper
         }
 
         $this
-//            ->generateDto()
-//            ->generateForm()
-//            ->generateEvent()
-            ->generateViewEvent()
+//            ->generateForType('Dto')
+//            ->generateForType('Form')
+//            ->generateForType('Event')
+            ->generateForType('ViewEvent')
 //            ->generateEventSubscriber()
 //            ->generateService()
 //            ->generateHydrator()
 //            ->generateTemplates()
-//            ->generateController()
+//            ->generateForType('Controller')
         ;
 
         $this->generator->writeChanges();
     }
 
     /**
+     * @param string $type
+     *
      * @return $this
      *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function generateForm()
+    public function generateForType(string $type): self
     {
+        $type = ucfirst($type);
+
         $this->generator->generate(
-            $this->getPathForType('Form', $this->reflectionClass->getShortName()),
-            'Form.skeleton.php.twig',
-            [
-                'entity' => [
-                    'shortName' => $this->reflectionClass->getShortName(),
-                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                    'properties' => $this->reflectionClass->getProperties(),
-                ],
-            ]);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateDto()
-    {
-        $this->generator->generate(
-            $this->getPathForType('Dto', $this->reflectionClass->getShortName()),
-            'Dto.skeleton.php.twig',
-            [
-                'entity' => [
-                    'shortName' => $this->reflectionClass->getShortName(),
-                    'properties' => $this->reflectionClass->getProperties(),
-                ],
-            ]);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    protected function generateEvent()
-    {
-        $this->generator->generate(
-            $this->getPathForType('Event', $this->reflectionClass->getShortName()),
-            'Event.skeleton.php.twig',
-            [
-                'entity' => [
-                    'shortName' => $this->reflectionClass->getShortName(),
-                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                ],
-            ]);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    protected function generateViewEvent()
-    {
-        $this->generator->generate(
-            $this->getPathForType('ViewEvent', $this->reflectionClass->getShortName()),
-            'ViewEvent.skeleton.php.twig',
-            [
-                'entity' => [
-                    'shortName' => $this->reflectionClass->getShortName(),
-                    'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                ],
-            ]);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    protected function generateController()
-    {
-        $this->generator->generate(
-            $this->getPathForType('Controller', $this->reflectionClass->getShortName()),
-            'Controller.skeleton.php.twig',
-            [
-                'entity' => [
-                        'shortName' => $this->reflectionClass->getShortName(),
-                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                    ],
-            ]);
+            $this->getPathForType($type),
+            $type.'.skeleton.php.twig',
+            $this->getOptionsForType($type)
+            );
 
         return $this;
     }
