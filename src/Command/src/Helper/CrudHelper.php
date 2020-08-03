@@ -6,7 +6,6 @@ use App\Command\src\Service\Generator;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 use Symfony\Bundle\MakerBundle\Exception\RuntimeCommandException;
 use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -65,11 +64,6 @@ class CrudHelper
      * @var ClassNameDetails
      */
     protected $controllerClassDetails;
-
-    /**
-     * @var EntityDetails
-     */
-    protected $entityDoctrineDetails;
 
     protected $entityVarPlural;
     protected $entityVarSingular;
@@ -133,11 +127,17 @@ class CrudHelper
             case 'Controller':
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.$type.'.php';
                 break;
+            case 'EventSubscriber':
+                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'EventsSubscriber.php';
+                break;
             case 'Form':
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.'Type.php';
                 break;
             case 'ViewEvent':
                 $path = $this->kernelProjectDir.'/src/Event/'.$className.'/'.$className.$type.'.php';
+                break;
+            case 'Hydrator':
+                $path = $this->kernelProjectDir.'/src/Service/'.$className.'/'.$className.$type.'Service.php';
                 break;
             default:
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.$type.'.php';
@@ -163,6 +163,7 @@ class CrudHelper
         switch ($type) {
             case 'Dto':
             case 'Form':
+            case 'Hydrator':
                 $options = [
                     'entity' => [
                         'shortName' => $this->reflectionClass->getShortName(),
@@ -174,6 +175,8 @@ class CrudHelper
             case 'Controller':
             case 'Event':
             case 'ViewEvent':
+            case 'EventSubscriber':
+            case 'Service':
                 $options = [
                     'entity' => [
                         'shortName' => $this->reflectionClass->getShortName(),
@@ -202,10 +205,10 @@ class CrudHelper
 //            ->generateForType('Dto')
 //            ->generateForType('Form')
 //            ->generateForType('Event')
-            ->generateForType('ViewEvent')
-//            ->generateEventSubscriber()
-//            ->generateService()
-//            ->generateHydrator()
+//            ->generateForType('ViewEvent')
+//            ->generateForType('EventSubscriber')
+//            ->generateForType('Service')
+            ->generateForType('Hydrator')
 //            ->generateTemplates()
 //            ->generateForType('Controller')
         ;
