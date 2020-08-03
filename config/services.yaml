@@ -73,4 +73,4 @@ services:
         public: true
 
     App\Command\src\Helper\CrudHelper:
-        arguments: ['@App\Command\src\Helper\DoctrineHelper', '@App\Command\src\Service\Generator', '%kernel.project_dir%']
+        arguments: ['@App\Command\src\Helper\DoctrineHelper', '@App\Command\src\Service\Generator', '%kernel.project_dir%', '%skeleton.dir%']

@@ -75,17 +75,28 @@ class CrudHelper
     private $kernelProjectDir;
 
     /**
+     * @var string
+     */
+    private $templatePath;
+
+    /**
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
      * @param Generator      $generator
      * @param string         $kernelProjectDir
+     * @param string         $templatePath
      */
-    public function __construct(DoctrineHelper $doctrineHelper, Generator $generator, string $kernelProjectDir)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        Generator $generator,
+        string $kernelProjectDir,
+        string $templatePath
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->generator = $generator;
         $this->kernelProjectDir = $kernelProjectDir;
+        $this->templatePath = $templatePath;
     }
 
     /**
@@ -139,6 +150,10 @@ class CrudHelper
             case 'Hydrator':
                 $path = $this->kernelProjectDir.'/src/Service/'.$className.'/'.$className.$type.'Service.php';
                 break;
+            case 'Template':
+                $className = strtolower($className);
+                $path = $this->kernelProjectDir.'/templates/'.$className.'/';
+                break;
             default:
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.$type.'.php';
                 break;
@@ -158,31 +173,19 @@ class CrudHelper
      */
     public function getOptionsForType(string $type): array
     {
-        $options = [];
+        $options = [
+            'entity' => [
+                'shortName' => $this->reflectionClass->getShortName(),
+                'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+            ],
+        ];
 
         switch ($type) {
             case 'Dto':
             case 'Form':
             case 'Hydrator':
-                $options = [
-                    'entity' => [
-                        'shortName' => $this->reflectionClass->getShortName(),
-                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                        'properties' => $this->reflectionClass->getProperties(),
-                    ],
-                ];
-                break;
-            case 'Controller':
-            case 'Event':
-            case 'ViewEvent':
-            case 'EventSubscriber':
-            case 'Service':
-                $options = [
-                    'entity' => [
-                        'shortName' => $this->reflectionClass->getShortName(),
-                        'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                    ],
-                ];
+            case 'Template':
+                $options['entity']['properties'] = $this->reflectionClass->getProperties();
                 break;
         }
 
@@ -208,8 +211,8 @@ class CrudHelper
 //            ->generateForType('ViewEvent')
 //            ->generateForType('EventSubscriber')
 //            ->generateForType('Service')
-            ->generateForType('Hydrator')
-//            ->generateTemplates()
+//            ->generateForType('Hydrator')
+            ->generateTemplate()
 //            ->generateForType('Controller')
         ;
 
@@ -234,6 +237,31 @@ class CrudHelper
             $type.'.skeleton.php.twig',
             $this->getOptionsForType($type)
             );
+
+        return $this;
+    }
+
+    public function generateTemplate()
+    {
+        $path = $this->getPathForType('Template');
+
+        $this->generator->generateTemplate(
+            $path.'detail.htlm.twig',
+            $this->templatePath.'/detail.skeleton.php',
+            $this->getOptionsForType('Template')
+        );
+
+//        $this->generator->generateTemplate(
+//            $path.'index.htlm.twig',
+//            $this->templatePath.'/index.skeleton.php',
+//            $this->getOptionsForType('Template')
+//        );
+//
+//        $this->generator->generateTemplate(
+//            $path.'type.htlm.twig',
+//            $this->templatePath.'/type.skeleton.php',
+//            $this->getOptionsForType('Template')
+//        );
 
         return $this;
     }
