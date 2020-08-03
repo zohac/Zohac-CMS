@@ -7,6 +7,7 @@ parameters:
     locale: 'fr'
     app.log.dev: 'app.dev'
     app.log: 'app'
+    # CRUD Command
     skeleton.dir: '%kernel.project_dir%/src/Command/src/Resources/Templates'
 
 services:
@@ -17,6 +18,7 @@ services:
         bind:
             string $defaultLocale: '%locale%'
             bool $isDebug: '%kernel.debug%'
+            # CRUD Command
             string $kernelProjectDir : '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
@@ -73,4 +75,8 @@ services:
         public: true
 
     App\Command\src\Helper\CrudHelper:
-        arguments: ['@App\Command\src\Helper\DoctrineHelper', '@App\Command\src\Service\Generator', '%kernel.project_dir%', '%skeleton.dir%']
+        arguments:
+            - '@App\Command\src\Helper\DoctrineHelper'
+            - '@App\Command\src\Service\Generator'
+            - '%kernel.project_dir%'
+            - '%skeleton.dir%'

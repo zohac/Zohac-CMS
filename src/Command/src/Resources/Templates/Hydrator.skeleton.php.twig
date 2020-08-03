@@ -46,7 +46,7 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
 
         $entity->setUuid($uuid)
 {% for property in entity.properties %}
-{% if 'id' != property.name and 'uuid' != property.name %}
+{% if property.name not in ['id', 'uuid'] %}
             ->set{{ property.name|capitalize }}($dto->{{ property.name }})
 {% endif %}
 {% endfor %}

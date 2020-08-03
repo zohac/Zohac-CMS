@@ -154,6 +154,10 @@ class CrudHelper
                 $className = strtolower($className);
                 $path = $this->kernelProjectDir.'/templates/'.$className.'/';
                 break;
+            case 'Translation':
+                $className = strtolower($className);
+                $path = $this->kernelProjectDir.'/translations/'.$className.'/'.$className.'.fr.yaml';
+                break;
             default:
                 $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.$type.'.php';
                 break;
@@ -185,6 +189,7 @@ class CrudHelper
             case 'Form':
             case 'Hydrator':
             case 'Template':
+            case 'Translation':
                 $options['entity']['properties'] = $this->reflectionClass->getProperties();
                 break;
         }
@@ -212,8 +217,9 @@ class CrudHelper
 //            ->generateForType('EventSubscriber')
 //            ->generateForType('Service')
 //            ->generateForType('Hydrator')
-            ->generateTemplate()
+//            ->generateTemplate()
 //            ->generateForType('Controller')
+            ->generateForType('Translation')
         ;
 
         $this->generator->writeChanges();
@@ -231,37 +237,38 @@ class CrudHelper
     public function generateForType(string $type): self
     {
         $type = ucfirst($type);
+        $templatePath = ('Translation' === $type) ? $type.'.skeleton.yaml.twig' : $type.'.skeleton.php.twig';
 
-        $this->generator->generate(
-            $this->getPathForType($type),
-            $type.'.skeleton.php.twig',
-            $this->getOptionsForType($type)
-            );
+        $this->generator->generate($this->getPathForType($type), $templatePath, $this->getOptionsForType($type));
 
         return $this;
     }
 
-    public function generateTemplate()
+    /**
+     * @return $this
+     */
+    public function generateTemplate(): self
     {
         $path = $this->getPathForType('Template');
+        $options = $this->getOptionsForType('Template');
 
         $this->generator->generateTemplate(
             $path.'detail.htlm.twig',
             $this->templatePath.'/detail.skeleton.php',
-            $this->getOptionsForType('Template')
+            $options
         );
 
-//        $this->generator->generateTemplate(
-//            $path.'index.htlm.twig',
-//            $this->templatePath.'/index.skeleton.php',
-//            $this->getOptionsForType('Template')
-//        );
-//
-//        $this->generator->generateTemplate(
-//            $path.'type.htlm.twig',
-//            $this->templatePath.'/type.skeleton.php',
-//            $this->getOptionsForType('Template')
-//        );
+        $this->generator->generateTemplate(
+            $path.'index.htlm.twig',
+            $this->templatePath.'/index.skeleton.php',
+            $options
+        );
+
+        $this->generator->generateTemplate(
+            $path.'type.htlm.twig',
+            $this->templatePath.'/type.skeleton.php',
+            $options
+        );
 
         return $this;
     }

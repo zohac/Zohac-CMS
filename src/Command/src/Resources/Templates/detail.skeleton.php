@@ -8,7 +8,7 @@
     {% if <?= $entity['shortNameToLower']; ?> is not empty %}
 <?php foreach ($entity['properties'] as $property) : ?>
 <?php if ('id' != $property->getName()) : ?>
-    {% trans from '<?= $entity['shortNameToLower']; ?>' %}<?= $property->getName(); ?>{% endtrans %}: {{ <?= $entity['shortNameToLower']; ?>.name }}<br/>
+    {% trans from '<?= $entity['shortNameToLower']; ?>' %}<?= $property->getName(); ?>{% endtrans %}: {{ <?= $entity['shortNameToLower']; ?>.<?= $property->getName(); ?> }}<br/>
 <?php endif; ?>
 <?php endforeach; ?>
 
