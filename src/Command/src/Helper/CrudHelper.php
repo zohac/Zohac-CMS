@@ -3,6 +3,9 @@
 namespace App\Command\src\Helper;
 
 use App\Command\src\Service\Generator;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -80,6 +83,11 @@ class CrudHelper
     private $templatePath;
 
     /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    /**
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
@@ -97,6 +105,10 @@ class CrudHelper
         $this->generator = $generator;
         $this->kernelProjectDir = $kernelProjectDir;
         $this->templatePath = $templatePath;
+
+        if (class_exists(InflectorFactory::class)) {
+            $this->inflector = InflectorFactory::create()->build();
+        }
     }
 
     /**
@@ -185,10 +197,14 @@ class CrudHelper
         ];
 
         switch ($type) {
+            case 'Template':
+            case 'Controller':
+                $options['entity']['shortNamePlural'] = $this->pluralize($this->reflectionClass->getShortName());
+                $options['entity']['properties'] = $this->reflectionClass->getProperties();
+                break;
             case 'Dto':
             case 'Form':
             case 'Hydrator':
-            case 'Template':
             case 'Translation':
                 $options['entity']['properties'] = $this->reflectionClass->getProperties();
                 break;
@@ -217,9 +233,9 @@ class CrudHelper
 //            ->generateForType('EventSubscriber')
 //            ->generateForType('Service')
 //            ->generateForType('Hydrator')
-//            ->generateTemplate()
+            ->generateTemplate()
 //            ->generateForType('Controller')
-            ->generateForType('Translation')
+//            ->generateForType('Translation')
         ;
 
         $this->generator->writeChanges();
@@ -271,5 +287,17 @@ class CrudHelper
         );
 
         return $this;
+    }
+
+
+    private function pluralize(string $word): string
+    {
+        $word = strtolower($word);
+
+        if (null !== $this->inflector) {
+            return $this->inflector->pluralize($word);
+        }
+
+        return LegacyInflector::pluralize($word);
     }
 }

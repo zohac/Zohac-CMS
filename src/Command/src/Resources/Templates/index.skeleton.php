@@ -3,9 +3,9 @@
 {% block title %}List!{% endblock %}
 
 {% block body %}
-<div class="<?= $entity['shortNameToLower']; ?>s-wrapper">
+<div class="<?= $entity['shortNamePlural']; ?>-wrapper">
 
-    {% for <?= $entity['shortNameToLower']; ?> in <?= $entity['shortNameToLower']; ?>s %}
+    {% for <?= $entity['shortNameToLower']; ?> in <?= $entity['shortNamePlural']; ?> %}
     <div class="<?= $entity['shortNameToLower']; ?>-wrapper">
 <?php foreach ($entity['properties'] as $property) : ?>
 <?php if (!in_array($property->getName(), ['id', 'uuid'])) : ?>
