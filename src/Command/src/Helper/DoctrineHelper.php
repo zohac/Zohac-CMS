@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException as ORMMappingException;
 use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 
 /**
@@ -33,7 +34,7 @@ class DoctrineHelper
         // this should never happen: we will have checked for the
         // DoctrineBundle dependency before calling this
         if (null === $this->registry) {
-            throw new \Exception('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
+            throw new Exception('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
         }
 
         return $this->registry;
@@ -49,7 +50,7 @@ class DoctrineHelper
      *
      * @return MappingDriver|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getMappingDriverForClass(string $className)
     {
@@ -97,7 +98,7 @@ class DoctrineHelper
      *
      * @return array|\Doctrine\Persistence\Mapping\ClassMetadata
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getMetadata(string $classOrNamespace = null, bool $disconnected = false)
     {
@@ -146,6 +147,8 @@ class DoctrineHelper
      * @param string $entityClassName
      *
      * @return EntityDetails|null
+     *
+     * @throws Exception
      */
     public function createDoctrineDetails(string $entityClassName)
     {

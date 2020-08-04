@@ -46,6 +46,11 @@ class CrudHelper
     /**
      * @var string
      */
+    private $srcDir;
+
+    /**
+     * @var string
+     */
     private $templatePath;
 
     /**
@@ -75,6 +80,8 @@ class CrudHelper
         if (class_exists(InflectorFactory::class)) {
             $this->inflector = InflectorFactory::create()->build();
         }
+
+        $this->srcDir = $kernelProjectDir.'src';
     }
 
     /**
@@ -104,66 +111,10 @@ class CrudHelper
     /**
      * @param string $type
      *
-     * @return string
-     */
-    public function getPathForType(string $type): string
-    {
-        $path = null;
-        $type = ucfirst($type);
-        $className = $this->reflectionClass->getShortName();
-
-        switch ($type) {
-            case 'Controller':
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.$type.'.php';
-                break;
-            case 'EventSubscriber':
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'EventsSubscriber.php';
-                break;
-            case 'Form':
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.'Type.php';
-                break;
-            case 'ViewEvent':
-                $path = $this->kernelProjectDir.'/src/Event/'.$className.'/'.$className.$type.'.php';
-                break;
-            case 'Hydrator':
-                $path = $this->kernelProjectDir.'/src/Service/'.$className.'/'.$className.$type.'Service.php';
-                break;
-            case 'Template':
-                $className = strtolower($className);
-                $path = $this->kernelProjectDir.'/templates/'.$className.'/';
-                break;
-            case 'Translation':
-                $className = strtolower($className);
-                $path = $this->kernelProjectDir.'/translations/'.$className.'/'.$className.'.fr.yaml';
-                break;
-            default:
-                $path = $this->kernelProjectDir.'/src/'.$type.'/'.$className.'/'.$className.$type.'.php';
-                break;
-        }
-
-        if (!$path) {
-            throw new RuntimeCommandException(
-                sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
-            );
-        }
-
-        return $path;
-    }
-
-    /**
-     * @param string $type
-     *
      * @return array|array[]
      */
     public function getOptionsForType(string $type): array
     {
-        $options = [
-            'entity' => [
-                'shortName' => $this->reflectionClass->getShortName(),
-                'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-            ],
-        ];
-
         switch ($type) {
             case 'Template':
             case 'Controller':
@@ -175,6 +126,10 @@ class CrudHelper
             case 'Hydrator':
             case 'Translation':
                 $options['entity']['properties'] = $this->reflectionClass->getProperties();
+                break;
+            default:
+                $options['entity']['shortName'] = $this->reflectionClass->getShortName();
+                $options['entity']['shortNameToLower'] = strtolower($this->reflectionClass->getShortName());
                 break;
         }
 
@@ -194,36 +149,185 @@ class CrudHelper
         }
 
         $this
-            ->generateForType('Dto')
-            ->generateForType('Form')
-            ->generateForType('Event')
-            ->generateForType('ViewEvent')
-            ->generateForType('EventSubscriber')
-            ->generateForType('Service')
-            ->generateForType('Hydrator')
+            ->generateDto()
+            ->generateForm()
+            ->generateEvent()
+            ->generateViewEvent()
+            ->generateEventSubscriber()
+            ->generateService()
+            ->generateHydrator()
             ->generateTemplate()
-            ->generateForType('Controller')
-            ->generateForType('Translation')
+            ->generateController()
+            ->generateTranslation()
         ;
 
         $this->generator->writeChanges();
     }
 
     /**
-     * @param string $type
-     *
      * @return $this
-     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generateForType(string $type): self
+    public function generateDto(): self
     {
-        $type = ucfirst($type);
-        $templatePath = ('Translation' === $type) ? $type.'.skeleton.yaml.twig' : $type.'.skeleton.php.twig';
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Dto/'.$className.'/'.$className.'Dto.php';
 
-        $this->generator->generate($this->getPathForType($type), $templatePath, $this->getOptionsForType($type));
+        $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptionsForType('Dto'));
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateForm(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Form/'.$className.'/'.$className.'Type.php';
+
+        $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptionsForType('Form'));
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateEvent(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'Event.php';
+
+        $this->generator->generate($path, 'Event.skeleton.php.twig', $this->getOptionsForType('Event'));
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateViewEvent(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'ViewEvent.php';
+
+        $this->generator->generate(
+            $path,
+            'ViewEvent.skeleton.php.twig',
+            $this->getOptionsForType('ViewEvent')
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateEventSubscriber(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/EventSubscriber/'.$className.'EventsSubscriber.php';
+
+        $this->generator->generate(
+            $path,
+            'EventSubscriber.skeleton.php.twig',
+            $this->getOptionsForType('EventSubscriber')
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateService(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'Service.php';
+
+        $this->generator->generate(
+            $path,
+            'Service.skeleton.php.twig',
+            $this->getOptionsForType('Service')
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateHydrator(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'HydratorService.php';
+
+        $this->generator->generate(
+            $path,
+            'Hydrator.skeleton.php.twig',
+            $this->getOptionsForType('Hydrator')
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateController(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Controller/'.$className.'/'.$className.'Controller.php';
+
+        $this->generator->generate(
+            $path,
+            'Controller.skeleton.php.twig',
+            $this->getOptionsForType('Controller')
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateTranslation(): self
+    {
+        $className = strtolower($this->reflectionClass->getShortName());
+        $path = $this->kernelProjectDir.'/translations/'.$className.'/'.$className.'.fr.yaml';
+
+        $this->generator->generate(
+            $path,
+            'Controller.skeleton.php.twig',
+            $this->getOptionsForType('Controller')
+        );
 
         return $this;
     }
@@ -233,7 +337,8 @@ class CrudHelper
      */
     public function generateTemplate(): self
     {
-        $path = $this->getPathForType('Template');
+        $className = strtolower($this->reflectionClass->getShortName());
+        $path = $this->kernelProjectDir.'/templates/'.$className.'/';
         $options = $this->getOptionsForType('Template');
 
         $this->generator->generateTemplate(
