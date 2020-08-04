@@ -102,6 +102,7 @@ class CrudHelper
 
     /**
      * @return array
+     * @throws Exception
      */
     public function getEntitiesForAutocomplete()
     {
@@ -109,31 +110,18 @@ class CrudHelper
     }
 
     /**
-     * @param string $type
-     *
      * @return array|array[]
      */
-    public function getOptionsForType(string $type): array
+    public function getOptions(): array
     {
-        switch ($type) {
-            case 'Template':
-            case 'Controller':
-                $options['entity']['shortNamePlural'] = $this->pluralize($this->reflectionClass->getShortName());
-                $options['entity']['properties'] = $this->reflectionClass->getProperties();
-                break;
-            case 'Dto':
-            case 'Form':
-            case 'Hydrator':
-            case 'Translation':
-                $options['entity']['properties'] = $this->reflectionClass->getProperties();
-                break;
-            default:
-                $options['entity']['shortName'] = $this->reflectionClass->getShortName();
-                $options['entity']['shortNameToLower'] = strtolower($this->reflectionClass->getShortName());
-                break;
-        }
-
-        return $options;
+        return [
+            'entity' => [
+                'shortName' => $this->reflectionClass->getShortName(),
+                'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+                'shortNamePlural' => $this->pluralize($this->reflectionClass->getShortName()),
+                'properties' => $this->reflectionClass->getProperties(),
+            ]
+        ];
     }
 
     /**
@@ -175,7 +163,7 @@ class CrudHelper
         $className = $this->reflectionClass->getShortName();
         $path = $this->srcDir.'/Dto/'.$className.'/'.$className.'Dto.php';
 
-        $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptionsForType('Dto'));
+        $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptions());
 
         return $this;
     }
@@ -191,7 +179,7 @@ class CrudHelper
         $className = $this->reflectionClass->getShortName();
         $path = $this->srcDir.'/Form/'.$className.'/'.$className.'Type.php';
 
-        $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptionsForType('Form'));
+        $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptions());
 
         return $this;
     }
@@ -207,7 +195,7 @@ class CrudHelper
         $className = $this->reflectionClass->getShortName();
         $path = $this->srcDir.'/Event/'.$className.'/'.$className.'Event.php';
 
-        $this->generator->generate($path, 'Event.skeleton.php.twig', $this->getOptionsForType('Event'));
+        $this->generator->generate($path, 'Event.skeleton.php.twig', $this->getOptions());
 
         return $this;
     }
@@ -226,7 +214,7 @@ class CrudHelper
         $this->generator->generate(
             $path,
             'ViewEvent.skeleton.php.twig',
-            $this->getOptionsForType('ViewEvent')
+            $this->getOptions()
         );
 
         return $this;
@@ -246,7 +234,7 @@ class CrudHelper
         $this->generator->generate(
             $path,
             'EventSubscriber.skeleton.php.twig',
-            $this->getOptionsForType('EventSubscriber')
+            $this->getOptions()
         );
 
         return $this;
@@ -266,7 +254,7 @@ class CrudHelper
         $this->generator->generate(
             $path,
             'Service.skeleton.php.twig',
-            $this->getOptionsForType('Service')
+            $this->getOptions()
         );
 
         return $this;
@@ -286,7 +274,7 @@ class CrudHelper
         $this->generator->generate(
             $path,
             'Hydrator.skeleton.php.twig',
-            $this->getOptionsForType('Hydrator')
+            $this->getOptions()
         );
 
         return $this;
@@ -306,7 +294,7 @@ class CrudHelper
         $this->generator->generate(
             $path,
             'Controller.skeleton.php.twig',
-            $this->getOptionsForType('Controller')
+            $this->getOptions()
         );
 
         return $this;
@@ -325,8 +313,8 @@ class CrudHelper
 
         $this->generator->generate(
             $path,
-            'Controller.skeleton.php.twig',
-            $this->getOptionsForType('Controller')
+            'Translation.skeleton.php.twig',
+            $this->getOptions()
         );
 
         return $this;
@@ -339,23 +327,23 @@ class CrudHelper
     {
         $className = strtolower($this->reflectionClass->getShortName());
         $path = $this->kernelProjectDir.'/templates/'.$className.'/';
-        $options = $this->getOptionsForType('Template');
+        $options = $this->getOptions();
 
         $this->generator->generateTemplate(
             $path.'detail.htlm.twig',
-            $this->templatePath.'/detail.skeleton.php',
+            $this->templatePath.'/detail.skeleton.inc',
             $options
         );
 
         $this->generator->generateTemplate(
             $path.'index.htlm.twig',
-            $this->templatePath.'/index.skeleton.php',
+            $this->templatePath.'/index.skeleton.inc',
             $options
         );
 
         $this->generator->generateTemplate(
             $path.'type.htlm.twig',
-            $this->templatePath.'/type.skeleton.php',
+            $this->templatePath.'/type.skeleton.inc',
             $options
         );
 

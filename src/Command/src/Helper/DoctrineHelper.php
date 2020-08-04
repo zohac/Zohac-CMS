@@ -46,36 +46,9 @@ class DoctrineHelper
     }
 
     /**
-     * @param string $className
-     *
-     * @return MappingDriver|null
-     *
+     * @return array
      * @throws Exception
      */
-    public function getMappingDriverForClass(string $className)
-    {
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->getRegistry()->getManagerForClass($className);
-
-        if (null === $entityManager) {
-            throw new \InvalidArgumentException(sprintf('Cannot find the entity manager for class "%s"', $className));
-        }
-
-        $metadataDriver = $entityManager->getConfiguration()->getMetadataDriverImpl();
-
-        if (!$metadataDriver instanceof MappingDriverChain) {
-            return $metadataDriver;
-        }
-
-        foreach ($metadataDriver->getDrivers() as $namespace => $driver) {
-            if (0 === strpos($className, $namespace)) {
-                return $driver;
-            }
-        }
-
-        return $metadataDriver->getDefaultDriver();
-    }
-
     public function getEntitiesForAutocomplete(): array
     {
         $entities = [];
@@ -94,36 +67,18 @@ class DoctrineHelper
 
     /**
      * @param string|null $classOrNamespace
-     * @param bool        $disconnected
      *
      * @return array|\Doctrine\Persistence\Mapping\ClassMetadata
      *
      * @throws Exception
      */
-    public function getMetadata(string $classOrNamespace = null, bool $disconnected = false)
+    public function getMetadata(string $classOrNamespace = null)
     {
         $metadata = [];
 
         /** @var EntityManagerInterface $entityManager */
         foreach ($this->getRegistry()->getManagers() as $entityManager) {
             $cmf = $entityManager->getMetadataFactory();
-
-            if ($disconnected) {
-                try {
-                    $loaded = $cmf->getAllMetadata();
-                } catch (ORMMappingException $e) {
-                    $loaded = $cmf instanceof AbstractClassMetadataFactory ? $cmf->getLoadedMetadata() : [];
-                } catch (PersistenceMappingException $e) {
-                    $loaded = $cmf instanceof AbstractClassMetadataFactory ? $cmf->getLoadedMetadata() : [];
-                }
-
-                $cmf = new DisconnectedClassMetadataFactory();
-                $cmf->setEntityManager($entityManager);
-
-                foreach ($loaded as $m) {
-                    $cmf->setMetadataFor($m->getName(), $m);
-                }
-            }
 
             foreach ($cmf->getAllMetadata() as $m) {
                 if (null === $classOrNamespace) {
