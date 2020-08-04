@@ -7,6 +7,8 @@ parameters:
     locale: 'fr'
     app.log.dev: 'app.dev'
     app.log: 'app'
+    # CRUD Command
+    skeleton.dir: '%kernel.project_dir%/src/Command/src/Resources/Templates'
 
 services:
     # default configuration for services in *this* file
@@ -16,6 +18,8 @@ services:
         bind:
             string $defaultLocale: '%locale%'
             bool $isDebug: '%kernel.debug%'
+            # CRUD Command
+            string $kernelProjectDir : '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -62,3 +66,17 @@ services:
     App\Service\DtoHandler:
         arguments:
             - !tagged_iterator app.dto.interface
+
+    # CRUD Command
+    App\Command\src\Helper\DoctrineHelper:
+        arguments: ['@?doctrine']
+
+    App\Command\src\Service\Generator:
+        public: true
+
+    App\Command\src\Helper\CrudHelper:
+        arguments:
+            - '@App\Command\src\Helper\DoctrineHelper'
+            - '@App\Command\src\Service\Generator'
+            - '%kernel.project_dir%'
+            - '%skeleton.dir%'

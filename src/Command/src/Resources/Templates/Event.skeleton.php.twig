@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Event\{{ entity.shortName }};
+
+use App\Dto\{{ entity.shortName }}\{{ entity.shortName }}Dto;
+use App\Entity\{{ entity.shortName }};
+use App\Interfaces\Event\EventInterface;
+use App\Traits\Event\EventTrait;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\Event;
+
+class {{ entity.shortName }}Event extends Event implements EventInterface
+{
+    use EventTrait;
+
+    public const PRE_CREATE = '{{ entity.shortNameToLower }}.pre.create';
+    public const CREATE = '{{ entity.shortNameToLower }}.create';
+    public const POST_CREATE = '{{ entity.shortNameToLower }}.post.create';
+    public const PRE_UPDATE = '{{ entity.shortNameToLower }}.pre.update';
+    public const UPDATE = '{{ entity.shortNameToLower }}.update';
+    public const POST_UPDATE = '{{ entity.shortNameToLower }}.post.update';
+    public const PRE_DELETE = '{{ entity.shortNameToLower }}.pre.delete';
+    public const DELETE = '{{ entity.shortNameToLower }}.delete';
+    public const SOFT_DELETE = '{{ entity.shortNameToLower }}.soft.delete';
+    public const POST_DELETE = '{{ entity.shortNameToLower }}.post.delete';
+
+    const ENTITY_NAME = {{ entity.shortName }}::class;
+
+    /**
+     * @var {{ entity.shortName }}Dto
+     */
+    private ${{ entity.shortNameToLower }}Dto;
+
+    /**
+     * @var FormInterface
+     */
+    private $form;
+
+    /**
+     * @var {{ entity.shortName }}
+     */
+    private ${{ entity.shortNameToLower }};
+
+    /**
+     * @return array|string[]
+     */
+    public static function getEventsName(): array
+    {
+        return [
+            self::PRE_CREATE,
+            self::CREATE,
+            self::POST_CREATE,
+            self::PRE_UPDATE,
+            self::UPDATE,
+            self::POST_UPDATE,
+            self::PRE_DELETE,
+            self::DELETE,
+            self::POST_DELETE,
+        ];
+    }
+
+    /**
+     * @return {{ entity.shortName }}Dto
+     */
+    public function get{{ entity.shortName }}Dto(): {{ entity.shortName }}Dto
+    {
+        return $this->{{ entity.shortNameToLower }}Dto;
+    }
+
+    /**
+    * @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
+    *
+    * @return $this
+    */
+    public function set{{ entity.shortName }}Dto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): self
+    {
+        $this->{{ entity.shortNameToLower }}Dto = ${{ entity.shortNameToLower }}Dto;
+
+        return $this;
+    }
+
+    /**
+    * @return mixed
+    */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+    * @param FormInterface $form
+    *
+    * @return $this
+    */
+    public function setForm(FormInterface $form): self
+    {
+        $this->form = $form;
+
+        return $this;
+    }
+
+    /**
+    * @return {{ entity.shortName }}
+    */
+    public function get{{ entity.shortName }}(): {{ entity.shortName }}
+    {
+        return $this->{{ entity.shortNameToLower }};
+    }
+
+    /**
+    * @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
+    *
+    * @return $this
+    */
+    public function set{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }}): self
+    {
+        $this->{{ entity.shortNameToLower }} = ${{ entity.shortNameToLower }};
+
+        return $this;
+    }
+
+    /**
+    * @return string
+    */
+    public function getRelatedEntity(): string
+    {
+        return self::ENTITY_NAME;
+    }
+}
