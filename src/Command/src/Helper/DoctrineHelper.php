@@ -53,14 +53,14 @@ class DoctrineHelper
      */
     public function getMappingDriverForClass(string $className)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getRegistry()->getManagerForClass($className);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->getRegistry()->getManagerForClass($className);
 
-        if (null === $em) {
+        if (null === $entityManager) {
             throw new \InvalidArgumentException(sprintf('Cannot find the entity manager for class "%s"', $className));
         }
 
-        $metadataDriver = $em->getConfiguration()->getMetadataDriverImpl();
+        $metadataDriver = $entityManager->getConfiguration()->getMetadataDriverImpl();
 
         if (!$metadataDriver instanceof MappingDriverChain) {
             return $metadataDriver;
@@ -103,9 +103,9 @@ class DoctrineHelper
     {
         $metadata = [];
 
-        /** @var EntityManagerInterface $em */
-        foreach ($this->getRegistry()->getManagers() as $em) {
-            $cmf = $em->getMetadataFactory();
+        /** @var EntityManagerInterface $entityManager */
+        foreach ($this->getRegistry()->getManagers() as $entityManager) {
+            $cmf = $entityManager->getMetadataFactory();
 
             if ($disconnected) {
                 try {
@@ -117,7 +117,7 @@ class DoctrineHelper
                 }
 
                 $cmf = new DisconnectedClassMetadataFactory();
-                $cmf->setEntityManager($em);
+                $cmf->setEntityManager($entityManager);
 
                 foreach ($loaded as $m) {
                     $cmf->setMetadataFor($m->getName(), $m);

@@ -19,6 +19,7 @@ use Twig\Error\SyntaxError;
 
 class CrudCommand extends Command
 {
+    private const ENTITY_CLASS = 'entity-class';
     /**
      * @var CrudHelper
      */
@@ -41,7 +42,14 @@ class CrudCommand extends Command
         $this
             ->setName('zcms:make:crud')
             ->setDescription('Creates CRUD for Doctrine entity class')
-            ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The entity class to create CRUD (e.g. <fg=yellow>Acme\DemoBundle\Entity\%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->addArgument(
+                self::ENTITY_CLASS,
+                InputArgument::OPTIONAL,
+                sprintf(
+                    'The entity class to create CRUD (e.g. <fg=yellow>Acme\DemoBundle\Entity\%s</>)',
+                    Str::asClassName(Str::getRandomTerm())
+                )
+            )
             ->setHelp('Creates CRUD for Doctrine entity class')
         ;
     }
@@ -54,8 +62,8 @@ class CrudCommand extends Command
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        if (null === $input->getArgument('entity-class')) {
-            $argument = $this->getDefinition()->getArgument('entity-class');
+        if (null === $input->getArgument(self::ENTITY_CLASS)) {
+            $argument = $this->getDefinition()->getArgument(self::ENTITY_CLASS);
 
             $entities = $this->crudHelper->getEntitiesForAutocomplete();
             sort($entities);
@@ -69,7 +77,7 @@ class CrudCommand extends Command
 
             $value = $this->io->askQuestion($question);
 
-            $input->setArgument('entity-class', $value);
+            $input->setArgument(self::ENTITY_CLASS, $value);
         }
     }
 
@@ -86,7 +94,7 @@ class CrudCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->crudHelper->setEntityClass($input->getArgument('entity-class'));
+        $this->crudHelper->setEntityClass($input->getArgument(self::ENTITY_CLASS));
 
         $confirmQuestion = new ConfirmationQuestion('Generate?', true, '/^(y)/i');
 

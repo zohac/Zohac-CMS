@@ -24,11 +24,6 @@ class CrudHelper
     protected $doctrineHelper;
 
     /**
-     * @var SymfonyStyle
-     */
-    protected $io;
-
-    /**
      * @var Generator
      */
     protected $generator;
@@ -42,36 +37,7 @@ class CrudHelper
      * @var string Full class name (with namespace)
      */
     protected $entityClass;
-    protected $routePath;
-    protected $routeName;
 
-    protected $bundleName;
-    protected $bundleDir;
-
-    /**
-     * @var ClassNameDetails
-     */
-    protected $repositoryClassDetails;
-
-    /**
-     * @var ClassNameDetails
-     */
-    protected $entityClassDetails;
-
-    /**
-     * @var ClassNameDetails
-     */
-    protected $formClassDetails;
-
-    /**
-     * @var ClassNameDetails
-     */
-    protected $controllerClassDetails;
-
-    protected $entityVarPlural;
-    protected $entityVarSingular;
-    protected $entityTwigVarPlural;
-    protected $entityTwigVarSingular;
     /**
      * @var string
      */
@@ -176,7 +142,9 @@ class CrudHelper
         }
 
         if (!$path) {
-            throw new RuntimeCommandException(sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className));
+            throw new RuntimeCommandException(
+                sprintf('The file "%s" can\'t be generated because because the path cannot be null.', $className)
+            );
         }
 
         return $path;
@@ -226,16 +194,16 @@ class CrudHelper
         }
 
         $this
-//            ->generateForType('Dto')
-//            ->generateForType('Form')
-//            ->generateForType('Event')
-//            ->generateForType('ViewEvent')
-//            ->generateForType('EventSubscriber')
-//            ->generateForType('Service')
-//            ->generateForType('Hydrator')
+            ->generateForType('Dto')
+            ->generateForType('Form')
+            ->generateForType('Event')
+            ->generateForType('ViewEvent')
+            ->generateForType('EventSubscriber')
+            ->generateForType('Service')
+            ->generateForType('Hydrator')
             ->generateTemplate()
-//            ->generateForType('Controller')
-//            ->generateForType('Translation')
+            ->generateForType('Controller')
+            ->generateForType('Translation')
         ;
 
         $this->generator->writeChanges();
