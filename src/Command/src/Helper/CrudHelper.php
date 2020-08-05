@@ -4,9 +4,6 @@ namespace App\Command\src\Helper;
 
 use App\Command\src\Exception\CrudException;
 use App\Command\src\Service\Generator;
-use Doctrine\Common\Inflector\Inflector as LegacyInflector;
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\InflectorFactory;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -47,11 +44,6 @@ class CrudHelper
     private $srcDir;
 
     /**
-     * @var Inflector
-     */
-    private $inflector;
-
-    /**
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
@@ -66,11 +58,6 @@ class CrudHelper
         $this->doctrineHelper = $doctrineHelper;
         $this->generator = $generator;
         $this->kernelProjectDir = $kernelProjectDir;
-
-        if (class_exists(InflectorFactory::class)) {
-            $this->inflector = InflectorFactory::create()->build();
-        }
-
         $this->srcDir = $kernelProjectDir.'/src';
     }
 
@@ -157,26 +144,10 @@ class CrudHelper
             'entity' => [
                 'shortName' => $this->reflectionClass->getShortName(),
                 'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-                'shortNamePlural' => $this->pluralize($this->reflectionClass->getShortName()),
+                'shortNamePlural' => $this->doctrineHelper->pluralize($this->reflectionClass->getShortName()),
                 'properties' => $this->reflectionClass->getProperties(),
             ],
         ];
-    }
-
-    /**
-     * @param string $word
-     *
-     * @return string
-     */
-    private function pluralize(string $word): string
-    {
-        $word = strtolower($word);
-
-        if (null !== $this->inflector) {
-            return $this->inflector->pluralize($word);
-        }
-
-        return LegacyInflector::pluralize($word);
     }
 
     /**

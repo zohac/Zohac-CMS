@@ -3,6 +3,9 @@
 namespace App\Command\src\Helper;
 
 use App\Command\src\Exception\CrudException;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
@@ -26,6 +29,11 @@ class DoctrineHelper
     private $metadataBag = [];
 
     /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    /**
      * DoctrineHelper constructor.
      *
      * @param ManagerRegistry $registry
@@ -33,6 +41,10 @@ class DoctrineHelper
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+
+        if (class_exists(InflectorFactory::class)) {
+            $this->inflector = InflectorFactory::create()->build();
+        }
     }
 
     /**
@@ -165,5 +177,21 @@ class DoctrineHelper
         }
 
         return (bool) $this->getMetadata($className);
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    public function pluralize(string $word): string
+    {
+        $word = strtolower($word);
+
+        if (null !== $this->inflector) {
+            return $this->inflector->pluralize($word);
+        }
+
+        return LegacyInflector::pluralize($word);
     }
 }
