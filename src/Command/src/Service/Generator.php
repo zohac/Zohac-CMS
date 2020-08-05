@@ -46,21 +46,6 @@ class Generator
     }
 
     /**
-     * @param string $templatePath
-     * @param array  $options
-     *
-     * @return string
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    private function render(string $templatePath, array $options = []): string
-    {
-        return $this->twigHelper->render($templatePath, $options);
-    }
-
-    /**
      * @param string $path
      * @param string $templatePath
      * @param array  $options
@@ -85,30 +70,14 @@ class Generator
      * @param array  $options
      *
      * @return string
-     */
-    public function renderTemplate(string $templatePath, array $options): string
-    {
-        ob_start();
-        extract($options, EXTR_SKIP);
-        include $templatePath;
-
-        return ob_get_clean();
-    }
-
-    /**
-     * @param string $path
-     * @param string $templatePath
-     * @param array  $options
      *
-     * @return $this
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function generateTemplate(string $path, string $templatePath, array $options = []): self
+    private function render(string $templatePath, array $options = []): string
     {
-        $template = $this->renderTemplate($templatePath, $options);
-
-        $this->addOperation($path, $template);
-
-        return $this;
+        return $this->twigHelper->render($templatePath, $options);
     }
 
     /**
@@ -131,6 +100,37 @@ class Generator
         $this->pendingOperations[$path] = $template;
 
         return $this;
+    }
+
+    /**
+     * @param string $path
+     * @param string $templatePath
+     * @param array  $options
+     *
+     * @return $this
+     */
+    public function generateTemplate(string $path, string $templatePath, array $options = []): self
+    {
+        $template = $this->renderTemplate($templatePath, $options);
+
+        $this->addOperation($path, $template);
+
+        return $this;
+    }
+
+    /**
+     * @param string $templatePath
+     * @param array  $options
+     *
+     * @return string
+     */
+    public function renderTemplate(string $templatePath, array $options): string
+    {
+        ob_start();
+        extract($options, EXTR_SKIP);
+        include $templatePath;
+
+        return ob_get_clean();
     }
 
     /**

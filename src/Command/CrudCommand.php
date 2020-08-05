@@ -37,23 +37,6 @@ class CrudCommand extends Command
         parent::__construct($name);
     }
 
-    protected function configure()
-    {
-        $this
-            ->setName('zcms:make:crud')
-            ->setDescription('Creates CRUD for Doctrine entity class')
-            ->addArgument(
-                self::ENTITY_CLASS,
-                InputArgument::OPTIONAL,
-                sprintf(
-                    'The entity class to create CRUD (e.g. <fg=yellow>Acme\DemoBundle\Entity\%s</>)',
-                    Str::asClassName(Str::getRandomTerm())
-                )
-            )
-            ->setHelp('Creates CRUD for Doctrine entity class')
-        ;
-    }
-
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
@@ -79,6 +62,22 @@ class CrudCommand extends Command
 
             $input->setArgument(self::ENTITY_CLASS, $value);
         }
+    }
+
+    protected function configure()
+    {
+        $this
+            ->setName('zcms:make:crud')
+            ->setDescription('Creates CRUD for Doctrine entity class')
+            ->addArgument(
+                self::ENTITY_CLASS,
+                InputArgument::OPTIONAL,
+                sprintf(
+                    'The entity class to create CRUD (e.g. <fg=yellow>Acme\DemoBundle\Entity\%s</>)',
+                    Str::asClassName(Str::getRandomTerm())
+                )
+            )
+            ->setHelp('Creates CRUD for Doctrine entity class');
     }
 
     /**

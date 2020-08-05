@@ -2,6 +2,7 @@
 
 namespace App\Command\src\Helper;
 
+use App\Command\src\Exception\CrudException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,22 +24,6 @@ class DoctrineHelper
         $this->registry = $registry;
     }
 
-    public function getRegistry(): ManagerRegistry
-    {
-        // this should never happen: we will have checked for the
-        // DoctrineBundle dependency before calling this
-        if (null === $this->registry) {
-            throw new Exception('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
-        }
-
-        return $this->registry;
-    }
-
-    private function isDoctrineInstalled(): bool
-    {
-        return null !== $this->registry;
-    }
-
     /**
      * @return array
      *
@@ -58,6 +43,11 @@ class DoctrineHelper
         }
 
         return $entities;
+    }
+
+    private function isDoctrineInstalled(): bool
+    {
+        return null !== $this->registry;
     }
 
     /**
@@ -87,6 +77,22 @@ class DoctrineHelper
         }
 
         return $metadata;
+    }
+
+    /**
+     * @return ManagerRegistry
+     *
+     * @throws CrudException
+     */
+    public function getRegistry(): ManagerRegistry
+    {
+        // this should never happen: we will have checked for the
+        // DoctrineBundle dependency before calling this
+        if (null === $this->registry) {
+            throw new CrudException('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
+        }
+
+        return $this->registry;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Command\src\Helper;
 
+use App\Command\src\Exception\CrudException;
 use App\Command\src\Service\Generator;
 use Doctrine\Common\Inflector\Inflector as LegacyInflector;
 use Doctrine\Inflector\Inflector;
@@ -108,6 +109,54 @@ class CrudHelper
     }
 
     /**
+     * @throws CrudException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generate()
+    {
+        if (!class_exists($this->entityClass)) {
+            throw new CrudException('Invalid class name: '.$this->entityClass);
+        }
+
+        $this
+            ->generateDto()
+            ->generateForm()
+            ->generateEvent()
+            ->generateViewEvent()
+            ->generateEventSubscriber()
+            ->generateService()
+            ->generateHydrator()
+            ->generateTemplate()
+            ->generateController()
+            ->generateTranslation();
+
+        $this->generator->writeChanges();
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateTranslation(): self
+    {
+        $className = strtolower($this->reflectionClass->getShortName());
+        $path = $this->kernelProjectDir.'/translations/'.$className.'/'.$className.'.fr.yaml';
+
+        $this->generator->generate(
+            $path,
+            'Translation.skeleton.yaml.twig',
+            $this->getOptions()
+        );
+
+        return $this;
+    }
+
+    /**
      * @return array|array[]
      */
     public function getOptions(): array
@@ -123,31 +172,19 @@ class CrudHelper
     }
 
     /**
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws Exception
+     * @param string $word
+     *
+     * @return string
      */
-    public function generate()
+    private function pluralize(string $word): string
     {
-        if (!class_exists($this->entityClass)) {
-            throw new Exception('Invalid class name: '.$this->entityClass);
+        $word = strtolower($word);
+
+        if (null !== $this->inflector) {
+            return $this->inflector->pluralize($word);
         }
 
-        $this
-            ->generateDto()
-            ->generateForm()
-            ->generateEvent()
-            ->generateViewEvent()
-            ->generateEventSubscriber()
-            ->generateService()
-            ->generateHydrator()
-            ->generateTemplate()
-            ->generateController()
-            ->generateTranslation()
-        ;
-
-        $this->generator->writeChanges();
+        return LegacyInflector::pluralize($word);
     }
 
     /**
@@ -157,142 +194,7 @@ class CrudHelper
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generateDto(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Dto/'.$className.'/'.$className.'Dto.php';
-
-        $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptions());
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateForm(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Form/'.$className.'Type.php';
-
-        $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptions());
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateEvent(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'Event.php';
-
-        $this->generator->generate($path, 'Event.skeleton.php.twig', $this->getOptions());
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateViewEvent(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'ViewEvent.php';
-
-        $this->generator->generate(
-            $path,
-            'ViewEvent.skeleton.php.twig',
-            $this->getOptions()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateEventSubscriber(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/EventSubscriber/'.$className.'EventsSubscriber.php';
-
-        $this->generator->generate(
-            $path,
-            'EventSubscriber.skeleton.php.twig',
-            $this->getOptions()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateService(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'Service.php';
-
-        $this->generator->generate(
-            $path,
-            'Service.skeleton.php.twig',
-            $this->getOptions()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateHydrator(): self
-    {
-        $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'HydratorService.php';
-
-        $this->generator->generate(
-            $path,
-            'Hydrator.skeleton.php.twig',
-            $this->getOptions()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateController(): self
+    private function generateController(): self
     {
         $className = $this->reflectionClass->getShortName();
         $path = $this->srcDir.'/Controller/'.$className.'Controller.php';
@@ -313,28 +215,7 @@ class CrudHelper
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generateTranslation(): self
-    {
-        $className = strtolower($this->reflectionClass->getShortName());
-        $path = $this->kernelProjectDir.'/translations/'.$className.'/'.$className.'.fr.yaml';
-
-        $this->generator->generate(
-            $path,
-            'Translation.skeleton.yaml.twig',
-            $this->getOptions()
-        );
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function generateTemplate(): self
+    private function generateTemplate(): self
     {
         $className = strtolower($this->reflectionClass->getShortName());
         $path = $this->kernelProjectDir.'/templates/'.$className.'/';
@@ -361,14 +242,138 @@ class CrudHelper
         return $this;
     }
 
-    private function pluralize(string $word): string
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateHydrator(): self
     {
-        $word = strtolower($word);
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'HydratorService.php';
 
-        if (null !== $this->inflector) {
-            return $this->inflector->pluralize($word);
-        }
+        $this->generator->generate(
+            $path,
+            'Hydrator.skeleton.php.twig',
+            $this->getOptions()
+        );
 
-        return LegacyInflector::pluralize($word);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateService(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Service/'.$className.'/'.$className.'Service.php';
+
+        $this->generator->generate(
+            $path,
+            'Service.skeleton.php.twig',
+            $this->getOptions()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateEventSubscriber(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/EventSubscriber/'.$className.'EventsSubscriber.php';
+
+        $this->generator->generate(
+            $path,
+            'EventSubscriber.skeleton.php.twig',
+            $this->getOptions()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateViewEvent(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'ViewEvent.php';
+
+        $this->generator->generate(
+            $path,
+            'ViewEvent.skeleton.php.twig',
+            $this->getOptions()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateEvent(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Event/'.$className.'/'.$className.'Event.php';
+
+        $this->generator->generate($path, 'Event.skeleton.php.twig', $this->getOptions());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateForm(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Form/'.$className.'Type.php';
+
+        $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptions());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function generateDto(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->srcDir.'/Dto/'.$className.'/'.$className.'Dto.php';
+
+        $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptions());
+
+        return $this;
     }
 }
