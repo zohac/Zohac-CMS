@@ -5,6 +5,7 @@ namespace App\Command\src\Helper;
 use App\Command\src\Exception\CrudException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
@@ -86,7 +87,13 @@ class DoctrineHelper
         return $this->metadata;
     }
 
-    private function parseAllMetadata($metadataFactory, ?string $classOrNamespace)
+    /**
+     * @param ClassMetadataFactory $metadataFactory
+     * @param string|null          $classOrNamespace
+     *
+     * @return ClassMetadata|null
+     */
+    private function parseAllMetadata(ClassMetadataFactory $metadataFactory, ?string $classOrNamespace): ?ClassMetadata
     {
         foreach ($metadataFactory->getAllMetadata() as $metadata) {
             if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
@@ -137,7 +144,9 @@ class DoctrineHelper
 
     /**
      * @param string $className
+     *
      * @return bool
+     *
      * @throws Exception
      */
     public function isClassAMappedEntity(string $className): bool
