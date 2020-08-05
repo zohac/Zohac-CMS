@@ -3,9 +3,9 @@
 namespace App\Command\src\Helper;
 
 use App\Command\src\Exception\CrudException;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
@@ -21,9 +21,9 @@ class DoctrineHelper
     private $registry;
 
     /**
-     * @var array
+     * @var ClassMetadata[]
      */
-    private $metadata = [];
+    private $metadataBag = [];
 
     /**
      * DoctrineHelper constructor.
@@ -67,13 +67,13 @@ class DoctrineHelper
     /**
      * @param string|null $classOrNamespace
      *
-     * @return array|\Doctrine\Persistence\Mapping\ClassMetadata
+     * @return ClassMetadata[]|ClassMetadata
      *
      * @throws Exception
      */
     public function getMetadata(string $classOrNamespace = null)
     {
-        $this->metadata = [];
+        $this->metadataBag = [];
 
         /** @var EntityManagerInterface $entityManager */
         foreach ($this->getRegistry()->getManagers() as $entityManager) {
@@ -84,7 +84,7 @@ class DoctrineHelper
             }
         }
 
-        return $this->metadata;
+        return $this->metadataBag;
     }
 
     /**
@@ -96,9 +96,7 @@ class DoctrineHelper
     private function parseAllMetadata(ClassMetadataFactory $metadataFactory, ?string $classOrNamespace): ?ClassMetadata
     {
         foreach ($metadataFactory->getAllMetadata() as $metadata) {
-            if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
-                $this->metadata[$metadata->getName()] = $metadata;
-            }
+            $this->sortMetadata($metadata, $classOrNamespace);
 
             if ($metadata->getName() === $classOrNamespace) {
                 return $metadata;
@@ -106,6 +104,17 @@ class DoctrineHelper
         }
 
         return null;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     * @param string|null $classOrNamespace
+     */
+    private function sortMetadata(ClassMetadata $metadata, ?string $classOrNamespace): void
+    {
+        if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
+            $this->metadataBag[$metadata->getName()] = $metadata;
+        }
     }
 
     /**
