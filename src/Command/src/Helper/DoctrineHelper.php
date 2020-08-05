@@ -2,14 +2,8 @@
 
 namespace App\Command\src\Helper;
 
-use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\Common\Persistence\Mapping\MappingException as PersistenceMappingException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\MappingException as ORMMappingException;
-use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
@@ -47,6 +41,7 @@ class DoctrineHelper
 
     /**
      * @return array
+     *
      * @throws Exception
      */
     public function getEntitiesForAutocomplete(): array

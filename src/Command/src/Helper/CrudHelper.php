@@ -9,9 +9,6 @@ use Doctrine\Inflector\InflectorFactory;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Bundle\MakerBundle\Exception\RuntimeCommandException;
-use Symfony\Bundle\MakerBundle\Util\ClassNameDetails;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -102,6 +99,7 @@ class CrudHelper
 
     /**
      * @return array
+     *
      * @throws Exception
      */
     public function getEntitiesForAutocomplete()
@@ -120,7 +118,7 @@ class CrudHelper
                 'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
                 'shortNamePlural' => $this->pluralize($this->reflectionClass->getShortName()),
                 'properties' => $this->reflectionClass->getProperties(),
-            ]
+            ],
         ];
     }
 
@@ -154,6 +152,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -170,6 +169,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -186,6 +186,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -202,6 +203,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -222,6 +224,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -242,6 +245,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -262,6 +266,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -282,6 +287,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -302,6 +308,7 @@ class CrudHelper
 
     /**
      * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
@@ -322,6 +329,10 @@ class CrudHelper
 
     /**
      * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function generateTemplate(): self
     {
@@ -329,27 +340,26 @@ class CrudHelper
         $path = $this->kernelProjectDir.'/templates/'.$className.'/';
         $options = $this->getOptions();
 
-        $this->generator->generateTemplate(
+        $this->generator->generate(
             $path.'detail.htlm.twig',
-            $this->templatePath.'/detail.skeleton.inc',
+            'detail.skeleton.php.twig',
             $options
         );
 
-        $this->generator->generateTemplate(
+        $this->generator->generate(
             $path.'index.htlm.twig',
-            $this->templatePath.'/index.skeleton.inc',
+            'index.skeleton.php.twig',
             $options
         );
 
-        $this->generator->generateTemplate(
+        $this->generator->generate(
             $path.'type.htlm.twig',
-            $this->templatePath.'/type.skeleton.inc',
+            'type.skeleton.php.twig',
             $options
         );
 
         return $this;
     }
-
 
     private function pluralize(string $word): string
     {
