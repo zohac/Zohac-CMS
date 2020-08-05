@@ -73,19 +73,15 @@ class DoctrineHelper
 
         /** @var EntityManagerInterface $entityManager */
         foreach ($this->getRegistry()->getManagers() as $entityManager) {
-            $cmf = $entityManager->getMetadataFactory();
+            $metadataFactory = $entityManager->getMetadataFactory();
 
-            foreach ($cmf->getAllMetadata() as $m) {
-                if (null === $classOrNamespace) {
+            foreach ($metadataFactory->getAllMetadata() as $m) {
+                if (null === $classOrNamespace || 0 === strpos($m->getName(), $classOrNamespace)) {
                     $metadata[$m->getName()] = $m;
-                } else {
-                    if ($m->getName() === $classOrNamespace) {
-                        return $m;
-                    }
+                }
 
-                    if (0 === strpos($m->getName(), $classOrNamespace)) {
-                        $metadata[$m->getName()] = $m;
-                    }
+                if ($m->getName() === $classOrNamespace) {
+                    return $m;
                 }
             }
         }

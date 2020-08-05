@@ -78,7 +78,7 @@ class CrudHelper
             $this->inflector = InflectorFactory::create()->build();
         }
 
-        $this->srcDir = $kernelProjectDir.'src';
+        $this->srcDir = $kernelProjectDir.'/src';
     }
 
     /**
@@ -177,7 +177,7 @@ class CrudHelper
     public function generateForm(): self
     {
         $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Form/'.$className.'/'.$className.'Type.php';
+        $path = $this->srcDir.'/Form/'.$className.'Type.php';
 
         $this->generator->generate($path, 'Form.skeleton.php.twig', $this->getOptions());
 
@@ -295,7 +295,7 @@ class CrudHelper
     public function generateController(): self
     {
         $className = $this->reflectionClass->getShortName();
-        $path = $this->srcDir.'/Controller/'.$className.'/'.$className.'Controller.php';
+        $path = $this->srcDir.'/Controller/'.$className.'Controller.php';
 
         $this->generator->generate(
             $path,
@@ -320,7 +320,7 @@ class CrudHelper
 
         $this->generator->generate(
             $path,
-            'Translation.skeleton.php.twig',
+            'Translation.skeleton.yaml.twig',
             $this->getOptions()
         );
 
