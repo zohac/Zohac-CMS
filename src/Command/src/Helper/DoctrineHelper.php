@@ -19,6 +19,16 @@ class DoctrineHelper
      */
     private $registry;
 
+    /**
+     * @var array
+     */
+    private $metadata = [];
+
+    /**
+     * DoctrineHelper constructor.
+     *
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -45,6 +55,9 @@ class DoctrineHelper
         return $entities;
     }
 
+    /**
+     * @return bool
+     */
     private function isDoctrineInstalled(): bool
     {
         return null !== $this->registry;
@@ -59,24 +72,33 @@ class DoctrineHelper
      */
     public function getMetadata(string $classOrNamespace = null)
     {
-        $metadata = [];
+        $this->metadata = [];
 
         /** @var EntityManagerInterface $entityManager */
         foreach ($this->getRegistry()->getManagers() as $entityManager) {
             $metadataFactory = $entityManager->getMetadataFactory();
 
-            foreach ($metadataFactory->getAllMetadata() as $m) {
-                if (null === $classOrNamespace || 0 === strpos($m->getName(), $classOrNamespace)) {
-                    $metadata[$m->getName()] = $m;
-                }
-
-                if ($m->getName() === $classOrNamespace) {
-                    return $m;
-                }
+            if ($metadata = $this->parseAllMetadata($metadataFactory, $classOrNamespace)) {
+                return $metadata;
             }
         }
 
-        return $metadata;
+        return $this->metadata;
+    }
+
+    private function parseAllMetadata($metadataFactory, ?string $classOrNamespace)
+    {
+        foreach ($metadataFactory->getAllMetadata() as $metadata) {
+            if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
+                $this->metadata[$metadata->getName()] = $metadata;
+            }
+
+            if ($metadata->getName() === $classOrNamespace) {
+                return $metadata;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -113,6 +135,11 @@ class DoctrineHelper
         return null;
     }
 
+    /**
+     * @param string $className
+     * @return bool
+     * @throws Exception
+     */
     public function isClassAMappedEntity(string $className): bool
     {
         if (!$this->isDoctrineInstalled()) {
