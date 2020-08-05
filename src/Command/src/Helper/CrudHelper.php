@@ -47,11 +47,6 @@ class CrudHelper
     private $srcDir;
 
     /**
-     * @var string
-     */
-    private $templatePath;
-
-    /**
      * @var Inflector
      */
     private $inflector;
@@ -62,18 +57,15 @@ class CrudHelper
      * @param DoctrineHelper $doctrineHelper
      * @param Generator      $generator
      * @param string         $kernelProjectDir
-     * @param string         $templatePath
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         Generator $generator,
-        string $kernelProjectDir,
-        string $templatePath
+        string $kernelProjectDir
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->generator = $generator;
         $this->kernelProjectDir = $kernelProjectDir;
-        $this->templatePath = $templatePath;
 
         if (class_exists(InflectorFactory::class)) {
             $this->inflector = InflectorFactory::create()->build();

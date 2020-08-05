@@ -7,8 +7,6 @@ parameters:
     locale: 'fr'
     app.log.dev: 'app.dev'
     app.log: 'app'
-    # CRUD Command
-    skeleton.dir: '%kernel.project_dir%/src/Command/src/Resources/Templates'
 
 services:
     # default configuration for services in *this* file
@@ -79,4 +77,3 @@ services:
             - '@App\Command\src\Helper\DoctrineHelper'
             - '@App\Command\src\Service\Generator'
             - '%kernel.project_dir%'
-            - '%skeleton.dir%'
