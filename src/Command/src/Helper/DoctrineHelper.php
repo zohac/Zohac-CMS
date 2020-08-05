@@ -120,7 +120,7 @@ class DoctrineHelper
 
     /**
      * @param ClassMetadata $metadata
-     * @param string|null $classOrNamespace
+     * @param string|null   $classOrNamespace
      */
     private function sortMetadata(ClassMetadata $metadata, ?string $classOrNamespace): void
     {
