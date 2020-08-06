@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Command\src\Helper\CrudHelper;
+use Exception;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Validator;
@@ -40,6 +41,8 @@ class CrudCommand extends Command
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
+     * @throws Exception
      */
     public function interact(InputInterface $input, OutputInterface $output)
     {
@@ -86,10 +89,11 @@ class CrudCommand extends Command
      *
      * @return int
      *
-     * @throws ReflectionException
      * @throws LoaderError
+     * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws src\Exception\CrudException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -101,6 +105,9 @@ class CrudCommand extends Command
             $this->crudHelper->generate();
 
             $this->io->success('Operation successful!');
+
+            $this->io->text('<fg=yellow>Check the new Entity\EntityService::getDeleteMessage</>');
+            $this->io->text('<fg=yellow>Check the new translation file : translations\Entity\entity.fr.yaml</>');
 
             return 0;
         }

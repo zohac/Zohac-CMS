@@ -157,15 +157,11 @@ class RoleService implements ServiceInterface
      */
     public function getDeleteMessage(EntityInterface $entity): string
     {
-        // TODO: Change the Delete Message
-
         /* @var Role $entity */
-        //  return $this->flashBagService->trans(
-        //      'Are you sure you want to delete this role (%role%) ?',
-        //      'role',
-        //      ['role' => $entity->getName()]
-        //  );
-
-        return 'Are you sure you want to delete this role  ?';
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this role (%role%) ?',
+            'role',
+            ['role' => $entity->getName()]
+        );
     }
 }
