@@ -185,19 +185,19 @@ class CrudHelper
         $options = $this->getOptions();
 
         $this->generator->generate(
-            $path.'detail.htlm.twig',
+            $path.'detail.html.twig',
             'detail.skeleton.php.twig',
             $options
         );
 
         $this->generator->generate(
-            $path.'index.htlm.twig',
+            $path.'index.html.twig',
             'index.skeleton.php.twig',
             $options
         );
 
         $this->generator->generate(
-            $path.'type.htlm.twig',
+            $path.'type.html.twig',
             'type.skeleton.php.twig',
             $options
         );

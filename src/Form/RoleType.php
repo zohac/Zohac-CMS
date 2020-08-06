@@ -13,7 +13,6 @@ class RoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('uuid')
             ->add('name')
             ->add('translatable')
 

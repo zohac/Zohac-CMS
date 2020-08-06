@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Interfaces\EntityInterface;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -14,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=RoleRepository::class)
  * @UniqueEntity("uuid")
  */
-class Role
+class Role implements EntityInterface
 {
     /**
      * @ORM\Id()
@@ -39,6 +40,11 @@ class Role
      * @ORM\OneToOne(targetEntity=Translatable::class, cascade={"persist", "remove"})
      */
     private $translatable;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $archived;
 
     public function getId(): ?int
     {
@@ -77,6 +83,18 @@ class Role
     public function setTranslatable(?Translatable $translatable): self
     {
         $this->translatable = $translatable;
+
+        return $this;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): self
+    {
+        $this->archived = $archived;
 
         return $this;
     }
