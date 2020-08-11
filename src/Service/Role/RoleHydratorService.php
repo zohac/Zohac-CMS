@@ -4,6 +4,8 @@ namespace App\Service\Role;
 
 use App\Dto\Role\RoleDto;
 use App\Entity\Role;
+use App\Entity\Translatable;
+use App\Entity\Translation;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
@@ -36,18 +38,31 @@ class RoleHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var Role    $entity
-     * @var RoleDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
+        /**
+         * @var Role $entity
+         * @var RoleDto $dto
+         */
+
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
+        $translatable = ($entity->getTranslatable() instanceof Translatable) ?
+            $entity->getTranslatable() :
+            (new Translatable())->setUuid($this->getUuid());
+
+        /** @var Translation $translation */
+        foreach ($dto->translatable as $translation) {
+            if (null === $translation->getUuid()) {
+                $translation->setUuid($this->getUuid());
+                $translatable->addTranslation($translation);
+            }
+        }
+
         $entity->setUuid($uuid)
-            ->setName($dto->name)
-            ->setTranslatable($dto->translatable)
-        ;
+            ->setName(strtoupper($dto->name))
+            ->setTranslatable($translatable);
 
         return $entity;
     }
@@ -64,15 +79,19 @@ class RoleHydratorService implements EntityHydratorInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @var Role
-     * @var RoleDto $dto
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /**
+         * @var Role $entity
+         * @var RoleDto $dto
+         */
+
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
-        $dto->translatable = $entity->getTranslatable();
+        foreach ($entity->getTranslatable()->getTranslations() as $translation) {
+            $dto->translatable[] = $translation;
+        }
 
         return $dto;
     }

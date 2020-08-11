@@ -17,13 +17,21 @@
     </div>
 
     <div>
-        {% if form.translatable.vars.errors|length %}
-        <div class="form-error-wrapper">
-            {{ form_errors(form.translatable) }}
-        </div>
-        {% endif %}
-        {{ form_label(form.translatable) }}
-        {{ form_widget(form.translatable) }}
+        <ul id="role-fields-list"
+            data-prototype="{{ form_widget(form.translatable.vars.prototype)|e }}"
+            data-widget-tags="{{ 'li'|e }}"
+            data-widget-counter="{{ form.translatable|length }}">
+            {% for translatable in form.translatable %}
+                <li>
+                    {{ form_errors(translatable) }}
+                    {{ form_widget(translatable) }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button type="button"
+                id="add-another-collection-widget"
+                data-list-selector="role-fields-list">Add collection Type</button>
     </div>
 
 
@@ -33,4 +41,12 @@
 
     {{ form_end(form) }}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{#    <script#}
+{#            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"#}
+{#            integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="#}
+{#            crossorigin="anonymous"></script>#}
+    <script src="{{ asset('/assets/js/CollectionType.js') }}"></script>
 {% endblock %}
