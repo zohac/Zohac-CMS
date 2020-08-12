@@ -25,6 +25,9 @@
                 <li>
                     {{ form_errors(translatable) }}
                     {{ form_widget(translatable) }}
+                    <button type="button" class="remove">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </li>
             {% endfor %}
         </ul>
@@ -44,9 +47,8 @@
 {% endblock %}
 
 {% block javascripts %}
-{#    <script#}
-{#            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"#}
-{#            integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="#}
-{#            crossorigin="anonymous"></script>#}
-    <script src="{{ asset('/assets/js/CollectionType.js') }}"></script>
+    {{ parent() }}
+    {{ encore_entry_script_tags('CollectionType') }}
+{#    <script src="{{ asset('/assets/js/CollectionType.js') }}"></script>#}
+
 {% endblock %}
