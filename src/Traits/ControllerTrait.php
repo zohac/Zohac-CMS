@@ -104,7 +104,7 @@ trait ControllerTrait
     ): Response {
         $this->entityService->setEntity($entity);
 
-        $entities = $repository->findAll($repositoryOptions);
+        $entities = $repository->findAllInOneRequest($repositoryOptions);
 
         return $this->viewIndex($entities);
     }

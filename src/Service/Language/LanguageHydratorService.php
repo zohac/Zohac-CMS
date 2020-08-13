@@ -36,12 +36,11 @@ class LanguageHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var Language    $entity
-     * @var LanguageDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
+        /** @var Language $entity */
+        /** @var LanguageDto $dto */
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
         $entity->setUuid($uuid)
@@ -74,6 +73,8 @@ class LanguageHydratorService implements EntityHydratorInterface
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /** @var Language $entity */
+        /** @var LanguageDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
         $dto->alternateName = $entity->getAlternateName();

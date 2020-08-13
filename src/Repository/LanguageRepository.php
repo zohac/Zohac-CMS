@@ -18,4 +18,14 @@ class LanguageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Language::class);
     }
+
+    /**
+     * @param array $options
+     *
+     * @return Language[]
+     */
+    public function findAllInOneRequest(array $options)
+    {
+        return $this->findAll();
+    }
 }

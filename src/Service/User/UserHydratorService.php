@@ -3,6 +3,7 @@
 namespace App\Service\User;
 
 use App\Dto\User\UserDto;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
@@ -44,20 +45,23 @@ class UserHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var User
-     * @var UserDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
+        /** @var User $entity */
+        /** @var UserDto $dto */
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
         $entity->setUuid($uuid)
             ->setEmail($dto->email)
-            ->setRoles($dto->roles)
             ->setLocale($dto->locale)
             ->setToken($dto->tokenValidity)
             ->setTokenValidity($dto->tokenValidity);
+
+        /** @var Role $role */
+        foreach ($dto->roles as $role) {
+            $entity->addRole($role);
+        }
 
         if (null !== $dto->password) {
             $password = $this->passwordEncoder->encodePassword($entity, $dto->password);
@@ -79,15 +83,14 @@ class UserHydratorService implements EntityHydratorInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @var User
-     * @var UserDto $dto
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /* @var User $entity */
+        /* @var UserDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->email = $entity->getEmail();
-        $dto->roles = $entity->getRoles();
+        $dto->roles = $entity->getRolesEntities();
         $dto->locale = $entity->getLocale();
         $dto->token = $entity->getToken();
         $dto->tokenValidity = $entity->getTokenValidity();

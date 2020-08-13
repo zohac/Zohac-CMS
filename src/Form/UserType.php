@@ -3,8 +3,9 @@
 namespace App\Form;
 
 use App\Dto\User\UserDto;
+use App\Entity\Role;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -24,15 +25,12 @@ class UserType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => 'email',
             ])
-            ->add('roles', ChoiceType::class, [
+            ->add('roles', EntityType::class, [
                 'label' => 'roles',
-                'choices' => [
-                    'ROLE_USER' => 0,
-                    'ROLE_ADMIN' => 1,
-                ],
+                'class' => Role::class,
+                'choice_label' => 'name',
                 'expanded' => true,
                 'multiple' => true,
-                'data' => array_keys($userDto->roles),
             ])
             ->add('password', RepeatedType::class, [
                 'label' => false,

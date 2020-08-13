@@ -18,4 +18,21 @@ class RoleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Role::class);
     }
+
+    /**
+     * @param array $options
+     *
+     * @return Role[]
+     */
+    public function findAllInOneRequest(array $options)
+    {
+        $query = $this->createQueryBuilder('r')
+                    ->select('r, t, tr, l')
+                    ->leftJoin('r.translatable', 't')
+                    ->leftJoin('t.translations', 'tr')
+                    ->leftJoin('tr.language', 'l')
+                    ->getQuery();
+
+        return $query->execute();
+    }
 }

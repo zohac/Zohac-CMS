@@ -8,6 +8,7 @@ use App\Interfaces\EntityInterface;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -45,9 +46,10 @@ class User implements AdvancedUserInterface, EntityInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\ManyToMany(targetEntity=Role::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $roles = [];
+    private $roles;
 
     /**
      * @var string The hashed password
@@ -76,6 +78,11 @@ class User implements AdvancedUserInterface, EntityInterface
      * @ORM\Column(type="string", length=255)
      */
     private $locale;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -124,16 +131,41 @@ class User implements AdvancedUserInterface, EntityInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = [];
+
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getName();
+        }
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    /**
+     * @return ArrayCollection
+     */
+    public function getRolesEntities()
     {
-        $this->roles = $roles;
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+        }
 
         return $this;
     }
