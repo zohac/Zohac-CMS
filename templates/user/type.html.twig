@@ -48,13 +48,13 @@
         </div>
 
         <div>
-            {% if form.locale.vars.errors|length %}
+            {% if form.language.vars.errors|length %}
                 <div class="form-error-wrapper">
-                    {{ form_errors(form.locale) }}
+                    {{ form_errors(form.language) }}
                 </div>
             {% endif %}
-            {{ form_label(form.locale) }}
-            {{ form_widget(form.locale) }}
+            {{ form_label(form.language) }}
+            {{ form_widget(form.language) }}
         </div>
 
         <div>

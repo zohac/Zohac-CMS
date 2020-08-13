@@ -73,8 +73,8 @@ class LanguageHydratorService implements EntityHydratorInterface
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-        /** @var Language $entity */
-        /** @var LanguageDto $dto */
+        /* @var Language $entity */
+        /* @var LanguageDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
         $dto->alternateName = $entity->getAlternateName();

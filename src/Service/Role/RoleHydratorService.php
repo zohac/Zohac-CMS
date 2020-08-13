@@ -79,8 +79,8 @@ class RoleHydratorService implements EntityHydratorInterface
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-        /** @var Role $entity */
-        /** @var RoleDto $dto */
+        /* @var Role $entity */
+        /* @var RoleDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
         foreach ($entity->getTranslatable()->getTranslations() as $translation) {

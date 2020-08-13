@@ -56,7 +56,10 @@ class UserEventsSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $form->remove('password');
         $form->add('password', RepeatedType::class, [
+            'label' => false,
             'type' => PasswordType::class,
+            'first_options' => ['label' => 'password'],
+            'second_options' => ['label' => 'repeat password'],
             'required' => false,
         ]);
     }

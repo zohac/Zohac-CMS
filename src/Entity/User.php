@@ -75,9 +75,10 @@ class User implements AdvancedUserInterface, EntityInterface
     private $archived = false;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Language::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $locale;
+    private $language;
 
     public function __construct()
     {
@@ -243,14 +244,30 @@ class User implements AdvancedUserInterface, EntityInterface
         return $this;
     }
 
-    public function getLocale(): ?string
+    /**
+     * @return string
+     */
+    public function getLocale(): string
     {
-        return $this->locale;
+        return $this->language->getIso6391();
     }
 
-    public function setLocale(string $locale): self
+    /**
+     * @return Language|null
+     */
+    public function getLanguage(): ?Language
     {
-        $this->locale = $locale;
+        return $this->language;
+    }
+
+    /**
+     * @param Language $language
+     *
+     * @return $this
+     */
+    public function setLanguage(Language $language): self
+    {
+        $this->language = $language;
 
         return $this;
     }

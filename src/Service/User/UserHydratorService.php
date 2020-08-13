@@ -9,6 +9,8 @@ use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
+use App\Repository\LanguageRepository;
+use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -23,17 +25,34 @@ class UserHydratorService implements EntityHydratorInterface
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
+    /**
+     * @var LanguageRepository
+     */
+    private $languageRepository;
+
+    /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
 
     /**
      * UserHydratorService constructor.
      *
      * @param UuidService                  $uuidService
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param LanguageRepository           $languageRepository
+     * @param RoleRepository               $roleRepository
      */
-    public function __construct(UuidService $uuidService, UserPasswordEncoderInterface $passwordEncoder)
-    {
+    public function __construct(
+        UuidService $uuidService,
+        UserPasswordEncoderInterface $passwordEncoder,
+        LanguageRepository $languageRepository,
+        RoleRepository $roleRepository
+    ) {
         $this->uuidService = $uuidService;
         $this->passwordEncoder = $passwordEncoder;
+        $this->languageRepository = $languageRepository;
+        $this->roleRepository = $roleRepository;
     }
 
     /**
@@ -51,15 +70,28 @@ class UserHydratorService implements EntityHydratorInterface
         /** @var User $entity */
         /** @var UserDto $dto */
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
+        $language = $this->languageRepository->findOneBy(['uuid' => $dto->language]);
+
+        if ($language) {
+            $entity->setLanguage($language);
+        }
 
         $entity->setUuid($uuid)
             ->setEmail($dto->email)
-            ->setLocale($dto->locale)
             ->setToken($dto->tokenValidity)
             ->setTokenValidity($dto->tokenValidity);
 
-        /** @var Role $role */
+        $roles = $entity->getRolesEntities();
+        foreach ($roles as $role) {
+            $entity->removeRole($role);
+        }
+
+        $roles = [];
         foreach ($dto->roles as $role) {
+            $roles[] = $this->roleRepository->findOneBy(['uuid' => $role]);
+        }
+
+        foreach ($roles as $role) {
             $entity->addRole($role);
         }
 
@@ -90,10 +122,14 @@ class UserHydratorService implements EntityHydratorInterface
         /* @var UserDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->email = $entity->getEmail();
-        $dto->roles = $entity->getRolesEntities();
-        $dto->locale = $entity->getLocale();
+        $dto->language = $entity->getLanguage()->getUuid();
         $dto->token = $entity->getToken();
         $dto->tokenValidity = $entity->getTokenValidity();
+
+        /** @var Role $role */
+        foreach ($entity->getRolesEntities() as $role) {
+            $dto->roles[] = $role->getUuid();
+        }
 
         return $dto;
     }
