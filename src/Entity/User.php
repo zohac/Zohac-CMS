@@ -75,7 +75,7 @@ class User implements AdvancedUserInterface, EntityInterface
     private $archived = false;
 
     /**
-     * @ORM\OneToOne(targetEntity=Language::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Language::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $language;
@@ -261,11 +261,10 @@ class User implements AdvancedUserInterface, EntityInterface
     }
 
     /**
-     * @param Language $language
-     *
+     * @param Language|null $language
      * @return $this
      */
-    public function setLanguage(Language $language): self
+    public function setLanguage(?Language $language): self
     {
         $this->language = $language;
 

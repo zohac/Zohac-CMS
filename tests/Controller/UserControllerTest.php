@@ -42,7 +42,7 @@ class UserControllerTest extends WebTestCase
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->users = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/UserFixtures.yaml',
+            __DIR__ . '/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->users as $key => $user) {

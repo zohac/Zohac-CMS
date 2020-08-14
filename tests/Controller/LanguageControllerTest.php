@@ -42,7 +42,7 @@ class LanguageControllerTest extends WebTestCase
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->languages = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/LanguageFixtures.yaml',
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->languages as $key => $language) {
@@ -92,12 +92,12 @@ class LanguageControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('POST', '/language/create/');
         $form = $crawler->selectButton('language[save]')->form([
-            'language[name]' => 'test',
-            'language[alternateName]' => 'Test',
-            'language[description]' => 'a language test',
-            'language[iso6391]' => 'ts',
-            'language[iso6392T]' => 'tes',
-            'language[iso6392B]' => 'tes',
+            'language[name]' => 'German',
+            'language[alternateName]' => 'Allemand',
+            'language[description]' => 'langue allemande',
+            'language[iso6391]' => 'de',
+            'language[iso6392T]' => 'ger',
+            'language[iso6392B]' => 'deu',
         ]);
         $this->client->submit($form);
         $this->assertResponseRedirects('/language/');
@@ -129,9 +129,9 @@ class LanguageControllerTest extends WebTestCase
             'language[name]' => 'test_update',
             'language[alternateName]' => 'Test_update',
             'language[description]' => 'a language test update',
-            'language[iso6391]' => 'ts',
-            'language[iso6392T]' => 'tes',
-            'language[iso6392B]' => 'tes',
+            'language[iso6391]' => 'fr',
+            'language[iso6392T]' => 'fre',
+            'language[iso6392B]' => 'fra',
         ]);
         $this->client->submit($form);
         $this->assertResponseRedirects('/language/');

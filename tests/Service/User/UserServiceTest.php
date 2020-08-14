@@ -3,6 +3,7 @@
 namespace App\Tests\Service\User;
 
 use App\Dto\User\UserDto;
+use App\Entity\Language;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\User\UserService;
@@ -55,7 +56,7 @@ class UserServiceTest extends KernelTestCase
     public function loadUsers()
     {
         $this->users = $this->loadFixtureFiles([
-            __DIR__.'/../../DataFixtures/UserFixtures.yaml',
+            __DIR__ . '/../../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->users as $user) {
@@ -64,6 +65,8 @@ class UserServiceTest extends KernelTestCase
             $this->entityManager->persist($user);
         }
         $this->entityManager->flush();
+
+        return $this;
     }
 
     public function testCreateUserFromDto()
@@ -91,7 +94,7 @@ class UserServiceTest extends KernelTestCase
         $userDto = new UserDto();
         $userDto->email = uniqid().'@test.com';
         $userDto->roles = ['ROLE_TEST', 'ROLE_USER'];
-        $userDto->locale = 'en';
+        $userDto->language = 'en';
 
         if ($withPassword) {
             $userDto->password = '0000';

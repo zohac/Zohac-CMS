@@ -35,7 +35,7 @@ class UserRepositoryTest extends KernelTestCase
     public function loadUsers()
     {
         $this->users = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/UserFixtures.yaml',
+            __DIR__ . '/../DataFixtures/Fixtures.yaml',
         ]);
     }
 
@@ -59,7 +59,7 @@ class UserRepositoryTest extends KernelTestCase
         // Refresh the user from DB
         $user = $this->userRepository->findOneById($user->getId());
 
-        $this->assertEquals('0000', $user->getPassword());
+        $this->assertEquals($this->users['user1']->getPassword(), $user->getPassword());
 
         $this->userRepository->upgradePassword($user, '1111');
         $this->assertEquals('1111', $user->getPassword());
