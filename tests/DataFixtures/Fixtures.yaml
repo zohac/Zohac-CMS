@@ -1,5 +1,5 @@
 App\Entity\Language:
-  language1:
+  language_1:
     uuid: <uuid()>
     name: 'Français'
     alternateName: 'French'
@@ -8,7 +8,7 @@ App\Entity\Language:
     iso6392T: 'fra'
     iso6392B: 'fre'
     archived: false
-  language2:
+  language_2:
     uuid: <uuid()>
     name: 'Anglais'
     alternateName: 'English'
@@ -21,19 +21,19 @@ App\Entity\Language:
 App\Entity\Translation:
   translation_1:
     uuid: <uuid()>
-    language: '@language1'
+    language: '@language_1'
     message: 'Rôle super administrateur'
   translation_2:
     uuid: <uuid()>
-    language: '@language2'
+    language: '@language_2'
     message: 'Super administrator role'
   translation_3:
     uuid: <uuid()>
-    language: '@language1'
+    language: '@language_1'
     message: 'Rôle utilisateur'
   translation_4:
     uuid: <uuid()>
-    language: '@language2'
+    language: '@language_2'
     message: 'User role'
 
 App\Entity\Translatable:
@@ -59,10 +59,10 @@ App\Entity\Role:
     translatable: '@translatable_2'
 
 App\Entity\User:
-  user{1..10}:
+  user_{1..10}:
     uuid: <uuid()>
     email: <email()>
     password: <password()>
-    language: '@language*'
-    roles:
-      - '@role_*'
+    language: '@language_*'
+#    roles:
+#      - '@role_*'
