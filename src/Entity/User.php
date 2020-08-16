@@ -262,6 +262,7 @@ class User implements AdvancedUserInterface, EntityInterface
 
     /**
      * @param Language|null $language
+     *
      * @return $this
      */
     public function setLanguage(?Language $language): self

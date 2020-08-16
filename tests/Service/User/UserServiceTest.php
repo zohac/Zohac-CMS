@@ -3,7 +3,6 @@
 namespace App\Tests\Service\User;
 
 use App\Dto\User\UserDto;
-use App\Entity\Language;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Repository\RoleRepository;
@@ -61,7 +60,7 @@ class UserServiceTest extends KernelTestCase
     public function loadFixtures()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__ . '/../../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
@@ -97,7 +96,7 @@ class UserServiceTest extends KernelTestCase
         $index = 0;
         foreach ($roles as $role) {
             $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
-            $index++;
+            ++$index;
         }
     }
 
@@ -144,7 +143,7 @@ class UserServiceTest extends KernelTestCase
         $index = 0;
         foreach ($roles as $role) {
             $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
-            $index++;
+            ++$index;
         }
     }
 
@@ -170,7 +169,7 @@ class UserServiceTest extends KernelTestCase
         $index = 0;
         foreach ($roles as $role) {
             $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
-            $index++;
+            ++$index;
         }
     }
 

@@ -6,10 +6,10 @@ use App\Command\src\Exception\CrudException;
 use Doctrine\Common\Inflector\Inflector as LegacyInflector;
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 
