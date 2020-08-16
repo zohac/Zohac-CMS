@@ -72,112 +72,113 @@ class UserControllerTest extends WebTestCase
         $entityManager->flush();
     }
 
-    public function refreshUser(): ?User
-    {
-        /** @var User $user */
-        $user = $this->fixtures['user_1'];
-
-        // Refresh User
-        return $this->userRepository->findOneById($user->getId());
-    }
+//    public function refreshUser(): ?User
+//    {
+//        /** @var User $user */
+//        $user = $this->fixtures['user_1'];
+//
+//        // Refresh User
+//        return $this->userRepository->findOneById($user->getId());
+//    }
 
     /**
      * @dataProvider provideUrls
      */
     public function testPageIsSuccessful($url)
     {
-        $user = $this->refreshUser();
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
 
         $url = sprintf($url, $user->getUuid());
-        var_dump($url);
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-//    /**
-//     * @dataProvider provideUrlsForRedirection
-//     */
-//    public function testPageIsRedirectedIfUserIsNotInDB($url)
-//    {
-//        $url = sprintf($url, $this->uuidService->create());
-//        $this->client->request('GET', $url);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-//    }
-//
-//    /**
-//     * @dataProvider provideBadUserCredentials
-//     *
-//     * @param $badCredential array
-//     */
-//    public function testCreateUserWithBadCredential($badCredential)
-//    {
-//        $crawler = $this->client->request('POST', '/user/create/');
-//        $form = $crawler->selectButton('user[save]')->form($badCredential);
-//        $this->client->submit($form);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-//        $this->assertSelectorExists('.form-error-wrapper');
-//    }
-//
-//    public function testCreateUser()
-//    {
-//        $crawler = $this->client->request('POST', '/user/create/');
-//        $form = $crawler->selectButton('user[save]')->form([
-//            'user[email]' => uniqid().'@test.com',
-//            'user[password][first]' => '123456',
-//            'user[password][second]' => '123456',
-//            'user[language]' => $this->fixtures['language_1']->getUuid(),
-//        ]);
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/user/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
-//    }
-//
-//    /**
-//     * @dataProvider provideBadUserCredentials
-//     *
-//     * @param $badCredential array
-//     */
-//    public function testUpdateUserWithBadCredentials($badCredential)
-//    {
-//        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('user[save]')->form($badCredential);
-//        $this->client->submit($form);
-//        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-//        $this->assertSelectorExists('.form-error-wrapper');
-//    }
-//
-//    public function testUpdateUser()
-//    {
-//        dump($this->fixtures);
-//        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('user[save]')->form([
-//            'user[email]' => uniqid().'@test.com',
-//            'user[password][first]' => '123456',
-//            'user[password][second]' => '123456',
-//            'user[language]' => $this->fixtures['language_1']->getUuid(),
-//        ]);
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/user/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
-//    }
-//
-//    public function testDeleteUser()
-//    {
-//        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_1']->getUuid());
-//        $crawler = $this->client->request('POST', $uri);
-//        $form = $crawler->selectButton('delete[delete]')->form();
-//        $this->client->submit($form);
-//        $this->assertResponseRedirects('/user/');
-//        $this->client->followRedirect();
-//        $this->assertSelectorExists('.alert.alert-success');
-//        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
-//    }
+    /**
+     * @dataProvider provideUrlsForRedirection
+     */
+    public function testPageIsRedirectedIfUserIsNotInDB($url)
+    {
+        $url = sprintf($url, $this->uuidService->create());
+        $this->client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
+
+    /**
+     * @dataProvider provideBadUserCredentials
+     *
+     * @param $badCredential array
+     */
+    public function testCreateUserWithBadCredential($badCredential)
+    {
+        $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
+        $crawler = $this->client->request('POST', '/user/create/');
+        $form = $crawler->selectButton('user[save]')->form($badCredential);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorExists('.form-error-wrapper');
+    }
+
+    public function testCreateUser()
+    {
+        $crawler = $this->client->request('POST', '/user/create/');
+        $form = $crawler->selectButton('user[save]')->form([
+            'user[email]' => uniqid().'@test.com',
+            'user[password][first]' => '123456',
+            'user[password][second]' => '123456',
+            'user[language]' => $this->fixtures['language_1']->getUuid(),
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/user/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
+    }
+
+    /**
+     * @dataProvider provideBadUserCredentials
+     *
+     * @param $badCredential array
+     */
+    public function testUpdateUserWithBadCredentials($badCredential)
+    {
+        $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
+        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('user[save]')->form($badCredential);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorExists('.form-error-wrapper');
+    }
+
+    public function testUpdateUser()
+    {
+        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('user[save]')->form([
+            'user[email]' => uniqid().'@test.com',
+            'user[password][first]' => '123456',
+            'user[password][second]' => '123456',
+            'user[language]' => $this->fixtures['language_1']->getUuid(),
+        ]);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/user/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
+    }
+
+    public function testDeleteUser()
+    {
+        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_1']->getUuid());
+        $crawler = $this->client->request('POST', $uri);
+        $form = $crawler->selectButton('delete[delete]')->form();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/user/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
+    }
 
     public function provideUrls()
     {
@@ -189,39 +190,37 @@ class UserControllerTest extends WebTestCase
         yield ['/user/%s/delete/'];
     }
 
-//    public function provideUrlsForRedirection()
-//    {
-//        yield ['/user/%s/'];
-//        yield ['/user/%s/update/'];
-//        yield ['/user/%s/delete/'];
-//    }
-//
-//    public function provideBadUserCredentials()
-//    {
-//        yield [
-//            [
-//                'user[email]' => 'test@test.com',
-//                'user[password][first]' => '132456',
-//                'user[password][second]' => '1324655',
-//                'user[language]' => $this->fixtures['language_1']->getUuid(),
-//            ],
-//        ];
-//        yield [
-//            [
-//                'user[email]' => 'notAnEmail',
-//                'user[password][first]' => '132456',
-//                'user[password][second]' => '132456',
-//                'user[language]' => $this->fixtures['language_1']->getUuid(),
-//            ],
-//        ];
-//    }
-//
-//    protected function tearDown(): void
-//    {
-//        parent::tearDown();
-//        // avoid memory leaks
-//        $this->client = null;
-//        $this->fixtures = null;
-//        $this->uuidService = null;
-//    }
+    public function provideUrlsForRedirection()
+    {
+        yield ['/user/%s/'];
+        yield ['/user/%s/update/'];
+        yield ['/user/%s/delete/'];
+    }
+
+    public function provideBadUserCredentials()
+    {
+        yield [
+            [
+                'user[email]' => 'test@test.com',
+                'user[password][first]' => '132456',
+                'user[password][second]' => '1324655',
+            ],
+        ];
+        yield [
+            [
+                'user[email]' => 'notAnEmail',
+                'user[password][first]' => '132456',
+                'user[password][second]' => '132456',
+            ],
+        ];
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        // avoid memory leaks
+        $this->client = null;
+        $this->fixtures = null;
+        $this->uuidService = null;
+    }
 }
