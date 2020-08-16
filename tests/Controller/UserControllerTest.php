@@ -22,11 +22,6 @@ class UserControllerTest extends WebTestCase
     private $fixtures;
 
     /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
      * @var RoleRepository
      */
     private $roleRepository;
@@ -45,7 +40,6 @@ class UserControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->uuidService = self::$container->get(UuidService::class);
-        $this->userRepository = self::$container->get(UserRepository::class);
         $this->roleRepository = self::$container->get(RoleRepository::class);
 
         $this->loadFixtures();
@@ -71,15 +65,6 @@ class UserControllerTest extends WebTestCase
         }
         $entityManager->flush();
     }
-
-//    public function refreshUser(): ?User
-//    {
-//        /** @var User $user */
-//        $user = $this->fixtures['user_1'];
-//
-//        // Refresh User
-//        return $this->userRepository->findOneById($user->getId());
-//    }
 
     /**
      * @dataProvider provideUrls

@@ -3,6 +3,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Language;
+use App\Entity\User;
+use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
@@ -15,9 +17,14 @@ class LanguageControllerTest extends WebTestCase
     use FixturesTrait;
 
     /**
-     * @var Language[]
+     * @var array
      */
-    private $languages;
+    private $fixtures;
+
+    /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
 
     /**
      * @var KernelBrowser|null
@@ -33,23 +40,25 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->uuidService = self::$container->get(UuidService::class);
+        $this->roleRepository = self::$container->get(RoleRepository::class);
 
-        $this->loadLanguages();
+        $this->loadFixtures();
     }
 
-    public function loadLanguages()
+    public function loadFixtures()
     {
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
-        $this->languages = $this->loadFixtureFiles([
+        $this->fixtures = $this->loadFixtureFiles([
             __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
 
-        foreach ($this->languages as $key => $language) {
-            $language->setUuid($this->uuidService->create());
-            $entityManager->persist($language);
+        foreach ($this->fixtures as $fixture) {
+            if ($fixture instanceof Language) {
+                $fixture->setUuid($this->uuidService->create());
 
-            $this->languages[$key] = $language;
+                $entityManager->persist($fixture);
+            }
         }
         $entityManager->flush();
     }
@@ -59,7 +68,7 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testPageIsSuccessful($url)
     {
-        $url = sprintf($url, $this->languages['language1']->getUuid());
+        $url = sprintf($url, $this->fixtures['language_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
@@ -113,7 +122,7 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testUpdateLanguageWithBadCredentials($badCredential)
     {
-        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
+        $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form($badCredential);
         $this->client->submit($form);
@@ -123,7 +132,7 @@ class LanguageControllerTest extends WebTestCase
 
     public function testUpdateLanguage()
     {
-        $uri = sprintf('/language/%s/update/', $this->languages['language1']->getUuid());
+        $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form([
             'language[name]' => 'test_update',
@@ -142,7 +151,7 @@ class LanguageControllerTest extends WebTestCase
 
     public function testDeleteLanguage()
     {
-        $uri = sprintf('/language/%s/delete/', $this->languages['language1']->getUuid());
+        $uri = sprintf('/language/%s/delete/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
         $this->client->submit($form);
@@ -195,7 +204,7 @@ class LanguageControllerTest extends WebTestCase
         parent::tearDown();
         // avoid memory leaks
         $this->client = null;
-        $this->languages = null;
+        $this->fixtures = null;
         $this->uuidService = null;
     }
 }
