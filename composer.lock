@@ -4,44 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6886de6b11cebbfd17be15203bf1b2d0",
+    "content-hash": "e2da53de58520a5252be7b715fd1c908",
     "packages": [
-        {
-            "name": "api-platform/api-pack",
-            "version": "v1.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/api-platform/api-pack.git",
-                "reference": "ca7ca22f30bcfcdb2493ec9e8b7b5dba1271608a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/api-platform/api-pack/zipball/ca7ca22f30bcfcdb2493ec9e8b7b5dba1271608a",
-                "reference": "ca7ca22f30bcfcdb2493ec9e8b7b5dba1271608a",
-                "shasum": ""
-            },
-            "require": {
-                "api-platform/core": "^2.1",
-                "doctrine/annotations": "^1.0",
-                "doctrine/doctrine-bundle": "^1.6 || ^2.0",
-                "doctrine/orm": "^2.4.5",
-                "nelmio/cors-bundle": "^1.5 || ^2.0",
-                "php": "^7.0",
-                "phpdocumentor/reflection-docblock": "^3.0 || ^4.0 || ^5.0",
-                "symfony/asset": "*",
-                "symfony/expression-language": "*",
-                "symfony/security-bundle": "*",
-                "symfony/twig-bundle": "*",
-                "symfony/validator": "*"
-            },
-            "type": "symfony-pack",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A pack for API Platform",
-            "time": "2020-04-01T16:40:06+00:00"
-        },
         {
             "name": "api-platform/core",
             "version": "v2.5.6",
@@ -7395,16 +7359,16 @@
         },
         {
             "name": "rector/rector-prefixed",
-            "version": "v0.7.63",
+            "version": "v0.7.64",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector-prefixed.git",
-                "reference": "ec0192b9a119fe6bd2275bd5e42403c55030b7b4"
+                "reference": "cc45901c555b31d29b1317fbc3a524ee581bf9d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/ec0192b9a119fe6bd2275bd5e42403c55030b7b4",
-                "reference": "ec0192b9a119fe6bd2275bd5e42403c55030b7b4",
+                "url": "https://api.github.com/repos/rectorphp/rector-prefixed/zipball/cc45901c555b31d29b1317fbc3a524ee581bf9d6",
+                "reference": "cc45901c555b31d29b1317fbc3a524ee581bf9d6",
                 "shasum": ""
             },
             "require": {
@@ -7430,7 +7394,7 @@
                 "MIT"
             ],
             "description": "Prefixed version of Rector compiled in PHAR",
-            "time": "2020-08-06T10:50:29+00:00"
+            "time": "2020-08-16T13:57:28+00:00"
         },
         {
             "name": "sebastian/comparator",
