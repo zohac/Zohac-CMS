@@ -14,6 +14,9 @@ php:
 
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
 before_script:
+  - sudo apt-get update -y && sudo apt-get upgrade -y
+  - sudo apt-get install python-software-properties
+  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash –
   - sudo apt-get install nodejs -y
   - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
