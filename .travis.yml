@@ -14,7 +14,13 @@ php:
 
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
 before_script:
+  - sudo apt-get install nodejs -y
+  - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+  - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  - sudo apt-get update -y && sudo apt install yarn -y
   - composer install
+  - yarn install
+  - yarn encore dev
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
