@@ -24,11 +24,19 @@ class RoleRepository extends ServiceEntityRepository
      *
      * @return Role[]
      */
-    public function findAllInOneRequest(array $options)
+    public function findAllInOneRequest(array $options = [])
     {
         $query = $this->createQueryBuilder('r')
-                    ->select('r, t, tr, l')
-                    ->leftJoin('r.translatable', 't')
+                    ->select('r, t, tr, l');
+
+        if (array_key_exists('archived', $options)) {
+            $archived = (bool) $options['archived'];
+
+            $query = $query->andWhere('u.archived = :archived')
+                ->setParameter('archived', $archived);
+        }
+
+        $query = $query->leftJoin('r.translatable', 't')
                     ->leftJoin('t.translations', 'tr')
                     ->leftJoin('tr.language', 'l')
                     ->getQuery();

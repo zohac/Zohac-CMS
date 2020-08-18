@@ -132,17 +132,17 @@ class User implements AdvancedUserInterface, EntityInterface
      */
     public function getRoles(): array
     {
-        $roles = [];
+        $rolesName = [];
 
         /** @var Role $role */
         foreach ($this->roles as $role) {
-            $roles[] = $role->getName();
+            $rolesName[] = $role->getName();
         }
 
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $rolesName[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_unique($rolesName);
     }
 
     /**

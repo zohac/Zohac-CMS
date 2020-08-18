@@ -24,8 +24,20 @@ class LanguageRepository extends ServiceEntityRepository
      *
      * @return Language[]
      */
-    public function findAllInOneRequest(array $options)
+    public function findAllInOneRequest(array $options = [])
     {
-        return $this->findAll();
+        $query = $this->createQueryBuilder('l')
+            ->select('l');
+
+        if (array_key_exists('archived', $options)) {
+            $archived = (bool) $options['archived'];
+
+            $query = $query->andWhere('u.archived = :archived')
+                ->setParameter('archived', $archived);
+        }
+
+        $query = $query->getQuery();
+
+        return $query->execute();
     }
 }

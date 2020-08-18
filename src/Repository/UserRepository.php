@@ -68,12 +68,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @return User[]
      */
-    public function findAllInOneRequest(array $options)
+    public function findAllInOneRequest(array $options = [])
     {
         $query = $this->createQueryBuilder('u')
-            ->select('u, r')
+            ->select('u, r, l')
             ->leftJoin('u.roles', 'r')
-            ->getQuery();
+            ->leftJoin('u.language', 'l');
+
+        if (array_key_exists('archived', $options)) {
+            $archived = (bool) $options['archived'];
+
+            $query = $query->andWhere('u.archived = :archived')
+                ->setParameter('archived', $archived);
+        }
+
+        $query = $query->getQuery();
 
         return $query->execute();
     }
