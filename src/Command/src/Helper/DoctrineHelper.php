@@ -100,6 +100,22 @@ class DoctrineHelper
     }
 
     /**
+     * @return ManagerRegistry
+     *
+     * @throws CrudException
+     */
+    public function getRegistry(): ManagerRegistry
+    {
+        // this should never happen: we will have checked for the
+        // DoctrineBundle dependency before calling this
+        if (null === $this->registry) {
+            throw new CrudException('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
+        }
+
+        return $this->registry;
+    }
+
+    /**
      * @param ClassMetadataFactory $metadataFactory
      * @param string|null          $classOrNamespace
      *
@@ -127,22 +143,6 @@ class DoctrineHelper
         if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
             $this->metadataBag[$metadata->getName()] = $metadata;
         }
-    }
-
-    /**
-     * @return ManagerRegistry
-     *
-     * @throws CrudException
-     */
-    public function getRegistry(): ManagerRegistry
-    {
-        // this should never happen: we will have checked for the
-        // DoctrineBundle dependency before calling this
-        if (null === $this->registry) {
-            throw new CrudException('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
-        }
-
-        return $this->registry;
     }
 
     /**

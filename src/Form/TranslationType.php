@@ -22,8 +22,7 @@ class TranslationType extends AbstractType
                 'label' => 'language',
                 'class' => Language::class,
                 'choice_label' => 'iso6391',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -9,7 +9,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\LanguageRepository;
@@ -26,20 +25,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Language implements EntityInterface
 {
     use EntityTrait;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -75,11 +60,6 @@ class Language implements EntityInterface
      * @ORM\Column(type="json", nullable=true)
      */
     private $iso6393 = [];
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $archived;
 
     public function getName(): ?string
     {

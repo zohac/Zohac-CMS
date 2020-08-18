@@ -24,7 +24,6 @@ class RoleType extends AbstractType
                 'by_reference' => false,
                 'required' => true,
             ])
-
             ->add('save', SubmitType::class, [
                 'label' => 'save',
                 'translation_domain' => 'fields',

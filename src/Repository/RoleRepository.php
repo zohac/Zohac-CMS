@@ -29,7 +29,7 @@ class RoleRepository extends ServiceEntityRepository
     public function findAllInOneRequest(array $options = [])
     {
         $query = $this->createQueryBuilder('r')
-                    ->select('r, t, tr, l');
+            ->select('r, t, tr, l');
 
         if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
@@ -39,9 +39,9 @@ class RoleRepository extends ServiceEntityRepository
         }
 
         $query = $query->leftJoin('r.translatable', 't')
-                    ->leftJoin('t.translations', 'tr')
-                    ->leftJoin('tr.language', 'l')
-                    ->getQuery();
+            ->leftJoin('t.translations', 'tr')
+            ->leftJoin('tr.language', 'l')
+            ->getQuery();
 
         return $query->execute();
     }

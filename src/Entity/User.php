@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\User\AdvancedUserInterface;
@@ -22,26 +21,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class User implements AdvancedUserInterface, EntityInterface
 {
     use EntityTrait;
-
-    /**
-     * The unique auto incremented primary key.
-     *
-     * @var int|null
-     * @ApiProperty(identifier=false)
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer", options={"unsigned"=true})
-     */
-    private $id;
-
-    /**
-     * @var string
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $uuid;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -71,11 +50,6 @@ class User implements AdvancedUserInterface, EntityInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $tokenValidity;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $archived = false;
 
     /**
      * @ORM\ManyToOne(targetEntity=Language::class)

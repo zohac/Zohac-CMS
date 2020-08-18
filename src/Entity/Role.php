@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\RoleRepository;
@@ -21,20 +20,6 @@ class Role implements EntityInterface
     use EntityTrait;
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255)
-     */
-    private $uuid;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -43,11 +28,6 @@ class Role implements EntityInterface
      * @ORM\OneToOne(targetEntity=Translatable::class, cascade={"persist", "remove"})
      */
     private $translatable;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $archived;
 
     public function getName(): ?string
     {
