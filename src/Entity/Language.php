@@ -13,6 +13,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\LanguageRepository;
+use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -24,6 +25,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Language implements EntityInterface
 {
+    use EntityTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -77,11 +80,6 @@ class Language implements EntityInterface
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $archived;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getName(): ?string
     {
@@ -163,30 +161,6 @@ class Language implements EntityInterface
     public function setIso6393(?array $iso6393): self
     {
         $this->iso6393 = $iso6393;
-
-        return $this;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->archived;
-    }
-
-    public function setArchived(bool $archived): self
-    {
-        $this->archived = $archived;
 
         return $this;
     }

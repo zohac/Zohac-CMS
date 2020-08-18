@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
+use App\Traits\EntityTrait;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,6 +21,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class User implements AdvancedUserInterface, EntityInterface
 {
+    use EntityTrait;
+
     /**
      * The unique auto incremented primary key.
      *
@@ -83,26 +86,6 @@ class User implements AdvancedUserInterface, EntityInterface
     public function __construct()
     {
         $this->roles = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @see AdvancedUserInterface
-     */
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(?string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
     }
 
     public function getEmail(): ?string
@@ -228,18 +211,6 @@ class User implements AdvancedUserInterface, EntityInterface
     public function setTokenValidity(?DateTimeInterface $tokenValidity): self
     {
         $this->tokenValidity = $tokenValidity;
-
-        return $this;
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->archived;
-    }
-
-    public function setArchived(bool $archived): self
-    {
-        $this->archived = $archived;
 
         return $this;
     }

@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\RoleRepository;
+use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -17,6 +18,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Role implements EntityInterface
 {
+    use EntityTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -46,23 +49,6 @@ class Role implements EntityInterface
      */
     private $archived;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
@@ -83,18 +69,6 @@ class Role implements EntityInterface
     public function setTranslatable(?Translatable $translatable): self
     {
         $this->translatable = $translatable;
-
-        return $this;
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->archived;
-    }
-
-    public function setArchived(bool $archived): self
-    {
-        $this->archived = $archived;
 
         return $this;
     }
