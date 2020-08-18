@@ -20,6 +20,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    const ARCHIVED = 'archived';
+
     /**
      * UserRepository constructor.
      *
@@ -75,11 +77,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('u.roles', 'r')
             ->leftJoin('u.language', 'l');
 
-        if (array_key_exists('archived', $options)) {
-            $archived = (bool) $options['archived'];
+        if (array_key_exists(self::ARCHIVED, $options)) {
+            $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('u.archived = :archived')
-                ->setParameter('archived', $archived);
+                ->setParameter(self::ARCHIVED, $archived);
         }
 
         $query = $query->getQuery();

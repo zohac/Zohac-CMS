@@ -14,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LanguageRepository extends ServiceEntityRepository
 {
+    const ARCHIVED = 'archived';
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Language::class);
@@ -29,11 +31,11 @@ class LanguageRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('l')
             ->select('l');
 
-        if (array_key_exists('archived', $options)) {
-            $archived = (bool) $options['archived'];
+        if (array_key_exists(self::ARCHIVED, $options)) {
+            $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('u.archived = :archived')
-                ->setParameter('archived', $archived);
+                ->setParameter(self::ARCHIVED, $archived);
         }
 
         $query = $query->getQuery();
