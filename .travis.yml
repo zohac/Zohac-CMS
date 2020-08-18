@@ -16,7 +16,7 @@ node_js:
       - 12
 
 before_install:
-  - npm i -g npm@12
+  - npm i -g npm@6
 
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
 before_script:
