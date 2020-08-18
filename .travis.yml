@@ -12,10 +12,9 @@ cache: false
 
 php:
   - '7.3'
-node_js:
-      - 12
 
 before_install:
+  - nvm install 12
   - npm i -g npm@6
 
 # In case of timeouts and build failures you may want to prepend 'travis_retry' to the following commands:
