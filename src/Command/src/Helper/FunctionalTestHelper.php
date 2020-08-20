@@ -39,11 +39,6 @@ class FunctionalTestHelper
     private $kernelProjectDir;
 
     /**
-     * @var string
-     */
-    private $srcDir;
-
-    /**
      * CrudHelper constructor.
      *
      * @param DoctrineHelper $doctrineHelper
