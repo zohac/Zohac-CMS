@@ -99,19 +99,6 @@ class FunctionalTestHelper
     }
 
     /**
-     * @return array|array[]
-     */
-    public function getOptions(): array
-    {
-        return [
-            'entity' => [
-                'shortName' => $this->reflectionClass->getShortName(),
-                'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
-            ],
-        ];
-    }
-
-    /**
      * @return $this
      *
      * @throws LoaderError
@@ -126,5 +113,18 @@ class FunctionalTestHelper
         $this->generator->generate($path, 'FunctionalTest.skeleton.php.twig', $this->getOptions());
 
         return $this;
+    }
+
+    /**
+     * @return array|array[]
+     */
+    public function getOptions(): array
+    {
+        return [
+            'entity' => [
+                'shortName' => $this->reflectionClass->getShortName(),
+                'shortNameToLower' => strtolower($this->reflectionClass->getShortName()),
+            ],
+        ];
     }
 }
