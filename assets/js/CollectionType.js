@@ -8,7 +8,7 @@
 
     // Add listener on the "add-another-collection-widget" button
     const element = document.getElementById("add-another-collection-widget");
-    element.addEventListener("click",  addAnotherWidget);
+    element.addEventListener("click", addAnotherWidget);
 }));
 
 // Remove a parent node
