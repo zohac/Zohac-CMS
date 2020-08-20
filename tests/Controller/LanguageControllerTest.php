@@ -206,5 +206,6 @@ class LanguageControllerTest extends WebTestCase
         $this->client = null;
         $this->fixtures = null;
         $this->uuidService = null;
+        $this->roleRepository = null;
     }
 }
