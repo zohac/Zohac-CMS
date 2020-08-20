@@ -77,6 +77,20 @@ class RoleControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
+    /**
+     * @dataProvider provideRole
+     */
+    public function testCreateLanguage($role)
+    {
+        $crawler = $this->client->request('POST', '/role/create/');
+        $form = $crawler->selectButton('role[save]')->form($role);
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/role/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert.alert-success');
+        $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
+    }
+
     public function provideUrls()
     {
         yield ['/role/'];
@@ -91,6 +105,21 @@ class RoleControllerTest extends WebTestCase
         yield ['/role/%s/'];
         yield ['/role/%s/update/'];
         yield ['/role/%s/delete/'];
+    }
+
+    public function provideRole()
+    {
+        yield [
+            [
+                'role[name]' => 'role_test',
+            ],
+        ];
+        yield [
+            [
+                'role[name]' => 'role_test',
+                'role[translatable][0][message]' => 'message test'
+            ],
+        ];
     }
 
     protected function tearDown(): void
