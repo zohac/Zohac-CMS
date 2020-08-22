@@ -3,8 +3,6 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Role;
-use App\Entity\User;
-use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
@@ -82,6 +80,10 @@ class RoleControllerTest extends WebTestCase
      */
     public function testCreateLanguage($role)
     {
+        if (isset($role['role[translatable][0][language]'])) {
+            $role['role[translatable][0][language]'] = $this->fixtures['language_1']->getUuid();
+        }
+
         $crawler = $this->client->request('POST', '/role/create/');
         $form = $crawler->selectButton('role[save]')->form($role);
         $this->client->submit($form);
@@ -117,7 +119,8 @@ class RoleControllerTest extends WebTestCase
         yield [
             [
                 'role[name]' => 'role_test',
-                'role[translatable][0][message]' => 'message test'
+                'role[translatable][0][message]' => 'message test',
+                'role[translatable][0][language]' => '',
             ],
         ];
     }

@@ -10,6 +10,7 @@ use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
+use App\Repository\LanguageRepository;
 use App\Service\UuidService;
 
 class RoleHydratorService implements EntityHydratorInterface
@@ -18,15 +19,21 @@ class RoleHydratorService implements EntityHydratorInterface
      * @var UuidService
      */
     private $uuidService;
+    /**
+     * @var LanguageRepository
+     */
+    private $languageRepository;
 
     /**
      * RoleHydratorService constructor.
      *
-     * @param UuidService $uuidService
+     * @param UuidService        $uuidService
+     * @param LanguageRepository $languageRepository
      */
-    public function __construct(UuidService $uuidService)
+    public function __construct(UuidService $uuidService, LanguageRepository $languageRepository)
     {
         $this->uuidService = $uuidService;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -49,12 +56,20 @@ class RoleHydratorService implements EntityHydratorInterface
             $entity->getTranslatable() :
             (new Translatable())->setUuid($this->getUuid());
 
-        /** @var Translation $translation */
-        foreach ($dto->translatable as $translation) {
-            if (null === $translation->getUuid()) {
-                $translation->setUuid($this->getUuid());
-                $translatable->addTranslation($translation);
-            }
+        foreach ($translatable->getTranslations() as $translation) {
+            $translatable->removeTranslation($translation);
+        }
+
+        /* @var Translation $translation */
+        foreach ($dto->translatable as $value) {
+            $language = $this->languageRepository->findOneBy(['uuid' => $value['language']]);
+
+            $translation = (new Translation())
+                ->setUuid($this->getUuid())
+                ->setLanguage($language)
+                ->setMessage($value['message']);
+
+            $translatable->addTranslation($translation);
         }
 
         $entity->setUuid($uuid)
@@ -84,7 +99,10 @@ class RoleHydratorService implements EntityHydratorInterface
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
         foreach ($entity->getTranslatable()->getTranslations() as $translation) {
-            $dto->translatable[] = $translation;
+            $dto->translatable[] = [
+                'message' => $translation->getMessage(),
+                'language' => $translation->getLanguage()->getUuid(),
+            ];
         }
 
         return $dto;
