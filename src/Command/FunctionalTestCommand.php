@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Command\src\Helper\FunctionalTestHelper;
+use App\Command\src\Helper\CommandHelper;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
@@ -23,18 +23,18 @@ class FunctionalTestCommand extends Command
     private const ENTITY_CLASS = 'entity-class';
 
     /**
-     * @var FunctionalTestHelper
-     */
-    private $functionalTestHelper;
-
-    /**
      * @var SymfonyStyle
      */
     private $io;
 
-    public function __construct(FunctionalTestHelper $functionalTestHelper, string $name = null)
+    /**
+     * @var CommandHelper
+     */
+    private $commandHelper;
+
+    public function __construct(CommandHelper $commandHelper, string $name = null)
     {
-        $this->functionalTestHelper = $functionalTestHelper;
+        $this->commandHelper = $commandHelper;
 
         parent::__construct($name);
     }
@@ -52,7 +52,7 @@ class FunctionalTestCommand extends Command
         if (null === $input->getArgument(self::ENTITY_CLASS)) {
             $argument = $this->getDefinition()->getArgument(self::ENTITY_CLASS);
 
-            $entities = $this->functionalTestHelper->getEntitiesForAutocomplete();
+            $entities = $this->commandHelper->getEntitiesForAutocomplete();
             sort($entities);
 
             $question = new Question($argument->getDescription());
@@ -94,16 +94,15 @@ class FunctionalTestCommand extends Command
      * @throws ReflectionException
      * @throws RuntimeError
      * @throws SyntaxError
-     * @throws src\Exception\CrudException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->functionalTestHelper->setEntityClass($input->getArgument(self::ENTITY_CLASS));
+        $this->commandHelper->setEntityClass($input->getArgument(self::ENTITY_CLASS));
 
         $confirmQuestion = new ConfirmationQuestion('Generate?', true, '/^(y)/i');
 
         if ($this->io->askQuestion($confirmQuestion)) {
-            $this->functionalTestHelper->generate();
+            $this->commandHelper->generateFunctionalTest();
 
             $this->io->success('Operation successful!');
 

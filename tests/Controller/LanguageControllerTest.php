@@ -3,7 +3,6 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Language;
-use App\Entity\User;
 use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;

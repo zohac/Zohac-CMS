@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Command\src\Helper\CrudHelper;
+use App\Command\src\Helper\CommandHelper;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
@@ -22,7 +22,7 @@ class CrudCommand extends Command
 {
     private const ENTITY_CLASS = 'entity-class';
     /**
-     * @var CrudHelper
+     * @var CommandHelper
      */
     private $crudHelper;
 
@@ -31,7 +31,7 @@ class CrudCommand extends Command
      */
     private $io;
 
-    public function __construct(CrudHelper $crudHelper, string $name = null)
+    public function __construct(CommandHelper $crudHelper, string $name = null)
     {
         $this->crudHelper = $crudHelper;
 
