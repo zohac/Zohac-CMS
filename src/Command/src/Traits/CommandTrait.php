@@ -2,8 +2,8 @@
 
 namespace App\Command\src\Traits;
 
-use Exception;
 use App\Command\src\Helper\CommandHelper;
+use Exception;
 use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
