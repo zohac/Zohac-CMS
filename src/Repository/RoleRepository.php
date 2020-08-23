@@ -34,7 +34,7 @@ class RoleRepository extends ServiceEntityRepository
         if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
-            $query = $query->andWhere('u.archived = :archived')
+            $query = $query->andWhere('r.archived = :archived')
                 ->setParameter(self::ARCHIVED, $archived);
         }
 

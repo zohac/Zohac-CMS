@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Language;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -31,10 +32,47 @@ class LanguageRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('l')
             ->select('l');
 
+        return $this->executeQuery($query, $options);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function findAllUuid(array $options = []): array
+    {
+        $query = $this->createQueryBuilder('l')
+            ->select('l.uuid');
+
+        return $this->executeQuery($query, $options);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function findLanguagesForForm(array $options = []): array
+    {
+        $query = $this->createQueryBuilder('l')
+            ->select('l.uuid, l.iso6391');
+
+        return $this->executeQuery($query, $options);
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param array        $options
+     *
+     * @return array
+     */
+    private function executeQuery(QueryBuilder $query, array $options = []): array
+    {
         if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
-            $query = $query->andWhere('u.archived = :archived')
+            $query = $query->andWhere('l.archived = :archived')
                 ->setParameter(self::ARCHIVED, $archived);
         }
 
