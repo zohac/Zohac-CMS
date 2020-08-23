@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Command\src\Helper\CommandHelper;
+use App\Command\src\Traits\CommandTrait;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
@@ -22,51 +23,7 @@ class FunctionalTestCommand extends Command
 {
     private const ENTITY_CLASS = 'entity-class';
 
-    /**
-     * @var SymfonyStyle
-     */
-    private $io;
-
-    /**
-     * @var CommandHelper
-     */
-    private $commandHelper;
-
-    public function __construct(CommandHelper $commandHelper, string $name = null)
-    {
-        $this->commandHelper = $commandHelper;
-
-        parent::__construct($name);
-    }
-
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @throws Exception
-     */
-    public function interact(InputInterface $input, OutputInterface $output)
-    {
-        $this->io = new SymfonyStyle($input, $output);
-
-        if (null === $input->getArgument(self::ENTITY_CLASS)) {
-            $argument = $this->getDefinition()->getArgument(self::ENTITY_CLASS);
-
-            $entities = $this->commandHelper->getEntitiesForAutocomplete();
-            sort($entities);
-
-            $question = new Question($argument->getDescription());
-            $question->setAutocompleterValues($entities);
-
-            $question->setValidator(function ($value) use ($entities) {
-                return Validator::entityExists($value, $entities);
-            });
-
-            $value = $this->io->askQuestion($question);
-
-            $input->setArgument(self::ENTITY_CLASS, $value);
-        }
-    }
+    use CommandTrait;
 
     protected function configure()
     {

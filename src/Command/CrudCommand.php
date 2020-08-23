@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Command\src\Helper\CommandHelper;
+use App\Command\src\Traits\CommandTrait;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\MakerBundle\Str;
@@ -21,51 +22,8 @@ use Twig\Error\SyntaxError;
 class CrudCommand extends Command
 {
     private const ENTITY_CLASS = 'entity-class';
-    /**
-     * @var CommandHelper
-     */
-    private $crudHelper;
 
-    /**
-     * @var SymfonyStyle
-     */
-    private $io;
-
-    public function __construct(CommandHelper $crudHelper, string $name = null)
-    {
-        $this->crudHelper = $crudHelper;
-
-        parent::__construct($name);
-    }
-
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @throws Exception
-     */
-    public function interact(InputInterface $input, OutputInterface $output)
-    {
-        $this->io = new SymfonyStyle($input, $output);
-
-        if (null === $input->getArgument(self::ENTITY_CLASS)) {
-            $argument = $this->getDefinition()->getArgument(self::ENTITY_CLASS);
-
-            $entities = $this->crudHelper->getEntitiesForAutocomplete();
-            sort($entities);
-
-            $question = new Question($argument->getDescription());
-            $question->setAutocompleterValues($entities);
-
-            $question->setValidator(function ($value) use ($entities) {
-                return Validator::entityExists($value, $entities);
-            });
-
-            $value = $this->io->askQuestion($question);
-
-            $input->setArgument(self::ENTITY_CLASS, $value);
-        }
-    }
+    use CommandTrait;
 
     protected function configure()
     {
@@ -97,12 +55,12 @@ class CrudCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->crudHelper->setEntityClass($input->getArgument(self::ENTITY_CLASS));
+        $this->commandHelper->setEntityClass($input->getArgument(self::ENTITY_CLASS));
 
         $confirmQuestion = new ConfirmationQuestion('Generate?', true, '/^(y)/i');
 
         if ($this->io->askQuestion($confirmQuestion)) {
-            $this->crudHelper->generate();
+            $this->commandHelper->generate();
 
             $this->io->success('Operation successful!');
 
