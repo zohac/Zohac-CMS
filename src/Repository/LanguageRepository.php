@@ -69,7 +69,7 @@ class LanguageRepository extends ServiceEntityRepository
      */
     private function executeQuery(QueryBuilder $query, array $options = []): array
     {
-        if (array_key_exists(self::ARCHIVED, $options)) {
+        if (\array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('l.archived = :archived')

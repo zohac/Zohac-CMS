@@ -77,7 +77,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('u.roles', 'r')
             ->leftJoin('u.language', 'l');
 
-        if (array_key_exists(self::ARCHIVED, $options)) {
+        if (\array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('u.archived = :archived')

@@ -4,13 +4,11 @@ namespace App\Service\Role;
 
 use App\Dto\Role\RoleDto;
 use App\Entity\Role;
-use App\Entity\Translatable;
-use App\Entity\Translation;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
-use App\Repository\LanguageRepository;
+use App\Service\Translatable\TranslatableService;
 use App\Service\UuidService;
 
 class RoleHydratorService implements EntityHydratorInterface
@@ -19,21 +17,22 @@ class RoleHydratorService implements EntityHydratorInterface
      * @var UuidService
      */
     private $uuidService;
+
     /**
-     * @var LanguageRepository
+     * @var TranslatableService
      */
-    private $languageRepository;
+    private $translatableService;
 
     /**
      * RoleHydratorService constructor.
      *
-     * @param UuidService        $uuidService
-     * @param LanguageRepository $languageRepository
+     * @param UuidService         $uuidService
+     * @param TranslatableService $translatableService
      */
-    public function __construct(UuidService $uuidService, LanguageRepository $languageRepository)
+    public function __construct(UuidService $uuidService, TranslatableService $translatableService)
     {
         $this->uuidService = $uuidService;
-        $this->languageRepository = $languageRepository;
+        $this->translatableService = $translatableService;
     }
 
     /**
@@ -52,25 +51,7 @@ class RoleHydratorService implements EntityHydratorInterface
         /** @var RoleDto $dto */
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
-        $translatable = ($entity->getTranslatable() instanceof Translatable) ?
-            $entity->getTranslatable() :
-            (new Translatable())->setUuid($this->getUuid());
-
-        foreach ($translatable->getTranslations() as $translation) {
-            $translatable->removeTranslation($translation);
-        }
-
-        /* @var Translation $translation */
-        foreach ($dto->translatable as $value) {
-            $language = $this->languageRepository->findOneBy(['uuid' => $value['language']]);
-
-            $translation = (new Translation())
-                ->setUuid($this->getUuid())
-                ->setLanguage($language)
-                ->setMessage($value['message']);
-
-            $translatable->addTranslation($translation);
-        }
+        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable());
 
         $entity->setUuid($uuid)
             ->setName(strtoupper($dto->name))
