@@ -34,9 +34,14 @@ class TranslationService
         $this->languageRepository = $languageRepository;
     }
 
+    /**
+     * @param TranslationDto $translationDto
+     * @return Translation
+     * @throws UuidException
+     */
     public function createTranslationFromDto(TranslationDto $translationDto): Translation
     {
-        $language = $this->languageRepository->findOneBy(['uuid' => $translationDto->uuid]);
+        $language = $this->languageRepository->findOneBy(['uuid' => $translationDto->language]);
 
         return $this->getNewTranslation()
             ->setUuid($this->getUuid())
