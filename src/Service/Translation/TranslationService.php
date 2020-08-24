@@ -36,7 +36,9 @@ class TranslationService
 
     /**
      * @param TranslationDto $translationDto
+     *
      * @return Translation
+     *
      * @throws UuidException
      */
     public function createTranslationFromDto(TranslationDto $translationDto): Translation
