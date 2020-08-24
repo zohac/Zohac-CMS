@@ -172,8 +172,8 @@ class LanguageService implements ServiceInterface
      */
     public function getLanguagesForForm(): array
     {
-        $languages = $this->languageRepository->findLanguagesForForm(['archived' => true]);
-        dump($languages);
+        $languages = $this->languageRepository->findLanguagesForForm(['archived' => false]);
+
         $languagesForForm = [];
         foreach ($languages as $language) {
             $languagesForForm[$language['iso6391']] = $language['uuid'];
