@@ -5,7 +5,6 @@ namespace App\Service\Translation;
 use App\Dto\Translation\TranslationDto;
 use App\Entity\Translation;
 use App\Exception\UuidException;
-use App\Repository\LanguageRepository;
 use App\Service\UuidService;
 
 class TranslationService
@@ -20,18 +19,20 @@ class TranslationService
     private $uuidService;
 
     /**
-     * @var LanguageRepository
+     * @var TranslationHydratorService
      */
-    private $languageRepository;
+    private $hydrator;
 
-    public function __construct(
-        Translation $translation,
-        UuidService $uuidService,
-        LanguageRepository $languageRepository
-    ) {
+    /**
+     * TranslationService constructor.
+     *
+     * @param Translation                $translation
+     * @param TranslationHydratorService $hydrator
+     */
+    public function __construct(Translation $translation, TranslationHydratorService $hydrator)
+    {
         $this->translation = $translation;
-        $this->uuidService = $uuidService;
-        $this->languageRepository = $languageRepository;
+        $this->hydrator = $hydrator;
     }
 
     /**
@@ -43,12 +44,11 @@ class TranslationService
      */
     public function createTranslationFromDto(TranslationDto $translationDto): Translation
     {
-        $language = $this->languageRepository->findOneBy(['uuid' => $translationDto->language]);
+        $translation = $this->getNewTranslation();
+        /** @var Translation $translation */
+        $translation = $this->hydrator->hydrateEntityWithDto($translation, $translationDto);
 
-        return $this->getNewTranslation()
-            ->setUuid($this->getUuid())
-            ->setLanguage($language)
-            ->setMessage($translationDto->message);
+        return $translation;
     }
 
     /**
