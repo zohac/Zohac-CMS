@@ -27,18 +27,16 @@ class TranslatableService
     /**
      * TranslatableService constructor.
      *
-     * @param Translatable       $translatable
      * @param UuidService        $uuidService
      * @param TranslationService $translationService
      */
     public function __construct(
-        Translatable $translatable,
         UuidService $uuidService,
         TranslationService $translationService
     ) {
         $this->uuidService = $uuidService;
-        $this->translatable = $translatable;
         $this->translationService = $translationService;
+        $this->translatable = new Translatable();
     }
 
     /**

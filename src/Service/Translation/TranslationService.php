@@ -13,10 +13,6 @@ class TranslationService
      * @var Translation
      */
     private $translation;
-    /**
-     * @var UuidService
-     */
-    private $uuidService;
 
     /**
      * @var TranslationHydratorService
@@ -26,13 +22,12 @@ class TranslationService
     /**
      * TranslationService constructor.
      *
-     * @param Translation                $translation
      * @param TranslationHydratorService $hydrator
      */
-    public function __construct(Translation $translation, TranslationHydratorService $hydrator)
+    public function __construct(TranslationHydratorService $hydrator)
     {
-        $this->translation = $translation;
         $this->hydrator = $hydrator;
+        $this->translation = new Translation();
     }
 
     /**
@@ -49,16 +44,6 @@ class TranslationService
         $translation = $this->hydrator->hydrateEntityWithDto($translation, $translationDto);
 
         return $translation;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws UuidException
-     */
-    public function getUuid(): string
-    {
-        return $this->uuidService->create();
     }
 
     public function getNewTranslation(): Translation
