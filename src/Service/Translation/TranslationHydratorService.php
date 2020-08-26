@@ -43,33 +43,16 @@ class TranslationHydratorService implements EntityHydratorInterface
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        /* @var Translation $entity */
-        /* @var TranslationDto $dto */
-        return $this->getHydratedEntity(
-            $entity,
-            $this->getUuid($dto->uuid),
-            $this->getLanguage($dto->language),
-            $dto->message
-        );
-    }
+        /** @var Translation $entity */
+        /** @var TranslationDto $dto */
+        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
+        $language = $this->languageRepository->findOneBy(['uuid' => $dto->language]);
 
-    /**
-     * @param Translation $entity
-     * @param string      $uuid
-     * @param Language    $language
-     * @param string      $message
-     *
-     * @return EntityInterface
-     */
-    public function getHydratedEntity(
-        Translation $entity,
-        string $uuid,
-        Language $language,
-        string $message
-    ): EntityInterface {
-        return $entity->setUuid($uuid)
+        $entity->setUuid($uuid)
             ->setLanguage($language)
-            ->setMessage($message);
+            ->setMessage($dto->message);
+
+        return $entity;
     }
 
     /**
@@ -77,40 +60,9 @@ class TranslationHydratorService implements EntityHydratorInterface
      *
      * @throws UuidException
      */
-    public function getUuid(?string $uuid = null): string
+    public function getUuid(): string
     {
-        $uuid = (null !== $uuid) ? $uuid : $this->uuidService->create();
-
-        return $uuid;
-    }
-
-    /**
-     * @param string $languageUuid
-     *
-     * @return Language
-     */
-    public function getLanguage(string $languageUuid): Language
-    {
-        return $this->languageRepository->findOneBy(['uuid' => $languageUuid]);
-    }
-
-    /**
-     * @param EntityInterface $entity
-     * @param array           $values
-     *
-     * @return EntityInterface
-     *
-     * @throws UuidException
-     */
-    public function hydrateEntityWithArray(EntityInterface $entity, array $values): EntityInterface
-    {
-        /* @var Translation $entity */
-        return $this->getHydratedEntity(
-            $entity,
-            $this->getUuid(),
-            $this->getLanguage($values['language']),
-            $values['message']
-        );
+        return $this->uuidService->create();
     }
 
     /**

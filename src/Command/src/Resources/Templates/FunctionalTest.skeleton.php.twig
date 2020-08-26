@@ -34,71 +34,71 @@ class {{ entity.shortName }}ControllerTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-$this->uuidService = self::$container->get(UuidService::class);
+        $this->uuidService = self::$container->get(UuidService::class);
 
-$this->loadFixtures();
-}
+        $this->loadFixtures();
+    }
 
-public function loadFixtures()
-{
-/** @var ObjectManager $entityManager */
-$entityManager = self::$container->get('doctrine.orm.default_entity_manager');
-$this->fixtures = $this->loadFixtureFiles([
-__DIR__.'/../DataFixtures/Fixtures.yaml',
-]);
+    public function loadFixtures()
+    {
+        /** @var ObjectManager $entityManager */
+        $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
+        $this->fixtures = $this->loadFixtureFiles([
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
+        ]);
 
-foreach ($this->fixtures as $fixture) {
-if ($fixture instanceof {{ entity.shortName }}) {
-$fixture->setUuid($this->uuidService->create());
+        foreach ($this->fixtures as $fixture) {
+            if ($fixture instanceof {{ entity.shortName }}) {
+                $fixture->setUuid($this->uuidService->create());
 
-$entityManager->persist($fixture);
-}
-}
-$entityManager->flush();
-}
+                $entityManager->persist($fixture);
+            }
+        }
+        $entityManager->flush();
+    }
 
-/**
-* @dataProvider provideUrls
-*/
-public function testPageIsSuccessful($url)
-{
-$url = sprintf($url, $this->fixtures['{{ entity.shortNameToLower }}_1']->getUuid());
-$this->client->request('GET', $url);
-$this->assertResponseStatusCodeSame(Response::HTTP_OK);
-}
+    /**
+     * @dataProvider provideUrls
+     */
+    public function testPageIsSuccessful($url)
+    {
+        $url = sprintf($url, $this->fixtures['{{ entity.shortNameToLower }}_1']->getUuid());
+        $this->client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
 
-/**
-* @dataProvider provideUrlsForRedirection
-*/
-public function testPageIsRedirectedIf{{ entity.shortName }}IsNotInDB($url)
-{
-$url = sprintf($url, $this->uuidService->create());
-$this->client->request('GET', $url);
-$this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-}
+    /**
+     * @dataProvider provideUrlsForRedirection
+     */
+    public function testPageIsRedirectedIf{{ entity.shortName }}IsNotInDB($url)
+    {
+        $url = sprintf($url, $this->uuidService->create());
+        $this->client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
 
-public function provideUrls()
-{
-yield ['/{{ entity.shortNameToLower }}/'];
-yield ['/{{ entity.shortNameToLower }}/%s/'];
-yield ['/{{ entity.shortNameToLower }}/create/'];
-yield ['/{{ entity.shortNameToLower }}/%s/update/'];
-yield ['/{{ entity.shortNameToLower }}/%s/delete/'];
-}
+    public function provideUrls()
+    {
+        yield ['/{{ entity.shortNameToLower }}/'];
+        yield ['/{{ entity.shortNameToLower }}/%s/'];
+        yield ['/{{ entity.shortNameToLower }}/create/'];
+        yield ['/{{ entity.shortNameToLower }}/%s/update/'];
+        yield ['/{{ entity.shortNameToLower }}/%s/delete/'];
+    }
 
-public function provideUrlsForRedirection()
-{
-yield ['/{{ entity.shortNameToLower }}/%s/'];
-yield ['/{{ entity.shortNameToLower }}/%s/update/'];
-yield ['/{{ entity.shortNameToLower }}/%s/delete/'];
-}
+    public function provideUrlsForRedirection()
+    {
+        yield ['/{{ entity.shortNameToLower }}/%s/'];
+        yield ['/{{ entity.shortNameToLower }}/%s/update/'];
+        yield ['/{{ entity.shortNameToLower }}/%s/delete/'];
+    }
 
-protected function tearDown(): void
-{
-parent::tearDown();
-// avoid memory leaks
-$this->client = null;
-$this->fixtures = null;
-$this->uuidService = null;
-}
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        // avoid memory leaks
+        $this->client = null;
+        $this->fixtures = null;
+        $this->uuidService = null;
+    }
 }

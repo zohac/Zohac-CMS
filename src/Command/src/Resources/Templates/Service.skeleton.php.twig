@@ -43,129 +43,129 @@ class {{ entity.shortName }}Service implements ServiceInterface
         EntityService $entityService
     ) {
         $this->eventService = $eventService;
-$this->flashBagService = $flashBagService;
-$this->entityService = $entityService;
-}
+        $this->flashBagService = $flashBagService;
+        $this->entityService = $entityService;
+    }
 
-/**
-* @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
-*
-* @return {{ entity.shortName }}
-*
-* @throws HydratorException
-*/
-public function create{{ entity.shortName }}FromDto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): {{ entity.shortName }}
-{
-/** @var {{ entity.shortName }} ${{ entity.shortNameToLower }} */
-${{ entity.shortNameToLower }} = $this->entityService->hydrateEntityWithDto(new {{ entity.shortName }}(), ${{ entity.shortNameToLower }}Dto);
+    /**
+    * @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
+    *
+    * @return {{ entity.shortName }}
+    *
+    * @throws HydratorException
+    */
+    public function create{{ entity.shortName }}FromDto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): {{ entity.shortName }}
+    {
+        /** @var {{ entity.shortName }} ${{ entity.shortNameToLower }} */
+        ${{ entity.shortNameToLower }} = $this->entityService->hydrateEntityWithDto(new {{ entity.shortName }}(), ${{ entity.shortNameToLower }}Dto);
 
-$this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_CREATE, [
-'{{ entity.shortNameToLower }}' => ${{ entity.shortNameToLower }},
-]);
+        $this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_CREATE, [
+            '{{ entity.shortNameToLower }}' => ${{ entity.shortNameToLower }},
+        ]);
 
-$this->flashBagService->addAndTransFlashMessage(
-'{{ entity.shortName }}',
-'{{ entity.shortName }} successfully created.',
-'{{ entity.shortNameToLower }}'
-);
+        $this->flashBagService->addAndTransFlashMessage(
+            '{{ entity.shortName }}',
+            '{{ entity.shortName }} successfully created.',
+            '{{ entity.shortNameToLower }}'
+        );
 
-return ${{ entity.shortNameToLower }};
-}
+        return ${{ entity.shortNameToLower }};
+    }
 
-/**
-* @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
-* @param {{ entity.shortName }}    ${{ entity.shortNameToLower }}
-*
-* @return {{ entity.shortName }}
-*
-* @throws HydratorException
-*/
-public function update{{ entity.shortName }}FromDto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto, {{ entity.shortName }} ${{ entity.shortNameToLower }}): {{ entity.shortName }}
-{
-/** @var {{ entity.shortName }} ${{ entity.shortNameToLower }} */
-${{ entity.shortNameToLower }} = $this->entityService->hydrateEntityWithDto(${{ entity.shortNameToLower }}, ${{ entity.shortNameToLower }}Dto);
+    /**
+    * @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
+    * @param {{ entity.shortName }}    ${{ entity.shortNameToLower }}
+    *
+    * @return {{ entity.shortName }}
+    *
+    * @throws HydratorException
+    */
+    public function update{{ entity.shortName }}FromDto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto, {{ entity.shortName }} ${{ entity.shortNameToLower }}): {{ entity.shortName }}
+    {
+        /** @var {{ entity.shortName }} ${{ entity.shortNameToLower }} */
+        ${{ entity.shortNameToLower }} = $this->entityService->hydrateEntityWithDto(${{ entity.shortNameToLower }}, ${{ entity.shortNameToLower }}Dto);
 
-$this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_UPDATE, [
-'{{ entity.shortNameToLower }}' => ${{ entity.shortNameToLower }},
-]);
+        $this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_UPDATE, [
+            '{{ entity.shortNameToLower }}' => ${{ entity.shortNameToLower }},
+        ]);
 
-$this->flashBagService->addAndTransFlashMessage(
-'{{ entity.shortName }}',
-'{{ entity.shortName }} successfully updated.',
-'{{ entity.shortNameToLower }}'
-);
+        $this->flashBagService->addAndTransFlashMessage(
+            '{{ entity.shortName }}',
+            '{{ entity.shortName }} successfully updated.',
+            '{{ entity.shortNameToLower }}'
+        );
 
-return ${{ entity.shortNameToLower }};
-}
+        return ${{ entity.shortNameToLower }};
+    }
 
-/**
-* @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
-*
-* @return $this
-*
-* @throws ReflectionException
-*/
-public function delete{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }}): self
-{
-$this->entityService
-->setEntity(${{ entity.shortNameToLower }})
-->remove(${{ entity.shortNameToLower }})
-->flush();
+    /**
+    * @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
+    *
+    * @return $this
+    *
+    * @throws ReflectionException
+    */
+    public function delete{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }}): self
+    {
+        $this->entityService
+            ->setEntity(${{ entity.shortNameToLower }})
+            ->remove(${{ entity.shortNameToLower }})
+            ->flush();
 
-$this->flashBagService->addAndTransFlashMessage(
-'{{ entity.shortName }}',
-'{{ entity.shortName }} successfully deleted.',
-$this->entityService->getEntityNameToLower()
-);
+        $this->flashBagService->addAndTransFlashMessage(
+            '{{ entity.shortName }}',
+            '{{ entity.shortName }} successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
 
-$this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_DELETE);
+        $this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_DELETE);
 
-return $this;
-}
+        return $this;
+    }
 
-/**
-* @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
-*
-* @return $this
-*
-* @throws ReflectionException
-*/
-public function deleteSoft{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }})
-{
-${{ entity.shortNameToLower }}->setArchived(true);
+    /**
+    * @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
+    *
+    * @return $this
+    *
+    * @throws ReflectionException
+    */
+    public function deleteSoft{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }})
+    {
+        ${{ entity.shortNameToLower }}->setArchived(true);
 
-$this->entityService
-->setEntity(${{ entity.shortNameToLower }})
-->persist(${{ entity.shortNameToLower }})
-->flush();
+        $this->entityService
+            ->setEntity(${{ entity.shortNameToLower }})
+            ->persist(${{ entity.shortNameToLower }})
+            ->flush();
 
-$this->flashBagService->addAndTransFlashMessage(
-'{{ entity.shortName }}',
-'{{ entity.shortName }} successfully deleted.',
-$this->entityService->getEntityNameToLower()
-);
+        $this->flashBagService->addAndTransFlashMessage(
+            '{{ entity.shortName }}',
+            '{{ entity.shortName }} successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
 
-$this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_DELETE);
+        $this->eventService->dispatchEvent({{ entity.shortName }}Event::POST_DELETE);
 
-return $this;
-}
+        return $this;
+    }
 
-/**
-* @param EntityInterface $entity
-*
-* @return string
-*/
-public function getDeleteMessage(EntityInterface $entity): string
-{
-// TODO: Change the Delete Message
+    /**
+    * @param EntityInterface $entity
+    *
+    * @return string
+    */
+    public function getDeleteMessage(EntityInterface $entity): string
+    {
+        // TODO: Change the Delete Message
 
-/* @var {{ entity.shortName }} $entity */
-//  return $this->flashBagService->trans(
-//      'Are you sure you want to delete this {{ entity.shortNameToLower }} (%{{ entity.shortNameToLower }}%) ?',
-//      '{{ entity.shortNameToLower }}',
-//      ['{{ entity.shortNameToLower }}' => $entity->getName()]
-//  );
+        /* @var {{ entity.shortName }} $entity */
+        //  return $this->flashBagService->trans(
+        //      'Are you sure you want to delete this {{ entity.shortNameToLower }} (%{{ entity.shortNameToLower }}%) ?',
+        //      '{{ entity.shortNameToLower }}',
+        //      ['{{ entity.shortNameToLower }}' => $entity->getName()]
+        //  );
 
-return 'Are you sure you want to delete this {{ entity.shortNameToLower }}  ?';
-}
+        return 'Are you sure you want to delete this {{ entity.shortNameToLower }}  ?';
+    }
 }

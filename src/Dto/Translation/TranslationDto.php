@@ -14,6 +14,9 @@ class TranslationDto implements DtoInterface
      */
     public $uuid;
 
+    /**
+     * @Ass
+     */
     public $message;
 
     /**

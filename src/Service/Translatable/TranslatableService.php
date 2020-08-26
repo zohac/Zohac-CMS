@@ -2,6 +2,7 @@
 
 namespace App\Service\Translatable;
 
+use App\Dto\Translation\TranslationDto;
 use App\Entity\Translatable;
 use App\Exception\UuidException;
 use App\Service\Translation\TranslationService;
@@ -40,13 +41,12 @@ class TranslatableService
 
     /**
      * @param Translatable|null $translatable
-     * @param array             $translations
      *
      * @return Translatable
      *
      * @throws UuidException
      */
-    public function hydrateTranslatable(?Translatable $translatable, array $translations): Translatable
+    public function hydrateTranslatable(?Translatable $translatable): Translatable
     {
         $translatable = ($translatable instanceof Translatable) ?
             $translatable :
@@ -56,21 +56,14 @@ class TranslatableService
             $translatable->removeTranslation($translation);
         }
 
-        foreach ($translations as $translation) {
-            $translation = $this->translationService->createTranslationFromArray($translation);
+        /* @var TranslationDto $translationDto */
+        foreach ($translatable as $translationDto) {
+            $translation = $this->translationService->createTranslationFromDto($translationDto);
 
             $translatable->addTranslation($translation);
         }
 
         return $translatable;
-    }
-
-    /**
-     * @return Translatable
-     */
-    public function getNewTranslatable(): Translatable
-    {
-        return clone $this->translatable;
     }
 
     /**
@@ -81,5 +74,13 @@ class TranslatableService
     public function getUuid(): string
     {
         return $this->uuidService->create();
+    }
+
+    /**
+     * @return Translatable
+     */
+    public function getNewTranslatable(): Translatable
+    {
+        return clone $this->translatable;
     }
 }

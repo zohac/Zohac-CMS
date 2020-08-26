@@ -65,65 +65,65 @@ class {{ entity.shortName }}Event extends Event implements EventInterface
     public function get{{ entity.shortName }}Dto(): {{ entity.shortName }}Dto
     {
         return $this->{{ entity.shortNameToLower }}Dto;
-}
+    }
 
-/**
-* @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
-*
-* @return $this
-*/
-public function set{{ entity.shortName }}Dto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): self
-{
-$this->{{ entity.shortNameToLower }}Dto = ${{ entity.shortNameToLower }}Dto;
+    /**
+    * @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
+    *
+    * @return $this
+    */
+    public function set{{ entity.shortName }}Dto({{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): self
+    {
+        $this->{{ entity.shortNameToLower }}Dto = ${{ entity.shortNameToLower }}Dto;
 
-return $this;
-}
+        return $this;
+    }
 
-/**
-* @return mixed
-*/
-public function getForm()
-{
-return $this->form;
-}
+    /**
+    * @return mixed
+    */
+    public function getForm()
+    {
+        return $this->form;
+    }
 
-/**
-* @param FormInterface $form
-*
-* @return $this
-*/
-public function setForm(FormInterface $form): self
-{
-$this->form = $form;
+    /**
+    * @param FormInterface $form
+    *
+    * @return $this
+    */
+    public function setForm(FormInterface $form): self
+    {
+        $this->form = $form;
 
-return $this;
-}
+        return $this;
+    }
 
-/**
-* @return {{ entity.shortName }}
-*/
-public function get{{ entity.shortName }}(): {{ entity.shortName }}
-{
-return $this->{{ entity.shortNameToLower }};
-}
+    /**
+    * @return {{ entity.shortName }}
+    */
+    public function get{{ entity.shortName }}(): {{ entity.shortName }}
+    {
+        return $this->{{ entity.shortNameToLower }};
+    }
 
-/**
-* @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
-*
-* @return $this
-*/
-public function set{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }}): self
-{
-$this->{{ entity.shortNameToLower }} = ${{ entity.shortNameToLower }};
+    /**
+    * @param {{ entity.shortName }} ${{ entity.shortNameToLower }}
+    *
+    * @return $this
+    */
+    public function set{{ entity.shortName }}({{ entity.shortName }} ${{ entity.shortNameToLower }}): self
+    {
+        $this->{{ entity.shortNameToLower }} = ${{ entity.shortNameToLower }};
 
-return $this;
-}
+        return $this;
+    }
 
-/**
-* @return string
-*/
-public function getRelatedEntity(): string
-{
-return self::ENTITY_NAME;
-}
+    /**
+    * @return string
+    */
+    public function getRelatedEntity(): string
+    {
+        return self::ENTITY_NAME;
+    }
 }

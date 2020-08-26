@@ -8,11 +8,9 @@ use App\Interfaces\EntityInterface;
 interface EntityHydratorInterface
 {
     /**
-     * @param string|null $uuid
-     *
      * @return string
      */
-    public function getUuid(?string $uuid = null): string;
+    public function getUuid(): string;
 
     /**
      * @param EntityInterface $entity

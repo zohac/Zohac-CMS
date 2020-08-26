@@ -49,9 +49,11 @@ class RoleHydratorService implements EntityHydratorInterface
     {
         /** @var Role $entity */
         /** @var RoleDto $dto */
-        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable(), $dto->translatable);
+        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
 
-        $entity->setUuid($this->getUuid($dto->uuid))
+        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable());
+
+        $entity->setUuid($uuid)
             ->setName(strtoupper($dto->name))
             ->setTranslatable($translatable);
 
@@ -63,11 +65,9 @@ class RoleHydratorService implements EntityHydratorInterface
      *
      * @throws UuidException
      */
-    public function getUuid(?string $uuid = null): string
+    public function getUuid(): string
     {
-        $uuid = (null !== $uuid) ? $uuid : $this->uuidService->create();
-
-        return $uuid;
+        return $this->uuidService->create();
     }
 
     /**
