@@ -43,13 +43,10 @@ class TranslationHydratorService implements EntityHydratorInterface
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        /** @var Translation $entity */
-        /** @var TranslationDto $dto */
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
-        $language = $this->languageRepository->findOneBy(['uuid' => $dto->language]);
-
-        $entity->setUuid($uuid)
-            ->setLanguage($language)
+        /* @var Translation $entity */
+        /* @var TranslationDto $dto */
+        $entity->setUuid($this->getUuid($dto->uuid))
+            ->setLanguage($this->getLanguage($dto->language))
             ->setMessage($dto->message);
 
         return $entity;
@@ -60,9 +57,19 @@ class TranslationHydratorService implements EntityHydratorInterface
      *
      * @throws UuidException
      */
-    public function getUuid(): string
+    public function getUuid(?string $uuid = null): string
     {
-        return $this->uuidService->create();
+        return (null !== $uuid) ? $uuid : $this->uuidService->create();
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return Language
+     */
+    public function getLanguage(string $uuid): Language
+    {
+        return $this->languageRepository->findOneBy(['uuid' => $uuid]);
     }
 
     /**
