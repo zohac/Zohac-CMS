@@ -67,6 +67,14 @@ class TranslatableService
     }
 
     /**
+     * @return Translatable
+     */
+    public function getNewTranslatable(): Translatable
+    {
+        return clone $this->translatable;
+    }
+
+    /**
      * @return string
      *
      * @throws UuidException
@@ -74,13 +82,5 @@ class TranslatableService
     public function getUuid(): string
     {
         return $this->uuidService->create();
-    }
-
-    /**
-     * @return Translatable
-     */
-    public function getNewTranslatable(): Translatable
-    {
-        return clone $this->translatable;
     }
 }
