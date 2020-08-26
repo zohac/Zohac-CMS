@@ -38,13 +38,30 @@ class TranslationService
      */
     public function createTranslationFromDto(TranslationDto $translationDto): Translation
     {
-        $translation = $this->getNewTranslation();
-        /** @var Translation $translation */
-        $translation = $this->hydrator->hydrateEntityWithDto($translation, $translationDto);
+        $entity = $this->getNewTranslation();
+        /** @var Translation $entity */
+        $entity = $this->hydrator->hydrateEntityWithDto($entity, $translationDto);
 
-        return $translation;
+        return $entity;
     }
 
+    /**
+     * @param array $values
+     * @return Translation
+     * @throws UuidException
+     */
+    public function createTranslationFromArray(array $values): Translation
+    {
+        $entity = $this->getNewTranslation();
+        /** @var Translation $entity */
+        $entity = $this->hydrator->hydrateEntityWithArray($entity, $values);
+
+        return $entity;
+    }
+
+    /**
+     * @return Translation
+     */
     public function getNewTranslation(): Translation
     {
         return clone $this->translation;

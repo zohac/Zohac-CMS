@@ -3,8 +3,8 @@
 namespace App\Form;
 
 use App\Dto\User\UserDto;
-use App\Repository\LanguageRepository;
-use App\Repository\RoleRepository;
+use App\Service\Language\LanguageService;
+use App\Service\Role\RoleService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -16,40 +16,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
-    /**
-     * @var LanguageRepository
+    /**.
+     * @var LanguageService
      */
-    private $languageRepository;
+    private $languageService;
 
     /**
-     * @var RoleRepository
+     * @var RoleService
      */
-    private $roleRepository;
+    private $roleService;
 
-    public function __construct(LanguageRepository $languageRepository, RoleRepository $roleRepository)
+    public function __construct(LanguageService $languageService, RoleService $roleService)
     {
-        $this->languageRepository = $languageRepository;
-        $this->roleRepository = $roleRepository;
+        $this->languageService = $languageService;
+        $this->roleService = $roleService;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var UserDto $userDto */
         $userDto = $options['data'];
-
-        $languages = $this->languageRepository->findAll();
-
-        $languagesChoices = [];
-        foreach ($languages as $language) {
-            $languagesChoices[$language->getIso6391()] = $language->getUuid();
-        }
-
-        $roles = $this->roleRepository->findAll();
-
-        $rolesChoices = [];
-        foreach ($roles as $role) {
-            $rolesChoices[$role->getName()] = $role->getUuid();
-        }
+        $languages = $this->languageService->getLanguagesForForm();
+        $roles = $this->roleService->getRoleForForm();
 
         $builder
             ->add('email', EmailType::class, [
@@ -57,7 +45,7 @@ class UserType extends AbstractType
             ])
             ->add('roles', ChoiceType::class, [
                 'label' => 'roles',
-                'choices' => $rolesChoices,
+                'choices' => $roles,
                 'data' => $userDto->roles,
                 'expanded' => true,
                 'multiple' => true,
@@ -70,7 +58,7 @@ class UserType extends AbstractType
             ])
             ->add('language', ChoiceType::class, [
                 'label' => 'locale',
-                'choices' => $languagesChoices,
+                'choices' => $languages,
                 'data' => $userDto->language,
             ])
             ->add('save', SubmitType::class, [

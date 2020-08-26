@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Role;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use function array_key_exists;
 
 /**
  * @method Role|null find($id, $lockMode = null, $lockVersion = null)
@@ -22,6 +25,61 @@ class RoleRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $uuid
+     *
+     * @return Role|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneByUuid(string $uuid): ?Role
+    {
+        $query = $this->createQueryBuilder('r')
+            ->select('r, t, tr, l')
+            ->leftJoin('r.translatable', 't')
+            ->leftJoin('t.translations', 'tr')
+            ->leftJoin('tr.language', 'l')
+            ->andWhere('r.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function findRolesForForm(array $options = []): array
+    {
+        $query = $this->createQueryBuilder('r')
+            ->select('r.uuid, r.name')
+            ;
+
+        return $this->executeQuery($query, $options);
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param array        $options
+     *
+     * @return array
+     */
+    private function executeQuery(QueryBuilder $query, array $options = []): array
+    {
+        if (array_key_exists(self::ARCHIVED, $options)) {
+            $archived = (bool) $options[self::ARCHIVED];
+
+            $query = $query->andWhere('r.archived = :archived')
+                ->setParameter(self::ARCHIVED, $archived);
+        }
+
+        $query = $query->getQuery();
+
+        return $query->execute();
+    }
+
+    /**
      * @param array $options
      *
      * @return Role[]
@@ -29,20 +87,11 @@ class RoleRepository extends ServiceEntityRepository
     public function findAllInOneRequest(array $options = [])
     {
         $query = $this->createQueryBuilder('r')
-            ->select('r, t, tr, l');
-
-        if (\array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('r.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->leftJoin('r.translatable', 't')
+            ->select('r, t, tr, l')
+            ->leftJoin('r.translatable', 't')
             ->leftJoin('t.translations', 'tr')
-            ->leftJoin('tr.language', 'l')
-            ->getQuery();
+            ->leftJoin('tr.language', 'l');
 
-        return $query->execute();
+        return $this->executeQuery($query, $options);
     }
 }

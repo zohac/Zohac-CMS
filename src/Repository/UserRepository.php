@@ -4,13 +4,15 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use function get_class;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use function array_key_exists;
+use function get_class;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -66,6 +68,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * @param string $uuid
+     *
+     * @return User|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneByUuid(string $uuid): ?User
+    {
+        $query = $this->createQueryBuilder('u')
+            ->select('u, r, l')
+            ->leftJoin('u.roles', 'r')
+            ->leftJoin('u.language', 'l')
+            ->andWhere('u.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
      * @param array $options
      *
      * @return User[]
@@ -77,7 +99,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->leftJoin('u.roles', 'r')
             ->leftJoin('u.language', 'l');
 
-        if (\array_key_exists(self::ARCHIVED, $options)) {
+        if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('u.archived = :archived')

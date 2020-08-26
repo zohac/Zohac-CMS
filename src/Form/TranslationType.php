@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Dto\Translation\TranslationDto;
 use App\Service\Language\LanguageService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -44,7 +43,6 @@ class TranslationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => TranslationDto::class,
             'translation_domain' => 'translation',
         ]);
     }

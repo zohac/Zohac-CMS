@@ -8,6 +8,7 @@ use App\Event\Role\RoleEvent;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
+use App\Repository\RoleRepository;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
@@ -31,20 +32,28 @@ class RoleService implements ServiceInterface
     private $entityService;
 
     /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
+
+    /**
      * RoleService constructor.
      *
      * @param EventService    $eventService
      * @param FlashBagService $flashBagService
      * @param EntityService   $entityService
+     * @param RoleRepository  $roleRepository
      */
     public function __construct(
         EventService $eventService,
         FlashBagService $flashBagService,
-        EntityService $entityService
+        EntityService $entityService,
+        RoleRepository $roleRepository
     ) {
         $this->eventService = $eventService;
         $this->flashBagService = $flashBagService;
         $this->entityService = $entityService;
+        $this->roleRepository = $roleRepository;
     }
 
     /**
@@ -148,6 +157,18 @@ class RoleService implements ServiceInterface
         $this->eventService->dispatchEvent(RoleEvent::POST_DELETE);
 
         return $this;
+    }
+
+    public function getRoleForForm(): array
+    {
+        $roles = $this->roleRepository->findRolesForForm(['archived' => false]);
+
+        $rolesForForm = [];
+        foreach ($roles as $role) {
+            $rolesForForm[$role['name']] = $role['uuid'];
+        }
+
+        return $rolesForForm;
     }
 
     /**

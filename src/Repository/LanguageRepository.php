@@ -6,6 +6,7 @@ use App\Entity\Language;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use function _HumbugBox58fd4d9e2a25\Sodium\crypto_aead_chacha20poly1305_ietf_decrypt;
 
 /**
  * @method Language|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class LanguageRepository extends ServiceEntityRepository
 {
     const ARCHIVED = 'archived';
+
+    private $temporaryCache = null;
 
     public function __construct(ManagerRegistry $registry)
     {
@@ -55,10 +58,14 @@ class LanguageRepository extends ServiceEntityRepository
      */
     public function findLanguagesForForm(array $options = []): array
     {
-        $query = $this->createQueryBuilder('l')
-            ->select('l.uuid, l.iso6391');
+        if (null === $this->temporaryCache) {
+            $query = $this->createQueryBuilder('l')
+                ->select('l.uuid, l.iso6391');
 
-        return $this->executeQuery($query, $options);
+            $this->temporaryCache = $this->executeQuery($query, $options);
+        }
+
+        return $this->temporaryCache;
     }
 
     /**

@@ -49,7 +49,8 @@ class RoleHydratorService implements EntityHydratorInterface
     {
         /** @var Role $entity */
         /** @var RoleDto $dto */
-        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable());
+        dump($dto);
+        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable(), $dto->translatable);
 
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setName(strtoupper($dto->name))
