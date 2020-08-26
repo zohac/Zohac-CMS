@@ -3,6 +3,7 @@
 namespace App\Service\User;
 
 use App\Dto\User\UserDto;
+use App\Entity\Language;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Exception\UuidException;
@@ -67,16 +68,13 @@ class UserHydratorService implements EntityHydratorInterface
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        /** @var User $entity */
+        /* @var User $entity */
         /** @var UserDto $dto */
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
-        $language = $this->languageRepository->findOneBy(['uuid' => $dto->language]);
-
-        if ($language) {
+        if ($language = $this->getLanguage($dto->language)) {
             $entity->setLanguage($language);
         }
 
-        $entity->setUuid($uuid)
+        $entity->setUuid($this->getUuid($dto->uuid))
             ->setEmail($dto->email)
             ->setToken($dto->tokenValidity)
             ->setTokenValidity($dto->tokenValidity);
@@ -104,13 +102,25 @@ class UserHydratorService implements EntityHydratorInterface
     }
 
     /**
+     * @param string $languageUuid
+     *
+     * @return Language
+     */
+    public function getLanguage(string $languageUuid): Language
+    {
+        return $this->languageRepository->findOneBy(['uuid' => $languageUuid]);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @throws UuidException
      */
-    public function getUuid(): string
+    public function getUuid(?string $uuid = null): string
     {
-        return $this->uuidService->create();
+        $uuid = (null !== $uuid) ? $uuid : $this->uuidService->create();
+
+        return $uuid;
     }
 
     /**

@@ -23,55 +23,55 @@ class {{ entity.shortName }}EventsSubscriber implements EventSubscriberInterface
     public function __construct({{ entity.shortName }}Service ${{ entity.shortNameToLower }}Service)
     {
         $this->{{ entity.shortNameToLower }}Service = ${{ entity.shortNameToLower }}Service;
-    }
+}
 
-    public static function getSubscribedEvents()
-    {
-        return [
-            {{ entity.shortName }}Event::CREATE => ['on{{ entity.shortName }}Create', 0],
-            {{ entity.shortName }}Event::UPDATE => ['on{{ entity.shortName }}Update', 0],
-            {{ entity.shortName }}Event::DELETE => ['on{{ entity.shortName }}Delete', 0],
-            {{ entity.shortName }}Event::SOFT_DELETE => ['on{{ entity.shortName }}SoftDelete', 0],
-        ];
-    }
+public static function getSubscribedEvents()
+{
+return [
+{{ entity.shortName }}Event::CREATE => ['on{{ entity.shortName }}Create', 0],
+{{ entity.shortName }}Event::UPDATE => ['on{{ entity.shortName }}Update', 0],
+{{ entity.shortName }}Event::DELETE => ['on{{ entity.shortName }}Delete', 0],
+{{ entity.shortName }}Event::SOFT_DELETE => ['on{{ entity.shortName }}SoftDelete', 0],
+];
+}
 
-    /**
-    * @param {{ entity.shortName }}Event $event
-    *
-    * @throws HydratorException
-    */
-    public function on{{ entity.shortName }}Create({{ entity.shortName }}Event $event)
-    {
-        $this->{{ entity.shortNameToLower }}Service->create{{ entity.shortName }}FromDto($event->get{{ entity.shortName }}Dto());
-    }
+/**
+* @param {{ entity.shortName }}Event $event
+*
+* @throws HydratorException
+*/
+public function on{{ entity.shortName }}Create({{ entity.shortName }}Event $event)
+{
+$this->{{ entity.shortNameToLower }}Service->create{{ entity.shortName }}FromDto($event->get{{ entity.shortName }}Dto());
+}
 
-    /**
-    * @param {{ entity.shortName }}Event $event
-    *
-    * @throws HydratorException
-    */
-    public function on{{ entity.shortName }}Update({{ entity.shortName }}Event $event)
-    {
-        $this->{{ entity.shortNameToLower }}Service->update{{ entity.shortName }}FromDto($event->get{{ entity.shortName }}Dto(), $event->get{{ entity.shortName }}());
-    }
+/**
+* @param {{ entity.shortName }}Event $event
+*
+* @throws HydratorException
+*/
+public function on{{ entity.shortName }}Update({{ entity.shortName }}Event $event)
+{
+$this->{{ entity.shortNameToLower }}Service->update{{ entity.shortName }}FromDto($event->get{{ entity.shortName }}Dto(), $event->get{{ entity.shortName }}());
+}
 
-    /**
-    * @param {{ entity.shortName }}Event $event
-    *
-    * @throws ReflectionException
-    */
-    public function on{{ entity.shortName }}Delete({{ entity.shortName }}Event $event)
-    {
-        $this->{{ entity.shortNameToLower }}Service->delete{{ entity.shortName }}($event->get{{ entity.shortName }}());
-    }
+/**
+* @param {{ entity.shortName }}Event $event
+*
+* @throws ReflectionException
+*/
+public function on{{ entity.shortName }}Delete({{ entity.shortName }}Event $event)
+{
+$this->{{ entity.shortNameToLower }}Service->delete{{ entity.shortName }}($event->get{{ entity.shortName }}());
+}
 
-    /**
-    * @param {{ entity.shortName }}Event $event
-    *
-    * @throws ReflectionException
-    */
-    public function on{{ entity.shortName }}SoftDelete({{ entity.shortName }}Event $event)
-    {
-        $this->{{ entity.shortNameToLower }}Service->deleteSoft{{ entity.shortName }}($event->get{{ entity.shortName }}());
-    }
+/**
+* @param {{ entity.shortName }}Event $event
+*
+* @throws ReflectionException
+*/
+public function on{{ entity.shortName }}SoftDelete({{ entity.shortName }}Event $event)
+{
+$this->{{ entity.shortNameToLower }}Service->deleteSoft{{ entity.shortName }}($event->get{{ entity.shortName }}());
+}
 }

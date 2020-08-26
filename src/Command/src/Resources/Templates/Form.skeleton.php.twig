@@ -19,17 +19,17 @@ class {{ entity.shortName }}Type extends AbstractType
 {% endif %}
 {% endfor %}
 
-            ->add('save', SubmitType::class, [
-                'label' => 'save',
-                'translation_domain' => 'fields',
-            ]);
-    }
+->add('save', SubmitType::class, [
+'label' => 'save',
+'translation_domain' => 'fields',
+]);
+}
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => {{ entity.shortName }}Dto::class,
-            'translation_domain' => '{{ entity.shortNameToLower }}',
-        ]);
-    }
+public function configureOptions(OptionsResolver $resolver)
+{
+$resolver->setDefaults([
+'data_class' => {{ entity.shortName }}Dto::class,
+'translation_domain' => '{{ entity.shortNameToLower }}',
+]);
+}
 }

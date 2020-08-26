@@ -42,110 +42,110 @@ class {{ entity.shortName }}Controller extends AbstractController implements Con
 
         // TODO: if $soft, $repositoryOptions = ['archived' => false];
 
-        return $this->index(${{ entity.shortNameToLower }}Repository, {{ entity.shortName }}::class, $repositoryOptions);
-    }
+return $this->index(${{ entity.shortNameToLower }}Repository, {{ entity.shortName }}::class, $repositoryOptions);
+}
 
-    /**
-    * @Route(
-    *     "/{uuid}/",
-    *     name="{{ entity.shortNameToLower }}.detail",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET"}
-    * )
-    *
-    * @param {{ entity.shortName }}|null ${{ entity.shortNameToLower }}
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
-    public function {{ entity.shortNameToLower }}Show(?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
-    {
-        if (!${{ entity.shortNameToLower }}) {
-            return $this->{{ entity.shortNameToLower }}NotFound();
-        }
+/**
+* @Route(
+*     "/{uuid}/",
+*     name="{{ entity.shortNameToLower }}.detail",
+*     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+*     methods={"GET"}
+* )
+*
+* @param {{ entity.shortName }}|null ${{ entity.shortNameToLower }}
+*
+* @return Response
+*
+* @throws ReflectionException
+*/
+public function {{ entity.shortNameToLower }}Show(?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
+{
+if (!${{ entity.shortNameToLower }}) {
+return $this->{{ entity.shortNameToLower }}NotFound();
+}
 
-        return $this->show(${{ entity.shortNameToLower }});
-    }
+return $this->show(${{ entity.shortNameToLower }});
+}
 
-    /**
-    * @return Response
-    */
-    public function {{ entity.shortNameToLower }}NotFound(): Response
-    {
-        $this->addAndTransFlashMessage(
-            FlashBagService::FLASH_ERROR,
-            '{{ entity.shortName }}',
-            'The {{ entity.shortNameToLower }} was not found.',
-            '{{ entity.shortNameToLower }}'
-        );
+/**
+* @return Response
+*/
+public function {{ entity.shortNameToLower }}NotFound(): Response
+{
+$this->addAndTransFlashMessage(
+FlashBagService::FLASH_ERROR,
+'{{ entity.shortName }}',
+'The {{ entity.shortNameToLower }} was not found.',
+'{{ entity.shortNameToLower }}'
+);
 
-        return $this->redirectToRoute('{{ entity.shortNameToLower }}.list');
-    }
+return $this->redirectToRoute('{{ entity.shortNameToLower }}.list');
+}
 
-    /**
-    * @Route("/create/", name="{{ entity.shortNameToLower }}.create", methods={"GET", "POST"})
-    *
-    * @param Request $request
-    * @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
-    public function {{ entity.shortNameToLower }}New(Request $request, {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): Response
-    {
-        return $this->new($request, ${{ entity.shortNameToLower }}Dto, {{ entity.shortName }}::class, {{ entity.shortName }}Type::class);
-    }
+/**
+* @Route("/create/", name="{{ entity.shortNameToLower }}.create", methods={"GET", "POST"})
+*
+* @param Request $request
+* @param {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto
+*
+* @return Response
+*
+* @throws ReflectionException
+*/
+public function {{ entity.shortNameToLower }}New(Request $request, {{ entity.shortName }}Dto ${{ entity.shortNameToLower }}Dto): Response
+{
+return $this->new($request, ${{ entity.shortNameToLower }}Dto, {{ entity.shortName }}::class, {{ entity.shortName }}Type::class);
+}
 
-    /**
-    * @Route(
-    *     "/{uuid}/update/",
-    *     name="{{ entity.shortNameToLower }}.update",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET", "POST"}
-    * )
-    *
-    * @param Request   $request
-    * @param {{ entity.shortName }}|null ${{ entity.shortNameToLower }}
-    *
-    * @return Response
-    *
-    * @throws HydratorException
-    * @throws ReflectionException
-    * @throws DtoHandlerException
-    */
-    public function {{ entity.shortNameToLower }}Edit(Request $request, ?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
-    {
-        if (!${{ entity.shortNameToLower }}) {
-            return $this->{{ entity.shortNameToLower }}NotFound();
-        }
+/**
+* @Route(
+*     "/{uuid}/update/",
+*     name="{{ entity.shortNameToLower }}.update",
+*     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+*     methods={"GET", "POST"}
+* )
+*
+* @param Request   $request
+* @param {{ entity.shortName }}|null ${{ entity.shortNameToLower }}
+*
+* @return Response
+*
+* @throws HydratorException
+* @throws ReflectionException
+* @throws DtoHandlerException
+*/
+public function {{ entity.shortNameToLower }}Edit(Request $request, ?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
+{
+if (!${{ entity.shortNameToLower }}) {
+return $this->{{ entity.shortNameToLower }}NotFound();
+}
 
-        return $this->edit($request, ${{ entity.shortNameToLower }}, {{ entity.shortName }}Type::class);
-    }
+return $this->edit($request, ${{ entity.shortNameToLower }}, {{ entity.shortName }}Type::class);
+}
 
-    /**
-    * @Route(
-    *     "/{uuid}/delete/",
-    *     name="{{ entity.shortNameToLower }}.delete",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET", "POST"}
-    * )
-    *
-    * @param Request     $request
-    * @param {{ entity.shortName }}Service $service
-    * @param {{ entity.shortName }}|null   ${{ entity.shortNameToLower }}
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
-    public function {{ entity.shortNameToLower }}Delete(Request $request, {{ entity.shortName }}Service $service, ?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
-    {
-        if (!${{ entity.shortNameToLower }}) {
-            return $this->{{ entity.shortNameToLower }}NotFound();
-        }
+/**
+* @Route(
+*     "/{uuid}/delete/",
+*     name="{{ entity.shortNameToLower }}.delete",
+*     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+*     methods={"GET", "POST"}
+* )
+*
+* @param Request     $request
+* @param {{ entity.shortName }}Service $service
+* @param {{ entity.shortName }}|null   ${{ entity.shortNameToLower }}
+*
+* @return Response
+*
+* @throws ReflectionException
+*/
+public function {{ entity.shortNameToLower }}Delete(Request $request, {{ entity.shortName }}Service $service, ?{{ entity.shortName }} ${{ entity.shortNameToLower }} = null): Response
+{
+if (!${{ entity.shortNameToLower }}) {
+return $this->{{ entity.shortNameToLower }}NotFound();
+}
 
-        return $this->delete($request, ${{ entity.shortNameToLower }}, $service);
-    }
+return $this->delete($request, ${{ entity.shortNameToLower }}, $service);
+}
 }

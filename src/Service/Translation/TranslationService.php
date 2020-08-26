@@ -5,7 +5,6 @@ namespace App\Service\Translation;
 use App\Dto\Translation\TranslationDto;
 use App\Entity\Translation;
 use App\Exception\UuidException;
-use App\Service\UuidService;
 
 class TranslationService
 {
@@ -39,9 +38,8 @@ class TranslationService
      */
     public function createTranslationFromDto(TranslationDto $translationDto): Translation
     {
-        $translation = $this->getNewTranslation();
         /** @var Translation $translation */
-        $translation = $this->hydrator->hydrateEntityWithDto($translation, $translationDto);
+        $translation = $this->hydrator->hydrateEntityWithDto($this->getNewTranslation(), $translationDto);
 
         return $translation;
     }
@@ -49,5 +47,20 @@ class TranslationService
     public function getNewTranslation(): Translation
     {
         return clone $this->translation;
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return Translation
+     *
+     * @throws UuidException
+     */
+    public function createTranslationFromArray(array $values): Translation
+    {
+        /** @var Translation $translation */
+        $translation = $this->hydrator->hydrateEntityWithArray($this->getNewTranslation(), $values);
+
+        return $translation;
     }
 }

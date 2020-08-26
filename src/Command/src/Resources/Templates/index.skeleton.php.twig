@@ -5,14 +5,15 @@
 {{ '{% block body %}' }}
 <div class="{{ entity.shortNamePlural }}-wrapper">
 
-    {{ '{% for ' }}{{ entity.shortNameToLower }}{{ ' in '}}{{ entity.shortNamePlural }}{{ ' %}' }}
+    {{ '{% for ' }}{{ entity.shortNameToLower }}{{ ' in ' }}{{ entity.shortNamePlural }}{{ ' %}' }}
     <div class="{{ entity.shortNameToLower }}-wrapper">
 
-{% for property in entity.properties %}
-{% if property.name not in ['id', 'uuid'] %}
-        {{ '{% trans from \'' }}{{ entity.shortNameToLower }}{{ '\' %}' }}{{ property.name }}{{ '{% endtrans %}' }}: {{ '{{ '}}{{ entity.shortNameToLower }}.{{ property.name }}{{ ' }}' }}<br/>
-{% endif %}
-{% endfor %}
+        {% for property in entity.properties %}
+            {% if property.name not in ['id', 'uuid'] %}
+                {{ '{% trans from \'' }}{{ entity.shortNameToLower }}{{ '\' %}' }}{{ property.name }}{{ '{% endtrans %}' }}: {{ '{{ ' }}{{ entity.shortNameToLower }}.{{ property.name }}{{ ' }}' }}
+                <br/>
+            {% endif %}
+        {% endfor %}
 
         <a href="{{ '{{ path(\'' }}{{ entity.shortNameToLower }}{{ '.detail\', {"uuid": ' }}{{ entity.shortNameToLower }}{{ '.uuid}) }}' }}">{{ '{% trans from \'global\' %}Detail{% endtrans %}' }}</a>
     </div>

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Role;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function array_key_exists;
 
 /**
  * @method Role|null find($id, $lockMode = null, $lockVersion = null)
@@ -31,7 +32,7 @@ class RoleRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('r')
             ->select('r, t, tr, l');
 
-        if (\array_key_exists(self::ARCHIVED, $options)) {
+        if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
             $query = $query->andWhere('r.archived = :archived')
