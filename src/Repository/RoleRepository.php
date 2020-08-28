@@ -19,6 +19,8 @@ class RoleRepository extends ServiceEntityRepository
 {
     const ARCHIVED = 'archived';
 
+    private $temporaryCache = null;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Role::class);
@@ -52,11 +54,14 @@ class RoleRepository extends ServiceEntityRepository
      */
     public function findRolesForForm(array $options = []): array
     {
-        $query = $this->createQueryBuilder('r')
-            ->select('r.uuid, r.name')
-            ;
+        if (null === $this->temporaryCache) {
+            $query = $this->createQueryBuilder('r')
+                ->select('r.uuid, r.name');
 
-        return $this->executeQuery($query, $options);
+            $this->temporaryCache = $this->executeQuery($query, $options);
+        }
+
+        return $this->temporaryCache;
     }
 
     /**
