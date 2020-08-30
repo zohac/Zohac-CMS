@@ -1,0 +1,44 @@
+App\Entity\Language:
+  language_1:
+    name: 'Français'
+    alternateName: 'French'
+    description: 'Français, langue française.'
+    iso6391: 'fr'
+    iso6392T: 'fra'
+    iso6392B: 'fre'
+    archived: false
+  language_2:
+    name: 'Anglais'
+    alternateName: 'English'
+    description: 'Anglais, langue anglaise.'
+    iso6391: 'en'
+    iso6392T: 'eng'
+    iso6392B: 'eng'
+    archived: false
+
+App\Entity\Role:
+  role_1:
+    name: 'ROLE_SUPER_ADMIN'
+    translatable:
+      translation_1:
+        language: 'fr'
+        message: 'Rôle super administrateur'
+      translation_2:
+        language: 'en'
+        message: 'Super administrator role'
+  role_2:
+    name: 'ROLE_USER'
+    translatable:
+      translation_1:
+        language: 'fr'
+        message: 'Rôle utilisateur'
+      translation_2:
+        language: 'en'
+        message: 'User role'
+
+App\Entity\User:
+  user_1:
+    email: 'test@test.com'
+    password: '123'
+    language: 'fr'
+    role: 'ROLE_SUPER_ADMIN'

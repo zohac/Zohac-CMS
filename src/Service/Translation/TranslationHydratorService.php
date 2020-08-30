@@ -54,8 +54,10 @@ class TranslationHydratorService implements EntityHydratorInterface
 
     /**
      * @param EntityInterface $entity
-     * @param array $values
+     * @param array           $values
+     *
      * @return EntityInterface
+     *
      * @throws UuidException
      */
     public function hydrateEntityWithArray(EntityInterface $entity, array $values): EntityInterface
