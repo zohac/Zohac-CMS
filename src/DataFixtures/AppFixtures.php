@@ -62,18 +62,14 @@ class AppFixtures extends Fixture
         $fixtures = Yaml::parseFile('src/DataFixtures/Data/fixtures.yaml');
 
         foreach ($fixtures as $entityType => $entities) {
-            switch ($entityType) {
-                case Language::class:
-                    $this->loadLanguage($entities);
-                    break;
-
-                case Role::class:
-                    $this->loadRole($entities);
-                    break;
-
-                case User::class:
-                    $this->loadUser($entities);
-                    break;
+            if (Language::class === $entityType) {
+                $this->loadLanguage($entities);
+            }
+            if (Role::class === $entityType) {
+                $this->loadRole($entities);
+            }
+            if (User::class === $entityType) {
+                $this->loadUser($entities);
             }
 
             $manager->flush();
