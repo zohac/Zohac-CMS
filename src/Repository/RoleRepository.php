@@ -3,11 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Role;
+use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use function array_key_exists;
 
 /**
  * @method Role|null find($id, $lockMode = null, $lockVersion = null)

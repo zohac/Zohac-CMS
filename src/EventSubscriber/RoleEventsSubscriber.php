@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Event\Role\RoleEvent;
+use App\Event\Role\RoleViewEvent;
 use App\Exception\HydratorException;
 use App\Service\Role\RoleService;
 use ReflectionException;
@@ -32,6 +33,7 @@ class RoleEventsSubscriber implements EventSubscriberInterface
             RoleEvent::UPDATE => ['onRoleUpdate', 0],
             RoleEvent::DELETE => ['onRoleDelete', 0],
             RoleEvent::SOFT_DELETE => ['onRoleSoftDelete', 0],
+            RoleViewEvent::UPDATE => ['onRoleViewEvent', 0],
         ];
     }
 
@@ -73,5 +75,10 @@ class RoleEventsSubscriber implements EventSubscriberInterface
     public function onRoleSoftDelete(RoleEvent $event)
     {
         $this->roleService->deleteSoftRole($event->getRole());
+    }
+
+    public function onRoleViewEvent(RoleViewEvent $event)
+    {
+        dump($event);
     }
 }

@@ -47,7 +47,9 @@ class TranslationService
 
     /**
      * @param array $values
+     *
      * @return Translation
+     *
      * @throws UuidException
      */
     public function createTranslationFromArray(array $values): Translation
