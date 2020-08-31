@@ -9,7 +9,7 @@
 
 {% for property in entity.properties %}
 {% if 'id' != property.getName %}
-    {{ '{% trans from ' }}{{ entity.shortNameToLower }}{{ ' %}' }}{{ property.getName }}{{ '{% endtrans %}: {{ ' }}{{ entity.shortNameToLower }}.{{ property.getName }}{{ ' }}' }}<br/>
+    {{ '{% trans from \'' }}{{ entity.shortNameToLower }}{{ '\' %}' }}{{ property.getName }}{{ '{% endtrans %}: {{ ' }}{{ entity.shortNameToLower }}.{{ property.getName }}{{ ' }}' }}<br/>
 {% endif %}
 {% endfor %}
 

@@ -14,7 +14,6 @@ class UserTest extends TestCase
         'password' => 'Secr3tP@ssword',
         'token' => 'a-token',
         'tokenValidity' => '',
-        'roles' => ['ROLE_TEST'],
         'archived' => true,
     ];
 
@@ -35,7 +34,6 @@ class UserTest extends TestCase
         $this->assertEquals(
             $this->user['tokenValidity']->format('Y-m-d H:i:s'), $user->getTokenValidity()->format('Y-m-d H:i:s')
         );
-        $this->assertContains('ROLE_TEST', $user->getRoles());
         $this->assertContains('ROLE_USER', $user->getRoles());
         $this->assertTrue($user->isArchived());
     }

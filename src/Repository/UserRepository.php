@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,6 +22,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    const ARCHIVED = 'archived';
+
     /**
      * UserRepository constructor.
      *
@@ -61,5 +65,49 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('u.id', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param string $uuid
+     *
+     * @return User|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneByUuid(string $uuid): ?User
+    {
+        $query = $this->createQueryBuilder('u')
+            ->select('u, r, l')
+            ->leftJoin('u.roles', 'r')
+            ->leftJoin('u.language', 'l')
+            ->andWhere('u.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return User[]
+     */
+    public function findAllInOneRequest(array $options = [])
+    {
+        $query = $this->createQueryBuilder('u')
+            ->select('u, r, l')
+            ->leftJoin('u.roles', 'r')
+            ->leftJoin('u.language', 'l');
+
+        if (array_key_exists(self::ARCHIVED, $options)) {
+            $archived = (bool) $options[self::ARCHIVED];
+
+            $query = $query->andWhere('u.archived = :archived')
+                ->setParameter(self::ARCHIVED, $archived);
+        }
+
+        $query = $query->getQuery();
+
+        return $query->execute();
     }
 }

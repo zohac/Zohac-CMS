@@ -6,14 +6,16 @@
     <div class="user-wrapper">
 
         {% if user is not empty %}
-            uuid: {{ user.uuid }}<br/>
-            email: {{ user.email }}<br/>
-            roles:
+            {% trans from 'user' %}uuid{% endtrans %} : {{ user.uuid }}<br/>
+            {% trans from 'user' %}email{% endtrans %} : {{ user.email }}<br/>
+            {% trans from 'user' %}roles{% endtrans %} :
             <ul>
                 {% for role in user.roles %}
                     <li>{{ role }}</li>
                 {% endfor %}
             </ul>
+            {% trans from 'user' %}language{% endtrans %} : {{ user.locale }}<br/>
+
             <a href="{{ path('user.list') }}">List</a>
             <a href="{{ path('user.update', {"uuid": user.uuid}) }}">Update</a>
             <a href="{{ path('user.delete', {"uuid": user.uuid}) }}">Delete</a>

@@ -4,7 +4,6 @@ namespace App\Tests\Repository;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use function count;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -14,10 +13,7 @@ class UserRepositoryTest extends KernelTestCase
 {
     use FixturesTrait;
 
-    /**
-     * @var User[]
-     */
-    private $users;
+    private $fixtures;
 
     /**
      * @var UserRepository
@@ -29,13 +25,13 @@ class UserRepositoryTest extends KernelTestCase
         self::bootKernel(['debug' => 0]);
         $this->userRepository = self::$container->get(UserRepository::class);
 
-        $this->loadUsers();
+        $this->loadFixtures();
     }
 
-    public function loadUsers()
+    public function loadFixtures()
     {
-        $this->users = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/UserFixtures.yaml',
+        $this->fixtures = $this->loadFixtureFiles([
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
     }
 
@@ -50,16 +46,16 @@ class UserRepositoryTest extends KernelTestCase
     {
         $users = $this->userRepository->findAllNotArchived();
 
-        $this->assertEquals(10, count($users));
+        $this->assertCount(10, $users);
     }
 
     public function testUpgradePassword()
     {
-        $user = $this->users['user1'];
+        $user = $this->fixtures['user_1'];
         // Refresh the user from DB
         $user = $this->userRepository->findOneById($user->getId());
 
-        $this->assertEquals('0000', $user->getPassword());
+        $this->assertEquals($this->fixtures['user_1']->getPassword(), $user->getPassword());
 
         $this->userRepository->upgradePassword($user, '1111');
         $this->assertEquals('1111', $user->getPassword());
@@ -98,8 +94,7 @@ class UserRepositoryTest extends KernelTestCase
     {
         parent::tearDown();
         // avoid memory leaks
-        $this->users = null;
-        $this->userService = null;
+        $this->fixtures = null;
         $this->userRepository = null;
     }
 }

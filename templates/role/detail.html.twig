@@ -7,9 +7,12 @@
 
     {% if role is not empty %}
 
-    {% trans from role %}uuid{% endtrans %}: {{ role.uuid }}<br/>
-    {% trans from role %}name{% endtrans %}: {{ role.name }}<br/>
-    {% trans from role %}translatable{% endtrans %}: {{ role.translatable }}<br/>
+    {% trans from 'role' %}uuid{% endtrans %}: {{ role.uuid }}<br/>
+    {% trans from 'role' %}name{% endtrans %}: {{ role.name }}<br/>
+    {% trans from 'role' %}translatable{% endtrans %}: <br/>
+    {% for translation in role.translatable.translations %}
+        {{ translation.language.alternateName ~ ' : ' ~ translation.message }}<br />
+    {% endfor %}
 
     <a href="{{ path('role.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
     <a href="{{ path('role.update', {"uuid": role.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>

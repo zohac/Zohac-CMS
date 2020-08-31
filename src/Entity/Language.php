@@ -9,10 +9,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Repository\LanguageRepository;
+use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -24,19 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Language implements EntityInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $uuid;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -72,16 +60,6 @@ class Language implements EntityInterface
      * @ORM\Column(type="json", nullable=true)
      */
     private $iso6393 = [];
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $archived;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getName(): ?string
     {
@@ -163,30 +141,6 @@ class Language implements EntityInterface
     public function setIso6393(?array $iso6393): self
     {
         $this->iso6393 = $iso6393;
-
-        return $this;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->archived;
-    }
-
-    public function setArchived(bool $archived): self
-    {
-        $this->archived = $archived;
 
         return $this;
     }

@@ -24,6 +24,7 @@ class UserDto implements DtoInterface
 
     /**
      * @Assert\Type("string")
+     * @ Assert\NotCompromisedPassword()
      */
     public $password;
 
@@ -38,9 +39,9 @@ class UserDto implements DtoInterface
     public $tokenValidity;
 
     /**
-     * @Assert\Type("string")
+     * @Assert\Uuid()
      */
-    public $locale;
+    public $language;
 
     /**
      * @param EntityInterface $entity

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List!{% endblock %}
+
+{% block body %}
+<div class="roles-wrapper">
+
+    {% for role in roles %}
+    <div class="role-wrapper">
+        {% trans from 'role' %}name{% endtrans %}: {{ role.name }}<br/>
+        {% trans from 'role' %}translatable{% endtrans %}: <br/>
+        {% for translation in role.translatable.translations %}
+            {{ translation.language.alternateName ~ ' : ' ~ translation.message }}<br />
+        {% endfor %}
+
+        <a href="{{ path('role.detail', {"uuid": role.uuid}) }}">{% trans from 'global' %}Detail{% endtrans %}</a>
+    </div>
+    {% endfor %}
+
+</div>
+<a href="{{ path('role.create') }}">{% trans from 'global' %}Create{% endtrans %}</a>
+{% endblock %}

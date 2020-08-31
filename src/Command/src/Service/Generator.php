@@ -89,12 +89,9 @@ class Generator
     public function addOperation(string $path, string $template): self
     {
         if ($this->fileManager->exists($path)) {
-            throw new RuntimeCommandException(
-                sprintf(
-                    'The file "%s" can\'t be generated because it already exists.',
-                    $this->fileManager->makePathRelative($path, $this->kernelProjectDir)
-                )
-            );
+            $message = 'The file "%s" can\'t be generated because it already exists.';
+            $relativePath = $this->fileManager->makePathRelative($path, $this->kernelProjectDir);
+            throw new RuntimeCommandException(sprintf($message, $relativePath));
         }
 
         $this->pendingOperations[$path] = $template;

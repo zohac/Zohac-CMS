@@ -14,7 +14,7 @@ class {{ entity.shortName }}Type extends AbstractType
     {
         $builder
 {% for property in entity.properties %}
-{% if 'id' != property.name %}
+{% if property.name not in ['id', 'uuid'] %}
             ->add('{{ property.name }}')
 {% endif %}
 {% endfor %}

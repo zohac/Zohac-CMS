@@ -11,7 +11,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class CrudHelper
+class CommandHelper
 {
     /**
      * @var DoctrineHelper
@@ -185,19 +185,19 @@ class CrudHelper
         $options = $this->getOptions();
 
         $this->generator->generate(
-            $path.'detail.htlm.twig',
+            $path.'detail.html.twig',
             'detail.skeleton.php.twig',
             $options
         );
 
         $this->generator->generate(
-            $path.'index.htlm.twig',
+            $path.'index.html.twig',
             'index.skeleton.php.twig',
             $options
         );
 
         $this->generator->generate(
-            $path.'type.htlm.twig',
+            $path.'type.html.twig',
             'type.skeleton.php.twig',
             $options
         );
@@ -336,6 +336,25 @@ class CrudHelper
         $path = $this->srcDir.'/Dto/'.$className.'/'.$className.'Dto.php';
 
         $this->generator->generate($path, 'Dto.skeleton.php.twig', $this->getOptions());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function generateFunctionalTest(): self
+    {
+        $className = $this->reflectionClass->getShortName();
+        $path = $this->kernelProjectDir.'/tests/Controller/'.$className.'ControllerTest.php';
+
+        $this->generator->generate($path, 'FunctionalTest.skeleton.php.twig', $this->getOptions());
+
+        $this->generator->writeChanges();
 
         return $this;
     }

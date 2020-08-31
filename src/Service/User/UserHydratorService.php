@@ -3,11 +3,15 @@
 namespace App\Service\User;
 
 use App\Dto\User\UserDto;
+use App\Entity\Language;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
+use App\Repository\LanguageRepository;
+use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -22,17 +26,34 @@ class UserHydratorService implements EntityHydratorInterface
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
+    /**
+     * @var LanguageRepository
+     */
+    private $languageRepository;
+
+    /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
 
     /**
      * UserHydratorService constructor.
      *
      * @param UuidService                  $uuidService
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param LanguageRepository           $languageRepository
+     * @param RoleRepository               $roleRepository
      */
-    public function __construct(UuidService $uuidService, UserPasswordEncoderInterface $passwordEncoder)
-    {
+    public function __construct(
+        UuidService $uuidService,
+        UserPasswordEncoderInterface $passwordEncoder,
+        LanguageRepository $languageRepository,
+        RoleRepository $roleRepository
+    ) {
         $this->uuidService = $uuidService;
         $this->passwordEncoder = $passwordEncoder;
+        $this->languageRepository = $languageRepository;
+        $this->roleRepository = $roleRepository;
     }
 
     /**
@@ -44,20 +65,27 @@ class UserHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var User
-     * @var UserDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
+        /* @var User $entity */
+        /** @var UserDto $dto */
+        if ($language = $this->getLanguage($dto->language)) {
+            $entity->setLanguage($language);
+        }
 
-        $entity->setUuid($uuid)
+        $entity->setUuid($this->getUuid($dto->uuid))
             ->setEmail($dto->email)
-            ->setRoles($dto->roles)
-            ->setLocale($dto->locale)
             ->setToken($dto->tokenValidity)
             ->setTokenValidity($dto->tokenValidity);
+
+        foreach ($entity->getRolesEntities() as $role) {
+            $entity->removeRole($role);
+        }
+
+        foreach ($this->getRolesFromDto($dto) as $role) {
+            $entity->addRole($role);
+        }
 
         if (null !== $dto->password) {
             $password = $this->passwordEncoder->encodePassword($entity, $dto->password);
@@ -68,31 +96,63 @@ class UserHydratorService implements EntityHydratorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $uuid
      *
-     * @throws UuidException
+     * @return Language
      */
-    public function getUuid(): string
+    public function getLanguage(string $uuid): Language
     {
-        return $this->uuidService->create();
+        return $this->languageRepository->findOneBy(['uuid' => $uuid]);
     }
 
     /**
      * {@inheritdoc}
      *
-     * @var User
-     * @var UserDto $dto
+     * @throws UuidException
+     */
+    public function getUuid(?string $uuid = null): string
+    {
+        return (null !== $uuid) ? $uuid : $this->uuidService->create();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /* @var User $entity */
+        /* @var UserDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->email = $entity->getEmail();
-        $dto->roles = $entity->getRoles();
-        $dto->locale = $entity->getLocale();
+        $dto->language = $entity->getLanguage()->getUuid();
         $dto->token = $entity->getToken();
         $dto->tokenValidity = $entity->getTokenValidity();
 
+        /** @var Role $role */
+        foreach ($entity->getRolesEntities() as $role) {
+            $dto->roles[] = $role->getUuid();
+        }
+
         return $dto;
+    }
+
+    /**
+     * @param DtoInterface $dto
+     *
+     * @return array
+     */
+    public function getRolesFromDto(DtoInterface $dto): array
+    {
+        /** @var UserDto $dto */
+        $roles = [];
+        if ($role = $this->roleRepository->findOneBy(['name' => 'ROLE_USER'])) {
+            $roles[$role->getUuid()] = $role;
+        }
+        foreach ($dto->roles as $role) {
+            $roles[$role] = $this->roleRepository->findOneBy(['uuid' => $role]);
+        }
+
+        return $roles;
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Event\Language\LanguageEvent;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
+use App\Repository\LanguageRepository;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
@@ -31,20 +32,28 @@ class LanguageService implements ServiceInterface
     private $entityService;
 
     /**
+     * @var LanguageRepository
+     */
+    private $languageRepository;
+
+    /**
      * LanguageService constructor.
      *
-     * @param EventService    $eventService
-     * @param FlashBagService $flashBagService
-     * @param EntityService   $entityService
+     * @param EventService       $eventService
+     * @param FlashBagService    $flashBagService
+     * @param EntityService      $entityService
+     * @param LanguageRepository $languageRepository
      */
     public function __construct(
         EventService $eventService,
         FlashBagService $flashBagService,
-        EntityService $entityService
+        EntityService $entityService,
+        LanguageRepository $languageRepository
     ) {
         $this->eventService = $eventService;
         $this->flashBagService = $flashBagService;
         $this->entityService = $entityService;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -148,6 +157,29 @@ class LanguageService implements ServiceInterface
         $this->eventService->dispatchEvent(LanguageEvent::POST_DELETE);
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUuidLanguages(): array
+    {
+        return $this->languageRepository->findAllUuid(['archived' => false]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getLanguagesForForm(): array
+    {
+        $languages = $this->languageRepository->findLanguagesForForm(['archived' => false]);
+
+        $languagesForForm = [];
+        foreach ($languages as $language) {
+            $languagesForForm[$language['iso6391']] = $language['uuid'];
+        }
+
+        return $languagesForForm;
     }
 
     /**

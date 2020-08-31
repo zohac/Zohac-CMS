@@ -65,30 +65,6 @@ trait ControllerTrait
     }
 
     /**
-     * @param string $eventName
-     *
-     * @return ViewEventInterface
-     *
-     * @throws ReflectionException
-     */
-    public function getViewEvent(string $eventName): string
-    {
-        return $this->entityService->getViewEvent($eventName);
-    }
-
-    /**
-     * @param string $eventName
-     *
-     * @return string
-     *
-     * @throws ReflectionException
-     */
-    public function getEvent(string $eventName): string
-    {
-        return $this->entityService->getEvent($eventName);
-    }
-
-    /**
      * @param ServiceEntityRepositoryInterface $repository
      * @param string                           $entity            the class name (Entity::class)
      * @param array|null                       $repositoryOptions
@@ -104,7 +80,7 @@ trait ControllerTrait
     ): Response {
         $this->entityService->setEntity($entity);
 
-        $entities = $repository->findAll($repositoryOptions);
+        $entities = $repository->findAllInOneRequest($repositoryOptions);
 
         return $this->viewIndex($entities);
     }
@@ -142,6 +118,18 @@ trait ControllerTrait
     public function dispatchEvent(string $eventName, ?array $data = [])
     {
         $this->entityService->getEventService()->dispatchEvent($eventName, $data);
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return ViewEventInterface
+     *
+     * @throws ReflectionException
+     */
+    public function getViewEvent(string $eventName): string
+    {
+        return $this->entityService->getViewEvent($eventName);
     }
 
     /**
@@ -224,6 +212,18 @@ trait ControllerTrait
         $this->dispatchEvent($this->getViewEvent('CREATE'), [ViewService::NAME => $this->getViewService()]);
 
         return $this->getResponse();
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return string
+     *
+     * @throws ReflectionException
+     */
+    public function getEvent(string $eventName): string
+    {
+        return $this->entityService->getEvent($eventName);
     }
 
     /**

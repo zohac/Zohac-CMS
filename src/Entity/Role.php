@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Interfaces\EntityInterface;
 use App\Repository\RoleRepository;
+use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -14,21 +15,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass=RoleRepository::class)
  * @UniqueEntity("uuid")
  */
-class Role
+class Role implements EntityInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255)
-     */
-    private $uuid;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -39,23 +28,6 @@ class Role
      * @ORM\OneToOne(targetEntity=Translatable::class, cascade={"persist", "remove"})
      */
     private $translatable;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
 
     public function getName(): ?string
     {

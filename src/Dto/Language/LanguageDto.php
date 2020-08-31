@@ -42,13 +42,7 @@ class LanguageDto implements DtoInterface
     public $description;
 
     /**
-     * @Assert\Length(
-     *      min = 2,
-     *      max = 2,
-     *      minMessage = "The iso639_1 string must be {{ limit }} characters long",
-     *      maxMessage = "The iso639_1 string must be {{ limit }} characters long",
-     *      allowEmptyString = false
-     * )
+     * @Assert\Locale()
      * @Assert\NotBlank()
      */
     public $iso6391;

@@ -6,10 +6,10 @@ use App\Command\src\Exception\CrudException;
 use Doctrine\Common\Inflector\Inflector as LegacyInflector;
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Exception;
 use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 
@@ -100,6 +100,22 @@ class DoctrineHelper
     }
 
     /**
+     * @return ManagerRegistry
+     *
+     * @throws CrudException
+     */
+    public function getRegistry(): ManagerRegistry
+    {
+        // this should never happen: we will have checked for the
+        // DoctrineBundle dependency before calling this
+        if (null === $this->registry) {
+            throw new CrudException('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
+        }
+
+        return $this->registry;
+    }
+
+    /**
      * @param ClassMetadataFactory $metadataFactory
      * @param string|null          $classOrNamespace
      *
@@ -127,22 +143,6 @@ class DoctrineHelper
         if (null === $classOrNamespace || 0 === strpos($metadata->getName(), $classOrNamespace)) {
             $this->metadataBag[$metadata->getName()] = $metadata;
         }
-    }
-
-    /**
-     * @return ManagerRegistry
-     *
-     * @throws CrudException
-     */
-    public function getRegistry(): ManagerRegistry
-    {
-        // this should never happen: we will have checked for the
-        // DoctrineBundle dependency before calling this
-        if (null === $this->registry) {
-            throw new CrudException('Somehow the doctrine service is missing. Is DoctrineBundle installed?');
-        }
-
-        return $this->registry;
     }
 
     /**

@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
+use App\Traits\EntityTrait;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -19,25 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class User implements AdvancedUserInterface, EntityInterface
 {
-    /**
-     * The unique auto incremented primary key.
-     *
-     * @var int|null
-     * @ApiProperty(identifier=false)
-     *
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer", options={"unsigned"=true})
-     */
-    private $id;
-
-    /**
-     * @var string
-     * @ApiProperty(identifier=true)
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $uuid;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -45,9 +28,10 @@ class User implements AdvancedUserInterface, EntityInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\ManyToMany(targetEntity=Role::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $roles = [];
+    private $roles;
 
     /**
      * @var string The hashed password
@@ -68,33 +52,14 @@ class User implements AdvancedUserInterface, EntityInterface
     private $tokenValidity;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\ManyToOne(targetEntity=Language::class)
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $archived = false;
+    private $language;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $locale;
-
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
-    }
-
-    /**
-     * @see AdvancedUserInterface
-     */
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(?string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
+        $this->roles = new ArrayCollection();
     }
 
     public function getEmail(): ?string
@@ -124,16 +89,41 @@ class User implements AdvancedUserInterface, EntityInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $rolesName = [];
 
-        return array_unique($roles);
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            $rolesName[] = $role->getName();
+        }
+
+        // guarantee every user at least has ROLE_USER
+        $rolesName[] = 'ROLE_USER';
+
+        return array_unique($rolesName);
     }
 
-    public function setRoles(array $roles): self
+    /**
+     * @return ArrayCollection
+     */
+    public function getRolesEntities()
     {
-        $this->roles = $roles;
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+        }
 
         return $this;
     }
@@ -199,26 +189,30 @@ class User implements AdvancedUserInterface, EntityInterface
         return $this;
     }
 
-    public function isArchived(): bool
+    /**
+     * @return string
+     */
+    public function getLocale(): string
     {
-        return $this->archived;
+        return $this->language->getIso6391();
     }
 
-    public function setArchived(bool $archived): self
+    /**
+     * @return Language|null
+     */
+    public function getLanguage(): ?Language
     {
-        $this->archived = $archived;
-
-        return $this;
+        return $this->language;
     }
 
-    public function getLocale(): ?string
+    /**
+     * @param Language|null $language
+     *
+     * @return $this
+     */
+    public function setLanguage(?Language $language): self
     {
-        return $this->locale;
-    }
-
-    public function setLocale(string $locale): self
-    {
-        $this->locale = $locale;
+        $this->language = $language;
 
         return $this;
     }

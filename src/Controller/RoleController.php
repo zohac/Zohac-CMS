@@ -13,6 +13,7 @@ use App\Service\FlashBagService;
 use App\Service\Role\RoleService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,6 +53,7 @@ class RoleController extends AbstractController implements ControllerInterface
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
      *     methods={"GET"}
      * )
+     * @Entity("role", expr="repository.findOneByUuid(uuid)")
      *
      * @param Role|null $role
      *
@@ -105,6 +107,7 @@ class RoleController extends AbstractController implements ControllerInterface
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
      *     methods={"GET", "POST"}
      * )
+     * @Entity("role", expr="repository.findOneByUuid(uuid)")
      *
      * @param Request   $request
      * @param Role|null $role

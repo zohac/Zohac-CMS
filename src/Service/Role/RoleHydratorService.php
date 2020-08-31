@@ -8,6 +8,7 @@ use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
+use App\Service\Translatable\TranslatableService;
 use App\Service\UuidService;
 
 class RoleHydratorService implements EntityHydratorInterface
@@ -18,13 +19,20 @@ class RoleHydratorService implements EntityHydratorInterface
     private $uuidService;
 
     /**
+     * @var TranslatableService
+     */
+    private $translatableService;
+
+    /**
      * RoleHydratorService constructor.
      *
-     * @param UuidService $uuidService
+     * @param UuidService         $uuidService
+     * @param TranslatableService $translatableService
      */
-    public function __construct(UuidService $uuidService)
+    public function __construct(UuidService $uuidService, TranslatableService $translatableService)
     {
         $this->uuidService = $uuidService;
+        $this->translatableService = $translatableService;
     }
 
     /**
@@ -36,18 +44,17 @@ class RoleHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var Role    $entity
-     * @var RoleDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
+        /* @var Role $entity */
+        /* @var RoleDto $dto */
+        dump($dto);
+        $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable(), $dto->translatable);
 
-        $entity->setUuid($uuid)
-            ->setName($dto->name)
-            ->setTranslatable($dto->translatable)
-        ;
+        $entity->setUuid($this->getUuid($dto->uuid))
+            ->setName(strtoupper($dto->name))
+            ->setTranslatable($translatable);
 
         return $entity;
     }
@@ -57,22 +64,26 @@ class RoleHydratorService implements EntityHydratorInterface
      *
      * @throws UuidException
      */
-    public function getUuid(): string
+    public function getUuid(?string $uuid = null): string
     {
-        return $this->uuidService->create();
+        return (null !== $uuid) ? $uuid : $this->uuidService->create();
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @var Role
-     * @var RoleDto $dto
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /* @var Role $entity */
+        /* @var RoleDto $dto */
         $dto->uuid = $entity->getUuid();
         $dto->name = $entity->getName();
-        $dto->translatable = $entity->getTranslatable();
+        foreach ($entity->getTranslatable()->getTranslations() as $translation) {
+            $dto->translatable[] = [
+                'message' => $translation->getMessage(),
+                'language' => $translation->getLanguage()->getUuid(),
+            ];
+        }
 
         return $dto;
     }

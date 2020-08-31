@@ -34,7 +34,12 @@ class Translatable
     private $uuid;
 
     /**
-     * @ORM\OneToMany(targetEntity=Translation::class, mappedBy="translatable", orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity=Translation::class,
+     *     mappedBy="translatable",
+     *     orphanRemoval=true,
+     *     cascade={"persist", "remove"}
+     * )
      */
     private $translations;
 
