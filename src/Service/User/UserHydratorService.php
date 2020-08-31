@@ -146,10 +146,10 @@ class UserHydratorService implements EntityHydratorInterface
         /** @var UserDto $dto */
         $roles = [];
         if ($role = $this->roleRepository->findOneBy(['name' => 'ROLE_USER'])) {
-            $roles[] = $role;
+            $roles[$role->getUuid()] = $role;
         }
         foreach ($dto->roles as $role) {
-            $roles[] = $this->roleRepository->findOneBy(['uuid' => $role]);
+            $roles[$role] = $this->roleRepository->findOneBy(['uuid' => $role]);
         }
 
         return $roles;

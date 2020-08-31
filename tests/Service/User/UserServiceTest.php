@@ -93,9 +93,11 @@ class UserServiceTest extends KernelTestCase
         /** @var Role[] $roles */
         $roles = $user->getRolesEntities();
 
+        $roleInDto = array_flip($userDto->roles);
+
         $index = 0;
         foreach ($roles as $role) {
-            $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
+            $this->assertTrue(array_key_exists($role->getUuid(), $roleInDto));
             ++$index;
         }
     }
@@ -140,9 +142,11 @@ class UserServiceTest extends KernelTestCase
         /** @var Role[] $roles */
         $roles = $user->getRolesEntities();
 
+        $roleInDto = array_flip($userDto->roles);
+
         $index = 0;
         foreach ($roles as $role) {
-            $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
+            $this->assertTrue(array_key_exists($role->getUuid(), $roleInDto));
             ++$index;
         }
     }
@@ -166,9 +170,11 @@ class UserServiceTest extends KernelTestCase
         /** @var Role[] $roles */
         $roles = $user->getRolesEntities();
 
+        $roleInDto = array_flip($userDto->roles);
+
         $index = 0;
         foreach ($roles as $role) {
-            $this->assertEquals($role->getUuid(), $userDto->roles[$index]);
+            $this->assertTrue(array_key_exists($role->getUuid(), $roleInDto));
             ++$index;
         }
     }
