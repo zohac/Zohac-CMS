@@ -81,7 +81,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         $user = $this->entityManager
             ->getRepository(User::class)
-            ->findOneBy(['email' => $credentials['email']]);
+            ->findOneByEmail($credentials['email']);
 
         if (!$user) {
             // fail authentication with a custom error
@@ -98,6 +98,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
+     *
+     * @param array $credentials
+     *
+     * @return string|null
      */
     public function getPassword($credentials): ?string
     {
@@ -110,8 +114,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             return new RedirectResponse($targetPath);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        return new RedirectResponse($this->urlGenerator->generate('admin'));
     }
 
     protected function getLoginUrl()

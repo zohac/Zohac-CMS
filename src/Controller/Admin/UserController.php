@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Dto\User\UserDto;
 use App\Entity\User;
@@ -14,6 +14,7 @@ use App\Service\User\UserService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class UserController.
  *
  * @Route("/user")
+ * @IsGranted("ROLE_ADMIN")
  */
 class UserController extends AbstractController implements ControllerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Dto\Role\RoleDto;
 use App\Entity\Role;
@@ -14,6 +14,7 @@ use App\Service\Role\RoleService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class RoleController.
  *
  * @Route("/role")
+ * @IsGranted("ROLE_ADMIN")
  */
 class RoleController extends AbstractController implements ControllerInterface
 {
