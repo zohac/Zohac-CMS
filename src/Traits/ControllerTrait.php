@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\DeleteType;
 use App\Interfaces\Dto\DtoInterface;
@@ -71,6 +72,7 @@ trait ControllerTrait
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function index(
@@ -86,10 +88,11 @@ trait ControllerTrait
     }
 
     /**
-     * @param EntityInterface[] $entities
+     * @param array $entities
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function viewIndex(array $entities): Response
@@ -114,6 +117,8 @@ trait ControllerTrait
     /**
      * @param string     $eventName
      * @param array|null $data
+     *
+     * @throws EventException
      */
     public function dispatchEvent(string $eventName, ?array $data = [])
     {
@@ -158,6 +163,7 @@ trait ControllerTrait
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function show(?EntityInterface $entity = null): Response
@@ -181,6 +187,7 @@ trait ControllerTrait
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function new(Request $request, DtoInterface $dto, string $entity, string $formType): Response
@@ -241,9 +248,10 @@ trait ControllerTrait
      *
      * @return Response
      *
+     * @throws DtoHandlerException
+     * @throws EventException
      * @throws HydratorException
      * @throws ReflectionException
-     * @throws DtoHandlerException
      */
     public function edit(Request $request, EntityInterface $entity, string $formType): Response
     {
@@ -288,6 +296,7 @@ trait ControllerTrait
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function delete(

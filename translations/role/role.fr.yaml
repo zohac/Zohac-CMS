@@ -5,4 +5,7 @@ Role successfully created. : Rôle créé avec succès.
 Role successfully deleted. : Rôle supprimé avec succès.
 Role successfully updated. : Rôle mis à jour avec succès.
 name : nom
+parent : parent
 translatable : traductible
+Choose an option : Choisissez une option
+Add translation : Ajouter une traduction

@@ -29,6 +29,11 @@ class Role implements EntityInterface
      */
     private $translatable;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Role::class)
+     */
+    private $parent;
+
     public function getName(): ?string
     {
         return $this->name;
@@ -49,6 +54,18 @@ class Role implements EntityInterface
     public function setTranslatable(?Translatable $translatable): self
     {
         $this->translatable = $translatable;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
 
         return $this;
     }

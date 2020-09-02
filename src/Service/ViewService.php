@@ -68,9 +68,9 @@ class ViewService
      *
      * @return $this
      */
-    public function setOptions(array $options): self
+    public function addOptions(array $options): self
     {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
 
         return $this;
     }

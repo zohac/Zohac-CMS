@@ -5,6 +5,7 @@ namespace App\Service\Role;
 use App\Dto\Role\RoleDto;
 use App\Entity\Role;
 use App\Event\Role\RoleEvent;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
@@ -58,9 +59,8 @@ class RoleService implements ServiceInterface
 
     /**
      * @param RoleDto $roleDto
-     *
      * @return Role
-     *
+     * @throws EventException
      * @throws HydratorException
      */
     public function createRoleFromDto(RoleDto $roleDto): Role
@@ -83,10 +83,9 @@ class RoleService implements ServiceInterface
 
     /**
      * @param RoleDto $roleDto
-     * @param Role    $role
-     *
+     * @param Role $role
      * @return Role
-     *
+     * @throws EventException
      * @throws HydratorException
      */
     public function updateRoleFromDto(RoleDto $roleDto, Role $role): Role
@@ -109,9 +108,8 @@ class RoleService implements ServiceInterface
 
     /**
      * @param Role $role
-     *
      * @return $this
-     *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function deleteRole(Role $role): self
@@ -134,10 +132,9 @@ class RoleService implements ServiceInterface
 
     /**
      * @param Role $role
-     *
      * @return $this
-     *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function deleteSoftRole(Role $role)
     {
