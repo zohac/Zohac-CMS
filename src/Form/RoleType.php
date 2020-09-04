@@ -60,17 +60,6 @@ class RoleType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => RoleDto::class,
-            'translation_domain' => 'role',
-        ]);
-    }
-
-    /**
      * @param RoleDto $roleDto
      *
      * @return array
@@ -80,5 +69,16 @@ class RoleType extends AbstractType
         return array_filter($this->roleService->getRoleForForm(), function ($key) use ($roleDto) {
             return $roleDto->uuid != $key;
         });
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => RoleDto::class,
+            'translation_domain' => 'role',
+        ]);
     }
 }

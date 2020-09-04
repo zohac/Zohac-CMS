@@ -46,7 +46,7 @@ class RoleControllerTest extends WebTestCase
         $roleRepository = self::$container->get(RoleRepository::class);
 
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/Fixtures.yaml',
+            __DIR__ . '/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
@@ -79,6 +79,15 @@ class RoleControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
+    }
+
     /**
      * @dataProvider provideUrlsForRedirection
      */
@@ -109,15 +118,6 @@ class RoleControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
-    }
-
-    public function loginUser()
-    {
-        /** @var User $user */
-        $user = $this->fixtures['user_1'];
-
-        // simulate $testUser being logged in
-        $this->client->loginUser($user);
     }
 
     public function provideUrls()

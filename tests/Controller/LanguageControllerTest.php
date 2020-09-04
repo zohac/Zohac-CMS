@@ -50,7 +50,7 @@ class LanguageControllerTest extends WebTestCase
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/Fixtures.yaml',
+            __DIR__ . '/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
@@ -81,6 +81,15 @@ class LanguageControllerTest extends WebTestCase
         $url = sprintf($url, $this->fixtures['language_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
+
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
     }
 
     /**
@@ -181,15 +190,6 @@ class LanguageControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue supprimée avec succès.');
-    }
-
-    public function loginUser()
-    {
-        /** @var User $user */
-        $user = $this->fixtures['user_1'];
-
-        // simulate $testUser being logged in
-        $this->client->loginUser($user);
     }
 
     public function provideUrls()

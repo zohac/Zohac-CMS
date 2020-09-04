@@ -46,6 +46,14 @@ class TranslationService
     }
 
     /**
+     * @return Translation
+     */
+    public function getNewTranslation(): Translation
+    {
+        return clone $this->translation;
+    }
+
+    /**
      * @param array $values
      *
      * @return Translation
@@ -59,13 +67,5 @@ class TranslationService
         $entity = $this->hydrator->hydrateEntityWithArray($entity, $values);
 
         return $entity;
-    }
-
-    /**
-     * @return Translation
-     */
-    public function getNewTranslation(): Translation
-    {
-        return clone $this->translation;
     }
 }

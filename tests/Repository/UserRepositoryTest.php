@@ -2,7 +2,6 @@
 
 namespace App\Tests\Repository;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -31,7 +30,7 @@ class UserRepositoryTest extends KernelTestCase
     public function loadFixtures()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/Fixtures.yaml',
+            __DIR__ . '/../DataFixtures/Fixtures.yaml',
         ]);
     }
 

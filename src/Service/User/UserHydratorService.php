@@ -116,6 +116,25 @@ class UserHydratorService implements EntityHydratorInterface
     }
 
     /**
+     * @param DtoInterface $dto
+     *
+     * @return array
+     */
+    public function getRolesFromDto(DtoInterface $dto): array
+    {
+        /** @var UserDto $dto */
+        $roles = [];
+        if ($role = $this->roleRepository->findOneBy(['name' => 'ROLE_USER'])) {
+            $roles[$role->getUuid()] = $role;
+        }
+        foreach ($dto->roles as $role) {
+            $roles[$role] = $this->roleRepository->findOneBy(['uuid' => $role]);
+        }
+
+        return $roles;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
@@ -134,25 +153,6 @@ class UserHydratorService implements EntityHydratorInterface
         }
 
         return $dto;
-    }
-
-    /**
-     * @param DtoInterface $dto
-     *
-     * @return array
-     */
-    public function getRolesFromDto(DtoInterface $dto): array
-    {
-        /** @var UserDto $dto */
-        $roles = [];
-        if ($role = $this->roleRepository->findOneBy(['name' => 'ROLE_USER'])) {
-            $roles[$role->getUuid()] = $role;
-        }
-        foreach ($dto->roles as $role) {
-            $roles[$role] = $this->roleRepository->findOneBy(['uuid' => $role]);
-        }
-
-        return $roles;
     }
 
     /**
