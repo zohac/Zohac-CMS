@@ -43,7 +43,7 @@ class RoleType extends AbstractType
 
         $builder
             ->add('name', TextType::class, [
-                'label' => 'name'
+                'label' => 'name',
             ])
             ->add('translatable', CollectionType::class, [
                 'label' => false,

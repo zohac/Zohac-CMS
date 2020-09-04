@@ -32,9 +32,10 @@ class RoleHydratorService implements EntityHydratorInterface
 
     /**
      * RoleHydratorService constructor.
-     * @param UuidService $uuidService
+     *
+     * @param UuidService         $uuidService
      * @param TranslatableService $translatableService
-     * @param RoleRepository $roleRepository
+     * @param RoleRepository      $roleRepository
      */
     public function __construct(
         UuidService $uuidService,
@@ -50,8 +51,10 @@ class RoleHydratorService implements EntityHydratorInterface
      * {@inheritdoc}
      *
      * @param EntityInterface $entity
-     * @param DtoInterface $dto
+     * @param DtoInterface    $dto
+     *
      * @return EntityInterface
+     *
      * @throws UuidException
      * @throws NonUniqueResultException
      */
@@ -98,7 +101,6 @@ class RoleHydratorService implements EntityHydratorInterface
         if ($parentRole = $entity->getParent()) {
             $dto->parent = $parentRole->getUuid();
         }
-
 
         return $dto;
     }

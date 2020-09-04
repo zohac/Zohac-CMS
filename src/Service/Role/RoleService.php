@@ -59,7 +59,9 @@ class RoleService implements ServiceInterface
 
     /**
      * @param RoleDto $roleDto
+     *
      * @return Role
+     *
      * @throws EventException
      * @throws HydratorException
      */
@@ -83,8 +85,10 @@ class RoleService implements ServiceInterface
 
     /**
      * @param RoleDto $roleDto
-     * @param Role $role
+     * @param Role    $role
+     *
      * @return Role
+     *
      * @throws EventException
      * @throws HydratorException
      */
@@ -108,7 +112,9 @@ class RoleService implements ServiceInterface
 
     /**
      * @param Role $role
+     *
      * @return $this
+     *
      * @throws EventException
      * @throws ReflectionException
      */
@@ -132,7 +138,9 @@ class RoleService implements ServiceInterface
 
     /**
      * @param Role $role
+     *
      * @return $this
+     *
      * @throws ReflectionException
      * @throws EventException
      */
