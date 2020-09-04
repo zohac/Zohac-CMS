@@ -3,6 +3,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Role;
+use App\Entity\User;
+use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
@@ -41,6 +43,8 @@ class RoleControllerTest extends WebTestCase
     {
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
+        $roleRepository = self::$container->get(RoleRepository::class);
+
         $this->fixtures = $this->loadFixtureFiles([
             __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
@@ -48,6 +52,14 @@ class RoleControllerTest extends WebTestCase
         foreach ($this->fixtures as $fixture) {
             if ($fixture instanceof Role) {
                 $fixture->setUuid($this->uuidService->create());
+
+                $entityManager->persist($fixture);
+            }
+            if ($fixture instanceof User) {
+                $fixture->setUuid($this->uuidService->create());
+
+                $role = $roleRepository->findOneBy(['id' => $this->fixtures['role_1']]);
+                $fixture->addRole($role);
 
                 $entityManager->persist($fixture);
             }
@@ -60,6 +72,8 @@ class RoleControllerTest extends WebTestCase
      */
     public function testPageIsSuccessful($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->fixtures['role_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -70,6 +84,8 @@ class RoleControllerTest extends WebTestCase
      */
     public function testPageIsRedirectedIfRoleIsNotInDB($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -80,6 +96,8 @@ class RoleControllerTest extends WebTestCase
      */
     public function testCreateLanguage($role)
     {
+        $this->loginUser();
+
         if (isset($role['role[translatable][0][language]'])) {
             $role['role[translatable][0][language]'] = $this->fixtures['language_1']->getUuid();
         }
@@ -91,6 +109,15 @@ class RoleControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
+    }
+
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
     }
 
     public function provideUrls()

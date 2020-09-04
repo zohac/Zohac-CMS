@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Language;
+use App\Entity\User;
 use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
@@ -58,6 +59,14 @@ class LanguageControllerTest extends WebTestCase
 
                 $entityManager->persist($fixture);
             }
+            if ($fixture instanceof User) {
+                $fixture->setUuid($this->uuidService->create());
+
+                $role = $this->roleRepository->findOneBy(['id' => $this->fixtures['role_1']]);
+                $fixture->addRole($role);
+
+                $entityManager->persist($fixture);
+            }
         }
         $entityManager->flush();
     }
@@ -67,6 +76,8 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testPageIsSuccessful($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->fixtures['language_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -77,6 +88,8 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testPageIsRedirectedIfLanguageIsNotInDB($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -89,6 +102,8 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testCreateLanguageWithBadCredential($badCredential)
     {
+        $this->loginUser();
+
         $crawler = $this->client->request('POST', '/language/create/');
         $form = $crawler->selectButton('language[save]')->form($badCredential);
         $this->client->submit($form);
@@ -98,6 +113,8 @@ class LanguageControllerTest extends WebTestCase
 
     public function testCreateLanguage()
     {
+        $this->loginUser();
+
         $crawler = $this->client->request('POST', '/language/create/');
         $form = $crawler->selectButton('language[save]')->form([
             'language[name]' => 'German',
@@ -121,6 +138,8 @@ class LanguageControllerTest extends WebTestCase
      */
     public function testUpdateLanguageWithBadCredentials($badCredential)
     {
+        $this->loginUser();
+
         $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form($badCredential);
@@ -131,6 +150,8 @@ class LanguageControllerTest extends WebTestCase
 
     public function testUpdateLanguage()
     {
+        $this->loginUser();
+
         $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form([
@@ -150,6 +171,8 @@ class LanguageControllerTest extends WebTestCase
 
     public function testDeleteLanguage()
     {
+        $this->loginUser();
+
         $uri = sprintf('/language/%s/delete/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
@@ -158,6 +181,15 @@ class LanguageControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue supprimée avec succès.');
+    }
+
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
     }
 
     public function provideUrls()
