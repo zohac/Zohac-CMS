@@ -35,12 +35,6 @@ class RoleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var RoleDto $roleDto */
-        $roleDto = $options['data'];
-        $roles = array_filter($this->roleService->getRoleForForm(), function ($key) use ($roleDto) {
-            return $roleDto->uuid != $key;
-        });
-
         $builder
             ->add('name', TextType::class, [
                 'label' => 'name',
@@ -57,7 +51,7 @@ class RoleType extends AbstractType
             ->add('parent', ChoiceType::class, [
                 'label' => 'parent',
                 'placeholder' => 'Choose an option',
-                'choices' => $roles,
+                'choices' => $this->getRoles($options['data']),
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'save',
@@ -74,5 +68,17 @@ class RoleType extends AbstractType
             'data_class' => RoleDto::class,
             'translation_domain' => 'role',
         ]);
+    }
+
+    /**
+     * @param RoleDto $roleDto
+     *
+     * @return array
+     */
+    public function getRoles(RoleDto $roleDto): array
+    {
+        return array_filter($this->roleService->getRoleForForm(), function ($key) use ($roleDto) {
+            return $roleDto->uuid != $key;
+        });
     }
 }

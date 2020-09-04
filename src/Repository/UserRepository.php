@@ -23,6 +23,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     const ARCHIVED = 'archived';
+    const USER = 'u, r, l';
+    const USER_ROLES = 'u.roles';
+    const USER_LANGUAGE = 'u.language';
 
     /**
      * UserRepository constructor.
@@ -77,9 +80,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findOneByUuid(string $uuid): ?User
     {
         $query = $this->createQueryBuilder('u')
-            ->select('u, r, l')
-            ->leftJoin('u.roles', 'r')
-            ->leftJoin('u.language', 'l')
+            ->select(self::USER)
+            ->leftJoin(self::USER_ROLES, 'r')
+            ->leftJoin(self::USER_LANGUAGE, 'l')
             ->andWhere('u.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->getQuery();
@@ -97,9 +100,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findOneByEmail(string $email): ?User
     {
         $query = $this->createQueryBuilder('u')
-            ->select('u, r, l')
-            ->leftJoin('u.roles', 'r')
-            ->leftJoin('u.language', 'l')
+            ->select(self::USER)
+            ->leftJoin(self::USER_ROLES, 'r')
+            ->leftJoin(self::USER_LANGUAGE, 'l')
             ->andWhere('u.email = :email')
             ->setParameter('email', $email)
             ->getQuery();
@@ -115,9 +118,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findAllInOneRequest(array $options = [])
     {
         $query = $this->createQueryBuilder('u')
-            ->select('u, r, l')
-            ->leftJoin('u.roles', 'r')
-            ->leftJoin('u.language', 'l');
+            ->select(self::USER)
+            ->leftJoin(self::USER_ROLES, 'r')
+            ->leftJoin(self::USER_LANGUAGE, 'l');
 
         if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];

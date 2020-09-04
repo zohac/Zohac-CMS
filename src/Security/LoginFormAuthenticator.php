@@ -25,6 +25,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
+    const EMAIL = 'email';
+    const PASSWORD = 'password';
 
     private $entityManager;
     private $urlGenerator;
@@ -60,13 +62,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'email' => $request->request->get('email'),
-            'password' => $request->request->get('password'),
+            self::EMAIL => $request->request->get(self::EMAIL),
+            self::PASSWORD => $request->request->get(self::PASSWORD),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
-            $credentials['email']
+            $credentials[self::EMAIL]
         );
 
         return $credentials;
@@ -81,7 +83,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         $user = $this->entityManager
             ->getRepository(User::class)
-            ->findOneByEmail($credentials['email']);
+            ->findOneByEmail($credentials[self::EMAIL]);
 
         if (!$user) {
             // fail authentication with a custom error
@@ -93,7 +95,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials[self::PASSWORD]);
     }
 
     /**
@@ -105,7 +107,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function getPassword($credentials): ?string
     {
-        return $credentials['password'];
+        return $credentials[self::PASSWORD];
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
