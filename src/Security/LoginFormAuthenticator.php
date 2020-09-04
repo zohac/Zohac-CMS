@@ -25,8 +25,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
-    const EMAIL = 'email';
-    const PASSWORD = 'password';
+    const QUERY_EMAIL = 'email';
+    const QUERY_PASSWORD = 'password';
 
     private $entityManager;
     private $urlGenerator;
@@ -62,13 +62,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     public function getCredentials(Request $request)
     {
         $credentials = [
-            self::EMAIL => $request->request->get(self::EMAIL),
-            self::PASSWORD => $request->request->get(self::PASSWORD),
+            self::QUERY_EMAIL => $request->request->get(self::QUERY_EMAIL),
+            self::QUERY_PASSWORD => $request->request->get(self::QUERY_PASSWORD),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
-            $credentials[self::EMAIL]
+            $credentials[self::QUERY_EMAIL]
         );
 
         return $credentials;
@@ -83,7 +83,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         $user = $this->entityManager
             ->getRepository(User::class)
-            ->findOneByEmail($credentials[self::EMAIL]);
+            ->findOneByEmail($credentials[self::QUERY_EMAIL]);
 
         if (!$user) {
             // fail authentication with a custom error
@@ -95,7 +95,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials[self::PASSWORD]);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials[self::QUERY_PASSWORD]);
     }
 
     /**
@@ -107,7 +107,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function getPassword($credentials): ?string
     {
-        return $credentials[self::PASSWORD];
+        return $credentials[self::QUERY_PASSWORD];
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
