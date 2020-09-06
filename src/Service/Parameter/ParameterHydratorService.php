@@ -51,7 +51,6 @@ class ParameterHydratorService implements EntityHydratorInterface
         $entity->setUuid($uuid)
             ->setName($dto->name)
             ->setValue(json_encode($value));
-        ;
 
         return $entity;
     }
