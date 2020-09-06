@@ -63,12 +63,15 @@ class RoleHydratorService implements EntityHydratorInterface
         /* @var Role $entity */
         /* @var RoleDto $dto */
         $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable(), $dto->translatable);
-        $parentRole = $this->roleRepository->findOneByUuid($dto->parent);
 
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setName(strtoupper($dto->name))
-            ->setTranslatable($translatable)
-            ->setParent($parentRole);
+            ->setTranslatable($translatable);
+
+        if ($dto->parent) {
+            $parentRole = $this->roleRepository->findOneByUuid($dto->parent);
+            $entity->setParent($parentRole);
+        }
 
         return $entity;
     }

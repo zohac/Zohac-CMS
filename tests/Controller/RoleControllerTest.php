@@ -103,7 +103,7 @@ class RoleControllerTest extends WebTestCase
     /**
      * @dataProvider provideRole
      */
-    public function testCreateLanguage($role)
+    public function testCreateRole($role)
     {
         $this->loginUser();
 
