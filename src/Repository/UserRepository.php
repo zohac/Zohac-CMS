@@ -3,12 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use Doctrine\ORM\QueryBuilder;
 use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use function get_class;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;

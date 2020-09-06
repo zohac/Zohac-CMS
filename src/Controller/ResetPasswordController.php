@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use _HumbugBox58fd4d9e2a25\___PHPSTORM_HELPERS\object;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Interfaces\User\AdvancedUserInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +16,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -42,9 +39,11 @@ class ResetPasswordController extends AbstractController
      *
      * @Route("", name="app_forgot_password_request")
      *
-     * @param Request $request
+     * @param Request         $request
      * @param MailerInterface $mailer
+     *
      * @return Response
+     *
      * @throws TransportExceptionInterface
      */
     public function request(Request $request, MailerInterface $mailer): Response
@@ -86,9 +85,10 @@ class ResetPasswordController extends AbstractController
      *
      * @Route("/reset/{token}", name="app_reset_password")
      *
-     * @param Request $request
+     * @param Request                      $request
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param string|null $token
+     * @param string|null                  $token
+     *
      * @return Response
      */
     public function reset(
@@ -139,9 +139,11 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * @param string $emailFormData
+     * @param string          $emailFormData
      * @param MailerInterface $mailer
+     *
      * @return RedirectResponse
+     *
      * @throws TransportExceptionInterface
      */
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
@@ -203,6 +205,7 @@ class ResetPasswordController extends AbstractController
 
     /**
      * @param ResetPasswordExceptionInterface $exception
+     *
      * @return RedirectResponse
      */
     private function addFlashMessageAndRedirect(ResetPasswordExceptionInterface $exception): RedirectResponse
