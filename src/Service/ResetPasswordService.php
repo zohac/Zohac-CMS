@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -56,8 +55,6 @@ class ResetPasswordService
      * @param string $emailFormData
      *
      * @return RedirectResponse
-     *
-     * @throws TransportExceptionInterface
      */
     public function processSendingPasswordResetEmail(string $emailFormData): RedirectResponse
     {
