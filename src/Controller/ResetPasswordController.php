@@ -99,22 +99,13 @@ class ResetPasswordController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         string $token = null
     ): Response {
-        if ($token) {
-            // We store the token in session and remove it from the URL, to avoid the URL being
-            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
-            $this->storeTokenInSession($token);
+        $return = $this->getUserOrRedirectResponse($token);
 
-            return $this->redirectToRoute('app_reset_password');
+        if ($return instanceof RedirectResponse) {
+            return $return;
         }
 
-        $token = $this->getToken();
-
-        try {
-            /** @var AdvancedUserInterface $user */
-            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
-        } catch (ResetPasswordExceptionInterface $e) {
-            return $this->addFlashMessageAndRedirect($e);
-        }
+        $user = $return;
 
         // The token is valid; allow the user to change their password.
         $form = $this->createForm(ChangePasswordFormType::class);
@@ -160,7 +151,7 @@ class ResetPasswordController extends AbstractController
 
         // Do not reveal whether a user account was found or not.
         if (!$user) {
-            return $this->redirectToRoute('app_check_email');
+            return $this->redirectToRouteAppCheckEmail();
         }
 
         try {
@@ -175,7 +166,7 @@ class ResetPasswordController extends AbstractController
             //     $e->getReason()
             // ));
 
-            return $this->redirectToRoute('app_check_email');
+            return $this->redirectToRouteAppCheckEmail();
         }
 
         $email = (new TemplatedEmail())
@@ -190,7 +181,7 @@ class ResetPasswordController extends AbstractController
 
         $mailer->send($email);
 
-        return $this->redirectToRoute('app_check_email');
+        return $this->redirectToRouteAppCheckEmail();
     }
 
     /**
@@ -219,5 +210,39 @@ class ResetPasswordController extends AbstractController
         ));
 
         return $this->redirectToRoute('app_forgot_password_request');
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    private function redirectToRouteAppCheckEmail(): RedirectResponse
+    {
+        return $this->redirectToRoute('app_check_email');
+    }
+
+    /**
+     * @param string|null $token
+     * @return AdvancedUserInterface|RedirectResponse
+     */
+    private function getUserOrRedirectResponse(?string $token = null)
+    {
+        if ($token) {
+            // We store the token in session and remove it from the URL, to avoid the URL being
+            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
+            $this->storeTokenInSession($token);
+
+            return $this->redirectToRoute('app_reset_password');
+        }
+
+        $token = $this->getToken();
+
+        try {
+            /** @var AdvancedUserInterface $user */
+            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface $e) {
+            return $this->addFlashMessageAndRedirect($e);
+        }
+
+        return $user;
     }
 }
