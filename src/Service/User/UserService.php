@@ -5,28 +5,20 @@ namespace App\Service\User;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Event\User\UserEvent;
-use App\Exception\UuidException;
+use App\Exception\HydratorException;
+use App\Interfaces\EntityInterface;
+use App\Interfaces\Service\ServiceInterface;
+use App\Service\EntityService;
 use App\Service\EventService;
-use App\Service\UuidService;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Service\FlashBagService;
+use ReflectionException;
 
-class UserService
+class UserService implements ServiceInterface
 {
     /**
-     * @var UserPasswordEncoderInterface
+     * @var EntityService
      */
-    private $passwordEncoder;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var UuidService
-     */
-    private $uuidService;
+    private $entityService;
 
     /**
      * @var EventService
@@ -34,23 +26,25 @@ class UserService
     private $eventService;
 
     /**
+     * @var FlashBagService
+     */
+    private $flashBagService;
+
+    /**
      * UserService constructor.
      *
-     * @param EventService                 $eventService
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface       $entityManager
-     * @param UuidService                  $uuidService
+     * @param EventService    $eventService
+     * @param EntityService   $entityService
+     * @param FlashBagService $flashBagService
      */
     public function __construct(
         EventService $eventService,
-        UserPasswordEncoderInterface $passwordEncoder,
-        EntityManagerInterface $entityManager,
-        UuidService $uuidService
+        EntityService $entityService,
+        FlashBagService $flashBagService
     ) {
         $this->eventService = $eventService;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->entityManager = $entityManager;
-        $this->uuidService = $uuidService;
+        $this->entityService = $entityService;
+        $this->flashBagService = $flashBagService;
     }
 
     /**
@@ -58,57 +52,22 @@ class UserService
      *
      * @return User
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function createUserFromDto(UserDto $userDto): User
     {
-        $user = new User();
-
-        $user->setUuid($this->getUuid());
-        $user->setEmail($userDto->email);
-        $user->setRoles($userDto->roles);
-
-        $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-        $user->setPassword($password);
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        /** @var User $user */
+        $user = $this->entityService->hydrateEntityWithDto(new User(), $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_CREATE, ['user' => $user]);
 
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully created.',
+            'user'
+        );
+
         return $user;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws UuidException
-     */
-    public function getUuid(): string
-    {
-        $uuid = $this->uuidService->create();
-
-        if (!$uuid) {
-            throw new UuidException('L\'application ne parviens pas à générer un uuid.');
-        }
-
-        return $uuid;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return UserDto
-     */
-    public function createUserDtoFromUser(User $user): UserDto
-    {
-        $userDto = new UserDto();
-
-        $userDto->uuid = $user->getUuid();
-        $userDto->email = $user->getEmail();
-        $userDto->roles = $user->getRoles();
-
-        return $userDto;
     }
 
     /**
@@ -117,23 +76,20 @@ class UserService
      *
      * @return User
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function updateUserFromDto(UserDto $userDto, User $user): User
     {
-        $user->setUuid($this->getUuid());
-        $user->setEmail($userDto->email);
-        $user->setRoles($userDto->roles);
-
-        if (null !== $userDto->password) {
-            $password = $this->passwordEncoder->encodePassword($user, $userDto->password);
-            $user->setPassword($password);
-        }
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        /** @var User $user */
+        $user = $this->entityService->hydrateEntityWithDto($user, $userDto);
 
         $this->eventService->dispatchEvent(UserEvent::POST_UPDATE, ['user' => $user]);
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully updated.',
+            'user'
+        );
 
         return $user;
     }
@@ -142,14 +98,66 @@ class UserService
      * @param User $user
      *
      * @return $this
+     *
+     * @throws ReflectionException
      */
     public function deleteUser(User $user): self
     {
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+        $this->entityService
+            ->setEntity($user)
+            ->remove($user)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
 
         $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
 
         return $this;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
+    public function deleteSoftUser(User $user): self
+    {
+        $user->setArchived(true);
+
+        $this->entityService
+            ->setEntity($user)
+            ->persist($user)
+            ->flush();
+
+        $this->flashBagService->addAndTransFlashMessage(
+            'User',
+            'User successfully deleted.',
+            $this->entityService->getEntityNameToLower()
+        );
+
+        $this->eventService->dispatchEvent(UserEvent::POST_DELETE);
+
+        return $this;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     *
+     * @return string
+     */
+    public function getDeleteMessage(EntityInterface $entity): string
+    {
+        /* @var User $entity */
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this user (%email%) ?',
+            'user',
+            ['email' => $entity->getEmail()]
+        );
     }
 }

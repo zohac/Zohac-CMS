@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Interfaces\Event\EventInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FinderService
 {
@@ -18,21 +17,15 @@ class FinderService
      */
     private $finder;
 
-    public function __construct(Finder $finder)
+    /**
+     * @var ReaderFileService
+     */
+    private $readerFile;
+
+    public function __construct(Finder $finder, ReaderFileService $readerFile)
     {
         $this->finder = $finder;
-    }
-
-    /**
-     * @param string $relativePath
-     *
-     * @return string
-     */
-    public function getFilename(string $relativePath): string
-    {
-        preg_match('/([a-zA-Z]*).php/', $relativePath, $fileName);
-
-        return $fileName[1];
+        $this->readerFile = $readerFile;
     }
 
     /**
@@ -64,8 +57,9 @@ class FinderService
     {
         $events = [];
 
+        $readerFile = new ReaderFileService();
         $finder = new Finder();
-        $finderService = new static ($finder);
+        $finderService = new static ($finder, $readerFile);
 
         $path = $path ?? $finderService->defaultEventsPath;
 
@@ -89,36 +83,10 @@ class FinderService
         $events = [];
 
         foreach ($finder as $file) {
-            $events = array_merge($events, $this->readFileContent($file));
-        }
-
-        return $events;
-    }
-
-    /**
-     * @param SplFileInfo $file
-     *
-     * @return array
-     */
-    public function readFileContent(SplFileInfo $file): array
-    {
-        $events = [];
-        $fileName = $this->getFilename($file->getRelativePathname());
-
-        $handle = @fopen($file->getRealPath(), 'r');
-        if ($handle) {
-            $continue = true;
-            while (false !== ($buffer = fgets($handle, 4096)) && $continue) {
-                if (preg_match('/namespace ([a-zA-Z\\\]*)\;/', $buffer, $matches)) {
-                    $className = $matches[1].'\\'.$fileName;
-
-                    $events[$className] = class_implements($className);
-
-                    $continue = false;
-                }
-            }
-
-            fclose($handle);
+            $events = array_merge(
+                $events,
+                $this->readerFile->readAndRegexSearchInFileContent($file, '/namespace ([a-zA-Z\\\]*)\;/')
+            );
         }
 
         return $events;

@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\Interfaces\Event\ViewEventInterface;
+
 class ViewService
 {
+    const NAME = 'viewService';
+
     /**
      * @var string
      */
@@ -13,6 +17,23 @@ class ViewService
      * @var array
      */
     private $options = [];
+
+    /**
+     * @var ViewEventInterface[]
+     */
+    private $viewEvents;
+
+    /**
+     * ViewService constructor.
+     *
+     * @param iterable $handlers
+     */
+    public function __construct(iterable $handlers)
+    {
+        foreach ($handlers as $handler) {
+            $this->viewEvents[$handler->getRelatedEntity()] = $handler;
+        }
+    }
 
     /**
      * @return string|null
@@ -47,9 +68,9 @@ class ViewService
      *
      * @return $this
      */
-    public function setOptions(array $options): self
+    public function addOptions(array $options): self
     {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
 
         return $this;
     }
@@ -66,5 +87,13 @@ class ViewService
         $this->options = $options;
 
         return $this;
+    }
+
+    /**
+     * @return ViewEventInterface[]
+     */
+    public function getViewEvents(): array
+    {
+        return $this->viewEvents;
     }
 }

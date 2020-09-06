@@ -1,5 +1,0 @@
-App\Entity\User:
-  user{1..10}:
-    email: <email()>
-    password: "0000"
-    uuid: <uuid()>

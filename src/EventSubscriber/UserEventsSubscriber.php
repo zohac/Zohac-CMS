@@ -3,9 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Event\User\UserEvent;
-use App\Event\User\UserViewEvent;
-use App\Exception\UuidException;
+use App\Exception\HydratorException;
 use App\Service\User\UserService;
+use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -34,18 +34,14 @@ class UserEventsSubscriber implements EventSubscriberInterface
             UserEvent::PRE_UPDATE => ['onUserPreUpdate', 0],
             UserEvent::UPDATE => ['onUserUpdate', 0],
             UserEvent::DELETE => ['onUserDelete', 0],
-            UserViewEvent::CREATE => ['onUserCreateView', 0],
-            UserViewEvent::UPDATE => ['onUserUpdateView', 0],
-            UserViewEvent::DELETE => ['onUserDeleteView', 0],
-            UserViewEvent::LIST => ['onUserListView', 0],
-            UserViewEvent::DETAIL => ['onUserDetailView', 0],
+            UserEvent::SOFT_DELETE => ['onUserSoftDelete', 0],
         ];
     }
 
     /**
      * @param UserEvent $event
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function onUserCreate(UserEvent $event)
     {
@@ -60,7 +56,10 @@ class UserEventsSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $form->remove('password');
         $form->add('password', RepeatedType::class, [
+            'label' => false,
             'type' => PasswordType::class,
+            'first_options' => ['label' => 'password'],
+            'second_options' => ['label' => 'repeat password'],
             'required' => false,
         ]);
     }
@@ -68,7 +67,7 @@ class UserEventsSubscriber implements EventSubscriberInterface
     /**
      * @param UserEvent $event
      *
-     * @throws UuidException
+     * @throws HydratorException
      */
     public function onUserUpdate(UserEvent $event)
     {
@@ -77,6 +76,8 @@ class UserEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param UserEvent $event
+     *
+     * @throws ReflectionException
      */
     public function onUserDelete(UserEvent $event)
     {
@@ -84,37 +85,12 @@ class UserEventsSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param UserViewEvent $event
+     * @param UserEvent $event
+     *
+     * @throws ReflectionException
      */
-    public function onUserCreateView(UserViewEvent $event)
+    public function onUserSoftDelete(UserEvent $event)
     {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserUpdateView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserDeleteView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserDetailView(UserViewEvent $event)
-    {
-    }
-
-    /**
-     * @param UserViewEvent $event
-     */
-    public function onUserListView(UserViewEvent $event)
-    {
+        $this->userService->deleteSoftUser($event->getUser());
     }
 }

@@ -2,48 +2,68 @@
 
 namespace App\Tests\Service;
 
+use App\Interfaces\Event\EventInterface;
 use App\Service\ViewService;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ViewServiceTest extends TestCase
+class ViewServiceTest extends KernelTestCase
 {
+    /**
+     * @var ViewService
+     */
+    private $viewService;
+
+    public function setUp(): void
+    {
+        self::bootKernel(['debug' => 0]);
+        $this->viewService = self::$container->get(ViewService::class);
+    }
+
     public function testSetData()
     {
-        $viewService = new ViewService();
-        $return = $viewService->setData('view', ['an option']);
+        $return = $this->viewService->setData('view', ['an option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $this->assertEquals('view', $viewService->getView());
-        $this->assertTrue(is_array($viewService->getOptions()));
+        $this->assertEquals('view', $this->viewService->getView());
+        $this->assertTrue(is_array($this->viewService->getOptions()));
     }
 
     public function testSetView()
     {
-        $viewService = new ViewService();
-        $return = $viewService->setData('view', ['an option']);
+        $return = $this->viewService->setData('view', ['an option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $return = $viewService->setView('view-2');
+        $return = $this->viewService->setView('view-2');
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $this->assertEquals('view-2', $viewService->getView());
+        $this->assertEquals('view-2', $this->viewService->getView());
     }
 
-    public function testSetOptions()
+    public function testAddOptions()
     {
-        $viewService = new ViewService();
-        $return = $viewService->setData('view', ['an option']);
+        $return = $this->viewService->setData('view', ['an option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $return = $viewService->setOptions(['an another option']);
+        $return = $this->viewService->addOptions(['an another option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $this->assertEquals('an another option', $viewService->getOptions()[0]);
+        $this->assertContains('an option', $this->viewService->getOptions());
+        $this->assertContains('an another option', $this->viewService->getOptions());
+    }
+
+    public function testGetViewEvents()
+    {
+        $events = $this->viewService->getViewEvents();
+
+        foreach ($events as $event) {
+            $this->assertInstanceOf(EventInterface::class, $event);
+        }
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
         // avoid memory leaks
+        $this->viewService = null;
     }
 }

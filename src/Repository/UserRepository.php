@@ -3,9 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use function get_class;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -20,6 +23,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    const ARCHIVED = 'archived';
+    const USER = 'u, r, l';
+    const USER_ROLES = 'u.roles';
+    const USER_LANGUAGE = 'u.language';
+
     /**
      * UserRepository constructor.
      *
@@ -63,32 +71,70 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string $uuid
+     *
+     * @return User|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneByUuid(string $uuid): ?User
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $query = $this->getQuery();
 
-    /*
-    public function findOneBySomeField($value): ?User
+        $query = $query
+            ->andWhere('u.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return User|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function findOneByEmail(string $email): ?User
+    {
+        $query = $this->getQuery();
+
+        $query = $query
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return User[]
+     */
+    public function findAllInOneRequest(array $options = [])
+    {
+        $query = $this->getQuery();
+
+        if (array_key_exists(self::ARCHIVED, $options)) {
+            $archived = (bool) $options[self::ARCHIVED];
+
+            $query = $query->andWhere('u.archived = :archived')
+                ->setParameter(self::ARCHIVED, $archived);
+        }
+
+        $query = $query->getQuery();
+
+        return $query->execute();
+    }
+
+    private function getQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->select(self::USER)
+            ->leftJoin(self::USER_ROLES, 'r')
+            ->leftJoin(self::USER_LANGUAGE, 'l');
     }
-    */
 }

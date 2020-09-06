@@ -6,17 +6,19 @@
     <div class="users-wrapper">
         {% for user in users %}
             <div class="user-wrapper">
-                uuid: {{ user.uuid }}<br/>
-                email: {{ user.email }}<br/>
-                roles:
+                {% trans from 'user' %}uuid{% endtrans %} : {{ user.uuid }}<br/>
+                {% trans from 'user' %}email{% endtrans %} : {{ user.email }}<br/>
+                {% trans from 'user' %}roles{% endtrans %} :
                 <ul>
                     {% for role in user.roles %}
                         <li>{{ role }}</li>
                     {% endfor %}
                 </ul>
-                <a href="{{ path('users.detail', {'uuid': user.uuid}) }}">Detail</a>
+                {% trans from 'user' %}language{% endtrans %} : {{ user.locale }}<br/>
+
+                <a href="{{ path('user.detail', {'uuid': user.uuid}) }}">Detail</a>
             </div>
         {% endfor %}
     </div>
-    <a href="{{ path('users.create') }}">Create</a>
+    <a href="{{ path('user.create') }}">Create</a>
 {% endblock %}

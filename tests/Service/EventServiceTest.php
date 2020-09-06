@@ -45,7 +45,7 @@ class EventServiceTest extends WebTestCase
     {
         $this->expectException(EventException::class);
 
-        $event = $this->eventService->getEvent('event.test');
+        $this->eventService->getEvent('event.test');
     }
 
     protected function tearDown(): void

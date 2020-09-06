@@ -7,7 +7,7 @@ trait EventTrait
     /**
      * @var array
      */
-    private $data;
+    private $data = [];
 
     /**
      * @var string
@@ -29,7 +29,7 @@ trait EventTrait
      */
     public function setData(?array $data = []): self
     {
-        $this->data = $data;
+        $this->data = array_merge($this->data, $data);
 
         foreach ($data as $key => $value) {
             $method = 'set'.ucfirst($key);

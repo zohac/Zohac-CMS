@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail!{% endblock %}
+
+{% block body %}
+    <div class="language-wrapper">
+
+        {% if language is not empty %}
+            {% trans from 'language' %}name{% endtrans %}: {{ language.name }}<br/>
+            {% trans from 'language' %}alternate name{% endtrans %}: {{ language.alternateName }}<br/>
+            {% trans from 'language' %}description{% endtrans %}: {{ language.description }}<br/>
+            {% trans from 'language' %}iso639-1{% endtrans %}: {{ language.iso6391 }}<br/>
+            {% trans from 'language' %}iso639-2/T{% endtrans %}: {{ language.iso6392T }}<br/>
+            {% trans from 'language' %}iso639-2/B{% endtrans %}: {{ language.iso6392B }}<br/>
+            {% trans from 'language' %}iso639-3{% endtrans %}:
+            <ul>
+                {% for iso6393 in language.iso6393 %}
+                    <li>{{ iso6393 }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ path('language.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
+            <a href="{{ path('language.update', {"uuid": language.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>
+            <a href="{{ path('language.delete', {"uuid": language.uuid}) }}">{% trans from 'global' %}Delete{% endtrans %}</a>
+        {% endif %}
+
+    </div>
+
+{% endblock %}

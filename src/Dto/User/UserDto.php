@@ -2,9 +2,12 @@
 
 namespace App\Dto\User;
 
+use App\Entity\User;
+use App\Interfaces\Dto\DtoInterface;
+use App\Interfaces\EntityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserDto
+class UserDto implements DtoInterface
 {
     /**
      * @Assert\Uuid()
@@ -21,6 +24,7 @@ class UserDto
 
     /**
      * @Assert\Type("string")
+     * @ Assert\NotCompromisedPassword()
      */
     public $password;
 
@@ -33,4 +37,19 @@ class UserDto
      * @Assert\DateTime()
      */
     public $tokenValidity;
+
+    /**
+     * @Assert\Uuid()
+     */
+    public $language;
+
+    /**
+     * @param EntityInterface $entity
+     *
+     * @return bool
+     */
+    public function canHandle(EntityInterface $entity): bool
+    {
+        return $entity instanceof User;
+    }
 }

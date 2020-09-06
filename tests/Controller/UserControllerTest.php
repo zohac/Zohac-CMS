@@ -3,7 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
-use App\Service\User\UserService;
+use App\Repository\RoleRepository;
 use App\Service\UuidService;
 use Doctrine\Persistence\ObjectManager;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
@@ -16,9 +16,14 @@ class UserControllerTest extends WebTestCase
     use FixturesTrait;
 
     /**
-     * @var User[]
+     * @var array
      */
-    private $users;
+    private $fixtures;
+
+    /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
 
     /**
      * @var KernelBrowser|null
@@ -34,24 +39,28 @@ class UserControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->uuidService = self::$container->get(UuidService::class);
+        $this->roleRepository = self::$container->get(RoleRepository::class);
 
-        $this->loadUsers();
+        $this->loadFixtures();
     }
 
-    public function loadUsers()
+    public function loadFixtures()
     {
-        $uuidService = self::$container->get(UserService::class);
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
-        $this->users = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/UserFixtures.yaml',
+        $this->fixtures = $this->loadFixtureFiles([
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
 
-        foreach ($this->users as $key => $user) {
-            $user->setUuid($uuidService->getUuid());
-            $entityManager->persist($user);
+        foreach ($this->fixtures as $fixture) {
+            if ($fixture instanceof User) {
+                $fixture->setUuid($this->uuidService->create());
 
-            $this->users[$key] = $user;
+                $role = $this->roleRepository->findOneBy(['id' => $this->fixtures['role_1']]);
+                $fixture->addRole($role);
+
+                $entityManager->persist($fixture);
+            }
         }
         $entityManager->flush();
     }
@@ -61,9 +70,23 @@ class UserControllerTest extends WebTestCase
      */
     public function testPageIsSuccessful($url)
     {
-        $url = sprintf($url, $this->users['user1']->getUuid());
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        $this->loginUser();
+
+        $url = sprintf($url, $user->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
+
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
     }
 
     /**
@@ -71,6 +94,8 @@ class UserControllerTest extends WebTestCase
      */
     public function testPageIsRedirectedIfUserIsNotInDB($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -83,7 +108,10 @@ class UserControllerTest extends WebTestCase
      */
     public function testCreateUserWithBadCredential($badCredential)
     {
-        $crawler = $this->client->request('POST', '/users/create');
+        $this->loginUser();
+
+        $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
+        $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form($badCredential);
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -92,14 +120,17 @@ class UserControllerTest extends WebTestCase
 
     public function testCreateUser()
     {
-        $crawler = $this->client->request('POST', '/users/create');
+        $this->loginUser();
+
+        $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
+            'user[language]' => $this->fixtures['language_1']->getUuid(),
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/users');
+        $this->assertResponseRedirects('/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
@@ -112,7 +143,10 @@ class UserControllerTest extends WebTestCase
      */
     public function testUpdateUserWithBadCredentials($badCredential)
     {
-        $uri = sprintf('/users/%s/update', $this->users['user1']->getUuid());
+        $this->loginUser();
+
+        $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
+        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form($badCredential);
         $this->client->submit($form);
@@ -122,15 +156,18 @@ class UserControllerTest extends WebTestCase
 
     public function testUpdateUser()
     {
-        $uri = sprintf('/users/%s/update', $this->users['user1']->getUuid());
+        $this->loginUser();
+
+        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
+            'user[language]' => $this->fixtures['language_1']->getUuid(),
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/users');
+        $this->assertResponseRedirects('/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
@@ -138,11 +175,13 @@ class UserControllerTest extends WebTestCase
 
     public function testDeleteUser()
     {
-        $uri = sprintf('/users/%s/delete', $this->users['user1']->getUuid());
+        $this->loginUser();
+
+        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_2']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
         $this->client->submit($form);
-        $this->assertResponseRedirects('/users');
+        $this->assertResponseRedirects('/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
@@ -151,18 +190,18 @@ class UserControllerTest extends WebTestCase
     public function provideUrls()
     {
         yield ['/'];
-        yield ['/users'];
-        yield ['/users/%s'];
-        yield ['/users/create'];
-        yield ['/users/%s/update'];
-        yield ['/users/%s/delete'];
+        yield ['/user/'];
+        yield ['/user/%s/'];
+        yield ['/user/create/'];
+        yield ['/user/%s/update/'];
+        yield ['/user/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/users/%s'];
-        yield ['/users/%s/update'];
-        yield ['/users/%s/delete'];
+        yield ['/user/%s/'];
+        yield ['/user/%s/update/'];
+        yield ['/user/%s/delete/'];
     }
 
     public function provideBadUserCredentials()
@@ -188,6 +227,8 @@ class UserControllerTest extends WebTestCase
         parent::tearDown();
         // avoid memory leaks
         $this->client = null;
-        $this->users = null;
+        $this->fixtures = null;
+        $this->uuidService = null;
+        $this->roleRepository = null;
     }
 }

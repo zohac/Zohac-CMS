@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    locale: 'fr'
     app.log.dev: 'app.dev'
     app.log: 'app'
 
@@ -13,18 +14,28 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            string $defaultLocale: '%locale%'
             bool $isDebug: '%kernel.debug%'
+            # CRUD Command
+            string $kernelProjectDir : '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    App\Service\UuidService:
+        public: true
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
-        resource: '../src/Controller'
+        resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
@@ -33,9 +44,40 @@ services:
     _instanceof:
         App\Interfaces\Event\EventInterface:
             tags: ['app.event.interface']
+        App\Interfaces\Event\ViewEventInterface:
+            tags: ['app.view.event.interface']
+        App\Interfaces\Service\EntityHydratorInterface:
+            tags: ['app.entity.hydrator.interface']
+        App\Interfaces\Dto\DtoInterface:
+            tags: ['app.dto.interface']
 
     App\Service\EventService:
         # inject all services tagged with app.event.interface as first argument
         arguments:
             - !tagged_iterator app.event.interface
             - '@event_dispatcher'
+
+    App\Service\ViewService:
+        arguments:
+            - !tagged_iterator app.view.event.interface
+
+    App\Service\HydratorService:
+        arguments:
+            - !tagged_iterator app.entity.hydrator.interface
+
+    App\Service\DtoHandler:
+        arguments:
+            - !tagged_iterator app.dto.interface
+
+    # CRUD Command
+    App\Command\src\Helper\DoctrineHelper:
+        arguments: ['@?doctrine']
+
+    App\Command\src\Service\Generator:
+        public: true
+
+    App\Command\src\Helper\CrudHelper:
+        arguments:
+            - '@App\Command\src\Helper\DoctrineHelper'
+            - '@App\Command\src\Service\Generator'
+            - '%kernel.project_dir%'
