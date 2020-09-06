@@ -68,10 +68,10 @@ class ParameterEvent extends Event implements EventInterface
     }
 
     /**
-    * @param ParameterDto $parameterDto
-    *
-    * @return $this
-    */
+     * @param ParameterDto $parameterDto
+     *
+     * @return $this
+     */
     public function setParameterDto(ParameterDto $parameterDto): self
     {
         $this->parameterDto = $parameterDto;
@@ -80,18 +80,18 @@ class ParameterEvent extends Event implements EventInterface
     }
 
     /**
-    * @return mixed
-    */
+     * @return mixed
+     */
     public function getForm()
     {
         return $this->form;
     }
 
     /**
-    * @param FormInterface $form
-    *
-    * @return $this
-    */
+     * @param FormInterface $form
+     *
+     * @return $this
+     */
     public function setForm(FormInterface $form): self
     {
         $this->form = $form;
@@ -100,18 +100,18 @@ class ParameterEvent extends Event implements EventInterface
     }
 
     /**
-    * @return Parameter
-    */
+     * @return Parameter
+     */
     public function getParameter(): Parameter
     {
         return $this->parameter;
     }
 
     /**
-    * @param Parameter $parameter
-    *
-    * @return $this
-    */
+     * @param Parameter $parameter
+     *
+     * @return $this
+     */
     public function setParameter(Parameter $parameter): self
     {
         $this->parameter = $parameter;
@@ -120,8 +120,8 @@ class ParameterEvent extends Event implements EventInterface
     }
 
     /**
-    * @return string
-    */
+     * @return string
+     */
     public function getRelatedEntity(): string
     {
         return self::ENTITY_NAME;

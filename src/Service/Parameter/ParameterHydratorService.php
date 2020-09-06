@@ -28,18 +28,18 @@ class ParameterHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @param EntityInterface $entity
-    * @param DtoInterface    $dto
-    *
-    * @return EntityInterface
-    *
-    * @throws UuidException
-    *
-    * @var Parameter    $entity
-    * @var ParameterDto $dto
-    */
+     * {@inheritdoc}
+     *
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
+     *
+     * @return EntityInterface
+     *
+     * @throws UuidException
+     *
+     * @var Parameter    $entity
+     * @var ParameterDto $dto
+     */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
         $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
@@ -53,21 +53,21 @@ class ParameterHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @throws UuidException
-    */
+     * {@inheritdoc}
+     *
+     * @throws UuidException
+     */
     public function getUuid(): string
     {
         return $this->uuidService->create();
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @var Parameter
-    * @var ParameterDto $dto
-    */
+     * {@inheritdoc}
+     *
+     * @var Parameter
+     * @var ParameterDto $dto
+     */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
         $dto->name = $entity->getName();
@@ -77,8 +77,8 @@ class ParameterHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function canHandle(EntityInterface $entity): bool
     {
         return $entity instanceof Parameter;

@@ -5,7 +5,6 @@ namespace App\Dto\Parameter;
 use App\Entity\Parameter;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class ParameterDto.

@@ -36,40 +36,40 @@ class ParameterEventsSubscriber implements EventSubscriberInterface
     }
 
     /**
-    * @param ParameterEvent $event
-    *
-    * @throws HydratorException
-    */
+     * @param ParameterEvent $event
+     *
+     * @throws HydratorException
+     */
     public function onParameterCreate(ParameterEvent $event)
     {
         $this->parameterService->createParameterFromDto($event->getParameterDto());
     }
 
     /**
-    * @param ParameterEvent $event
-    *
-    * @throws HydratorException
-    */
+     * @param ParameterEvent $event
+     *
+     * @throws HydratorException
+     */
     public function onParameterUpdate(ParameterEvent $event)
     {
         $this->parameterService->updateParameterFromDto($event->getParameterDto(), $event->getParameter());
     }
 
     /**
-    * @param ParameterEvent $event
-    *
-    * @throws ReflectionException
-    */
+     * @param ParameterEvent $event
+     *
+     * @throws ReflectionException
+     */
     public function onParameterDelete(ParameterEvent $event)
     {
         $this->parameterService->deleteParameter($event->getParameter());
     }
 
     /**
-    * @param ParameterEvent $event
-    *
-    * @throws ReflectionException
-    */
+     * @param ParameterEvent $event
+     *
+     * @throws ReflectionException
+     */
     public function onParameterSoftDelete(ParameterEvent $event)
     {
         $this->parameterService->deleteSoftParameter($event->getParameter());

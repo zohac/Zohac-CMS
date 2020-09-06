@@ -48,12 +48,12 @@ class ParameterService implements ServiceInterface
     }
 
     /**
-    * @param ParameterDto $parameterDto
-    *
-    * @return Parameter
-    *
-    * @throws HydratorException
-    */
+     * @param ParameterDto $parameterDto
+     *
+     * @return Parameter
+     *
+     * @throws HydratorException
+     */
     public function createParameterFromDto(ParameterDto $parameterDto): Parameter
     {
         /** @var Parameter $parameter */
@@ -73,13 +73,13 @@ class ParameterService implements ServiceInterface
     }
 
     /**
-    * @param ParameterDto $parameterDto
-    * @param Parameter    $parameter
-    *
-    * @return Parameter
-    *
-    * @throws HydratorException
-    */
+     * @param ParameterDto $parameterDto
+     * @param Parameter    $parameter
+     *
+     * @return Parameter
+     *
+     * @throws HydratorException
+     */
     public function updateParameterFromDto(ParameterDto $parameterDto, Parameter $parameter): Parameter
     {
         /** @var Parameter $parameter */
@@ -99,12 +99,12 @@ class ParameterService implements ServiceInterface
     }
 
     /**
-    * @param Parameter $parameter
-    *
-    * @return $this
-    *
-    * @throws ReflectionException
-    */
+     * @param Parameter $parameter
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
     public function deleteParameter(Parameter $parameter): self
     {
         $this->entityService
@@ -124,12 +124,12 @@ class ParameterService implements ServiceInterface
     }
 
     /**
-    * @param Parameter $parameter
-    *
-    * @return $this
-    *
-    * @throws ReflectionException
-    */
+     * @param Parameter $parameter
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
     public function deleteSoftParameter(Parameter $parameter)
     {
         $parameter->setArchived(true);
@@ -151,10 +151,10 @@ class ParameterService implements ServiceInterface
     }
 
     /**
-    * @param EntityInterface $entity
-    *
-    * @return string
-    */
+     * @param EntityInterface $entity
+     *
+     * @return string
+     */
     public function getDeleteMessage(EntityInterface $entity): string
     {
         // TODO: Change the Delete Message
