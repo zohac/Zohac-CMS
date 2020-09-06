@@ -39,15 +39,16 @@ class ViewServiceTest extends KernelTestCase
         $this->assertEquals('view-2', $this->viewService->getView());
     }
 
-    public function testSetOptions()
+    public function testAddOptions()
     {
         $return = $this->viewService->setData('view', ['an option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $return = $this->viewService->setOptions(['an another option']);
+        $return = $this->viewService->addOptions(['an another option']);
         $this->assertInstanceOf(ViewService::class, $return);
 
-        $this->assertEquals('an another option', $this->viewService->getOptions()[0]);
+        $this->assertContains('an option', $this->viewService->getOptions());
+        $this->assertContains('an another option', $this->viewService->getOptions());
     }
 
     public function testGetViewEvents()

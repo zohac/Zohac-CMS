@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
@@ -13,6 +13,7 @@ use App\Service\FlashBagService;
 use App\Service\Language\LanguageService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class LanguageController.
  *
  * @Route("/language")
+ * @IsGranted("ROLE_ADMIN")
  */
 class LanguageController extends AbstractController implements ControllerInterface
 {

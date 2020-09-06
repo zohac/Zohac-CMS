@@ -2,7 +2,6 @@
 
 namespace App\Tests\Repository;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

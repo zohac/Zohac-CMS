@@ -34,9 +34,18 @@
 
         <button type="button"
                 id="add-another-collection-widget"
-                data-list-selector="role-fields-list">Add collection Type</button>
+                data-list-selector="role-fields-list">{% trans from 'role' %}Add translation{% endtrans %}</button>
     </div>
 
+    <div>
+        {% if form.parent.vars.errors|length %}
+            <div class="form-error-wrapper">
+                {{ form_errors(form.parent) }}
+            </div>
+        {% endif %}
+        {{ form_label(form.parent) }}
+        {{ form_widget(form.parent) }}
+    </div>
 
     <div>
         {{ form_widget(form.save) }}

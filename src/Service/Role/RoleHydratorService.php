@@ -8,8 +8,10 @@ use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
+use App\Repository\RoleRepository;
 use App\Service\Translatable\TranslatableService;
 use App\Service\UuidService;
+use Doctrine\ORM\NonUniqueResultException;
 
 class RoleHydratorService implements EntityHydratorInterface
 {
@@ -24,15 +26,25 @@ class RoleHydratorService implements EntityHydratorInterface
     private $translatableService;
 
     /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
+
+    /**
      * RoleHydratorService constructor.
      *
      * @param UuidService         $uuidService
      * @param TranslatableService $translatableService
+     * @param RoleRepository      $roleRepository
      */
-    public function __construct(UuidService $uuidService, TranslatableService $translatableService)
-    {
+    public function __construct(
+        UuidService $uuidService,
+        TranslatableService $translatableService,
+        RoleRepository $roleRepository
+    ) {
         $this->uuidService = $uuidService;
         $this->translatableService = $translatableService;
+        $this->roleRepository = $roleRepository;
     }
 
     /**
@@ -44,17 +56,22 @@ class RoleHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
+     * @throws NonUniqueResultException
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
         /* @var Role $entity */
         /* @var RoleDto $dto */
-        dump($dto);
         $translatable = $this->translatableService->hydrateTranslatable($entity->getTranslatable(), $dto->translatable);
 
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setName(strtoupper($dto->name))
             ->setTranslatable($translatable);
+
+        if ($dto->parent) {
+            $parentRole = $this->roleRepository->findOneByUuid($dto->parent);
+            $entity->setParent($parentRole);
+        }
 
         return $entity;
     }
@@ -83,6 +100,9 @@ class RoleHydratorService implements EntityHydratorInterface
                 'message' => $translation->getMessage(),
                 'language' => $translation->getLanguage()->getUuid(),
             ];
+        }
+        if ($parentRole = $entity->getParent()) {
+            $dto->parent = $parentRole->getUuid();
         }
 
         return $dto;

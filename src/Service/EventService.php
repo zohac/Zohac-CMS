@@ -96,6 +96,8 @@ class EventService
      * @param array|null $data
      *
      * @return $this
+     *
+     * @throws EventException
      */
     public function dispatchEvent(string $eventName, ?array $data = []): self
     {

@@ -17,6 +17,8 @@ class RoleDto implements DtoInterface
 
     public $translatable;
 
+    public $parent;
+
     /**
      * @param EntityInterface $entity
      *

@@ -73,9 +73,20 @@ class UserControllerTest extends WebTestCase
         /** @var User $user */
         $user = $this->fixtures['user_1'];
 
+        $this->loginUser();
+
         $url = sprintf($url, $user->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
+
+    public function loginUser()
+    {
+        /** @var User $user */
+        $user = $this->fixtures['user_1'];
+
+        // simulate $testUser being logged in
+        $this->client->loginUser($user);
     }
 
     /**
@@ -83,6 +94,8 @@ class UserControllerTest extends WebTestCase
      */
     public function testPageIsRedirectedIfUserIsNotInDB($url)
     {
+        $this->loginUser();
+
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
@@ -95,6 +108,8 @@ class UserControllerTest extends WebTestCase
      */
     public function testCreateUserWithBadCredential($badCredential)
     {
+        $this->loginUser();
+
         $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
         $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form($badCredential);
@@ -105,6 +120,8 @@ class UserControllerTest extends WebTestCase
 
     public function testCreateUser()
     {
+        $this->loginUser();
+
         $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
@@ -126,6 +143,8 @@ class UserControllerTest extends WebTestCase
      */
     public function testUpdateUserWithBadCredentials($badCredential)
     {
+        $this->loginUser();
+
         $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
         $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
@@ -137,6 +156,8 @@ class UserControllerTest extends WebTestCase
 
     public function testUpdateUser()
     {
+        $this->loginUser();
+
         $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form([
@@ -154,7 +175,9 @@ class UserControllerTest extends WebTestCase
 
     public function testDeleteUser()
     {
-        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_1']->getUuid());
+        $this->loginUser();
+
+        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_2']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
         $this->client->submit($form);
