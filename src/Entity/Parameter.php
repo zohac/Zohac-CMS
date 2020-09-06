@@ -2,20 +2,17 @@
 
 namespace App\Entity;
 
+use App\Interfaces\EntityInterface;
 use App\Repository\ParameterRepository;
+use App\Traits\EntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ParameterRepository::class)
  */
-class Parameter
+class Parameter implements EntityInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=255)

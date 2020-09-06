@@ -11,6 +11,8 @@ use App\Interfaces\EntityInterface;
  */
 class ParameterDto implements DtoInterface
 {
+    public $uuid;
+
     public $name;
 
     public $value;
