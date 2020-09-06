@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail!{% endblock %}
+
+{% block body %}
+<div class="parameter-wrapper">
+
+    {% if parameter is not empty %}
+
+    {% trans from 'parameter' %}name{% endtrans %}: {{ parameter.name }}<br/>
+    {% trans from 'parameter' %}value{% endtrans %}: {{ parameter.value }}<br/>
+
+    <a href="{{ path('parameter.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
+    <a href="{{ path('parameter.update', {"uuid": parameter.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>
+    <a href="{{ path('parameter.delete', {"uuid": parameter.uuid}) }}">{% trans from 'global' %}Delete{% endtrans %}</a>
+    {% endif %}
+
+</div>
+
+ {% endblock %}
