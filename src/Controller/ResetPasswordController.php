@@ -222,6 +222,7 @@ class ResetPasswordController extends AbstractController
 
     /**
      * @param string|null $token
+     *
      * @return AdvancedUserInterface|RedirectResponse
      */
     private function getUserOrRedirectResponse(?string $token = null)
