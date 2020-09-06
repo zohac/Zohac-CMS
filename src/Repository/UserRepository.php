@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -79,10 +80,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findOneByUuid(string $uuid): ?User
     {
-        $query = $this->createQueryBuilder('u')
-            ->select(self::USER)
-            ->leftJoin(self::USER_ROLES, 'r')
-            ->leftJoin(self::USER_LANGUAGE, 'l')
+        $query = $this->getQuery();
+
+        $query = $query
             ->andWhere('u.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->getQuery();
@@ -99,10 +99,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findOneByEmail(string $email): ?User
     {
-        $query = $this->createQueryBuilder('u')
-            ->select(self::USER)
-            ->leftJoin(self::USER_ROLES, 'r')
-            ->leftJoin(self::USER_LANGUAGE, 'l')
+        $query = $this->getQuery();
+
+        $query = $query
             ->andWhere('u.email = :email')
             ->setParameter('email', $email)
             ->getQuery();
@@ -117,10 +116,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findAllInOneRequest(array $options = [])
     {
-        $query = $this->createQueryBuilder('u')
-            ->select(self::USER)
-            ->leftJoin(self::USER_ROLES, 'r')
-            ->leftJoin(self::USER_LANGUAGE, 'l');
+        $query = $this->getQuery();
 
         if (array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
@@ -132,5 +128,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $query = $query->getQuery();
 
         return $query->execute();
+    }
+
+    private function getQuery(): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+            ->select(self::USER)
+            ->leftJoin(self::USER_ROLES, 'r')
+            ->leftJoin(self::USER_LANGUAGE, 'l');
     }
 }
