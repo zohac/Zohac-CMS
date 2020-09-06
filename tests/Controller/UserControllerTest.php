@@ -49,7 +49,7 @@ class UserControllerTest extends WebTestCase
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__ . '/../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
@@ -124,7 +124,7 @@ class UserControllerTest extends WebTestCase
 
         $crawler = $this->client->request('POST', '/user/create/');
         $form = $crawler->selectButton('user[save]')->form([
-            'user[email]' => uniqid() . '@test.com',
+            'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
             'user[language]' => $this->fixtures['language_1']->getUuid(),
@@ -161,7 +161,7 @@ class UserControllerTest extends WebTestCase
         $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form([
-            'user[email]' => uniqid() . '@test.com',
+            'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
             'user[password][second]' => '123456',
             'user[language]' => $this->fixtures['language_1']->getUuid(),

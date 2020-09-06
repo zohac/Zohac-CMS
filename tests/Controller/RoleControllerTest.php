@@ -46,7 +46,7 @@ class RoleControllerTest extends WebTestCase
         $roleRepository = self::$container->get(RoleRepository::class);
 
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__ . '/../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {

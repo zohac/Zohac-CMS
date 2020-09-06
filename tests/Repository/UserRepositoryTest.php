@@ -30,7 +30,7 @@ class UserRepositoryTest extends KernelTestCase
     public function loadFixtures()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__ . '/../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../DataFixtures/Fixtures.yaml',
         ]);
     }
 

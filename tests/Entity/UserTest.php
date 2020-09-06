@@ -43,7 +43,7 @@ class UserTest extends TestCase
         $user = new User();
 
         foreach ($this->user as $key => $value) {
-            $method = 'set' . ucfirst($key);
+            $method = 'set'.ucfirst($key);
             $user->$method($value);
         }
 

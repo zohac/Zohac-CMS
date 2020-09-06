@@ -60,7 +60,7 @@ class UserServiceTest extends KernelTestCase
     public function loadFixtures()
     {
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__ . '/../../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
@@ -110,7 +110,7 @@ class UserServiceTest extends KernelTestCase
     public function getUserDto(?bool $withPassword = false): UserDto
     {
         $userDto = new UserDto();
-        $userDto->email = uniqid() . '@test.com';
+        $userDto->email = uniqid().'@test.com';
         $userDto->roles = [$this->fixtures['role_1']->getUuid(), $this->fixtures['role_2']->getUuid()];
         $userDto->language = $this->fixtures['language_1']->getUuid();
 
