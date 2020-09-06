@@ -90,8 +90,8 @@ class ResetPasswordService
 
         $email = $this->mailerService->generateWebMasterEmail(
             $user,
-        'Your password reset request',
-        'reset_password/email.html.twig',
+            'Your password reset request',
+            'reset_password/email.html.twig',
             [
                 'resetToken' => $resetToken,
                 'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
@@ -101,6 +101,19 @@ class ResetPasswordService
         $this->mailerService->send($email);
 
         return $this->redirectToRouteAppCheckEmail();
+    }
+
+    private function setCanCheckEmailInSession(): void
+    {
+        $this->httpFondationService->getSession()->set('ResetPasswordCheckEmail', true);
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    private function redirectToRouteAppCheckEmail(): RedirectResponse
+    {
+        return new RedirectResponse($this->httpFondationService->getRouter()->generate('app_check_email'));
     }
 
     public function getTokenLifetime(): int
@@ -135,18 +148,5 @@ class ResetPasswordService
     public function validateTokenAndFetchUser(string $token): object
     {
         return $this->resetPasswordHelper->validateTokenAndFetchUser($token);
-    }
-
-    /**
-     * @return RedirectResponse
-     */
-    private function redirectToRouteAppCheckEmail(): RedirectResponse
-    {
-        return new RedirectResponse($this->httpFondationService->getRouter()->generate('app_check_email'));
-    }
-
-    private function setCanCheckEmailInSession(): void
-    {
-        $this->httpFondationService->getSession()->set('ResetPasswordCheckEmail', true);
     }
 }
