@@ -5,9 +5,7 @@ namespace App\Service;
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -30,27 +28,28 @@ class ResetPasswordService
     private $resetPasswordHelper;
 
     /**
-     * @var UrlGeneratorInterface
+     * @var HttpFondationService
      */
-    private $router;
+    private $httpFondationService;
 
     /**
-     * @var SessionInterface
+     * ResetPasswordService constructor.
+     *
+     * @param UserRepository               $userRepository
+     * @param MailerService                $mailerService
+     * @param ResetPasswordHelperInterface $resetPasswordHelper
+     * @param HttpFondationService         $httpFondationService
      */
-    private $session;
-
     public function __construct(
         UserRepository $userRepository,
         MailerService $mailerService,
         ResetPasswordHelperInterface $resetPasswordHelper,
-        UrlGeneratorInterface $router,
-        SessionInterface $session
+        HttpFondationService $httpFondationService
     ) {
         $this->userRepository = $userRepository;
         $this->mailerService = $mailerService;
         $this->resetPasswordHelper = $resetPasswordHelper;
-        $this->router = $router;
-        $this->session = $session;
+        $this->httpFondationService = $httpFondationService;
     }
 
     /**
@@ -90,14 +89,14 @@ class ResetPasswordService
         }
 
         $email = $this->mailerService->generateWebMasterEmail(
-                $user,
-            'Your password reset request',
-            'reset_password/email.html.twig',
-                [
-                    'resetToken' => $resetToken,
-                    'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
-                ]
-            );
+            $user,
+        'Your password reset request',
+        'reset_password/email.html.twig',
+            [
+                'resetToken' => $resetToken,
+                'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
+            ]
+        );
 
         $this->mailerService->send($email);
 
@@ -143,11 +142,11 @@ class ResetPasswordService
      */
     private function redirectToRouteAppCheckEmail(): RedirectResponse
     {
-        return new RedirectResponse($this->router->generate('app_check_email'));
+        return new RedirectResponse($this->httpFondationService->getRouter()->generate('app_check_email'));
     }
 
     private function setCanCheckEmailInSession(): void
     {
-        $this->session->set('ResetPasswordCheckEmail', true);
+        $this->httpFondationService->getSession()->set('ResetPasswordCheckEmail', true);
     }
 }

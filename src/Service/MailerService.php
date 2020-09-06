@@ -25,8 +25,12 @@ class MailerService
         $this->mailer = $mailer;
     }
 
-    public function generateWebMasterEmail(AdvancedUserInterface $user, string $subject, string $template, array $context)
-    {
+    public function generateWebMasterEmail(
+        AdvancedUserInterface $user,
+        string $subject,
+        string $template,
+        array $context
+    ) {
         return (new TemplatedEmail())
             ->from(new Address('webmaster@jouan.ovh', 'WebMaster'))
             ->to($user->getEmail())
