@@ -134,14 +134,14 @@ class ResetPasswordController extends AbstractController
      */
     private function getToken(): string
     {
-        $token = $this->getTokenFromSession();
-        if (null === $token) {
+        $tokenFromSession = $this->getTokenFromSession();
+        if (null === $tokenFromSession) {
             throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
         }
 
-        $this->token = $token;
+        $this->token = $tokenFromSession;
 
-        return $token;
+        return $tokenFromSession;
     }
 
     /**

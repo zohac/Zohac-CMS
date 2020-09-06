@@ -4,12 +4,9 @@ namespace App\Service;
 
 use App\Interfaces\User\AdvancedUserInterface;
 use App\Repository\UserRepository;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
@@ -23,9 +20,9 @@ class ResetPasswordService
     private $userRepository;
 
     /**
-     * @var MailerInterface
+     * @var MailerService
      */
-    private $mailer;
+    private $mailerService;
 
     /**
      * @var ResetPasswordHelperInterface
@@ -44,13 +41,13 @@ class ResetPasswordService
 
     public function __construct(
         UserRepository $userRepository,
-        MailerInterface $mailer,
+        MailerService $mailerService,
         ResetPasswordHelperInterface $resetPasswordHelper,
         UrlGeneratorInterface $router,
         SessionInterface $session
     ) {
         $this->userRepository = $userRepository;
-        $this->mailer = $mailer;
+        $this->mailerService = $mailerService;
         $this->resetPasswordHelper = $resetPasswordHelper;
         $this->router = $router;
         $this->session = $session;
@@ -92,17 +89,17 @@ class ResetPasswordService
             return $this->redirectToRouteAppCheckEmail();
         }
 
-        $email = (new TemplatedEmail())
-            ->from(new Address('webmaster@jouan.ovh', 'WebMaster'))
-            ->to($user->getEmail())
-            ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-                'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
-            ]);
+        $email = $this->mailerService->generateWebMasterEmail(
+                $user,
+            'Your password reset request',
+            'reset_password/email.html.twig',
+                [
+                    'resetToken' => $resetToken,
+                    'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
+                ]
+            );
 
-        $this->mailer->send($email);
+        $this->mailerService->send($email);
 
         return $this->redirectToRouteAppCheckEmail();
     }
