@@ -2,23 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Interfaces\User\AdvancedUserInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use App\Service\ResetPasswordService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 /**
  * @Route("/reset-password")
@@ -28,13 +24,18 @@ class ResetPasswordController extends AbstractController
     use ResetPasswordControllerTrait;
 
     /**
-     * @var ResetPasswordHelperInterface
+     * @var string|null
      */
-    private $resetPasswordHelper;
+    private $token = null;
 
-    public function __construct(ResetPasswordHelperInterface $resetPasswordHelper)
+    /**
+     * @var ResetPasswordService
+     */
+    private $resetPasswordService;
+
+    public function __construct(ResetPasswordService $resetPasswordService)
     {
-        $this->resetPasswordHelper = $resetPasswordHelper;
+        $this->resetPasswordService = $resetPasswordService;
     }
 
     /**
@@ -42,23 +43,19 @@ class ResetPasswordController extends AbstractController
      *
      * @Route("", name="app_forgot_password_request")
      *
-     * @param Request         $request
-     * @param MailerInterface $mailer
+     * @param Request $request
      *
      * @return Response
      *
      * @throws TransportExceptionInterface
      */
-    public function request(Request $request, MailerInterface $mailer): Response
+    public function request(Request $request): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->processSendingPasswordResetEmail(
-                $form->get('email')->getData(),
-                $mailer
-            );
+            return $this->resetPasswordService->processSendingPasswordResetEmail($form->get('email')->getData());
         }
 
         return $this->render('reset_password/request.html.twig', [
@@ -79,7 +76,7 @@ class ResetPasswordController extends AbstractController
         }
 
         return $this->render('reset_password/check_email.html.twig', [
-            'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
+            'tokenLifetime' => $this->resetPasswordService->getTokenLifetime(),
         ]);
     }
 
@@ -113,7 +110,7 @@ class ResetPasswordController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // A password reset token should be used only once, remove it.
-            $this->resetPasswordHelper->removeResetRequest($token);
+            $this->resetPasswordService->removeResetRequest($this->token);
 
             // Encode the plain password, and set it.
             $encodedPassword = $passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
@@ -133,58 +130,6 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * @param string          $emailFormData
-     * @param MailerInterface $mailer
-     *
-     * @return RedirectResponse
-     *
-     * @throws TransportExceptionInterface
-     */
-    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
-    {
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy([
-            'email' => $emailFormData,
-        ]);
-
-        // Marks that you are allowed to see the app_check_email page.
-        $this->setCanCheckEmailInSession();
-
-        // Do not reveal whether a user account was found or not.
-        if (!$user) {
-            return $this->redirectToRouteAppCheckEmail();
-        }
-
-        try {
-            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-        } catch (ResetPasswordExceptionInterface $e) {
-            // If you want to tell the user why a reset email was not sent, uncomment
-            // the lines below and change the redirect to 'app_forgot_password_request'.
-            // Caution: This may reveal if a user is registered or not.
-            //
-            // $this->addFlash('reset_password_error', sprintf(
-            //     'There was a problem handling your password reset request - %s',
-            //     $e->getReason()
-            // ));
-
-            return $this->redirectToRouteAppCheckEmail();
-        }
-
-        $email = (new TemplatedEmail())
-            ->from(new Address('webmaster@jouan.ovh', 'WebMaster'))
-            ->to($user->getEmail())
-            ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-                'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
-            ]);
-
-        $mailer->send($email);
-
-        return $this->redirectToRouteAppCheckEmail();
-    }
-
-    /**
      * @return string
      */
     private function getToken(): string
@@ -193,6 +138,8 @@ class ResetPasswordController extends AbstractController
         if (null === $token) {
             throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
         }
+
+        $this->token = $token;
 
         return $token;
     }
@@ -210,14 +157,6 @@ class ResetPasswordController extends AbstractController
         ));
 
         return $this->redirectToRoute('app_forgot_password_request');
-    }
-
-    /**
-     * @return RedirectResponse
-     */
-    private function redirectToRouteAppCheckEmail(): RedirectResponse
-    {
-        return $this->redirectToRoute('app_check_email');
     }
 
     /**
@@ -239,7 +178,7 @@ class ResetPasswordController extends AbstractController
 
         try {
             /** @var AdvancedUserInterface $user */
-            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+            $user = $this->resetPasswordService->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
             return $this->addFlashMessageAndRedirect($e);
         }
