@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail!{% endblock %}
+
+{% block body %}
+<div class="maintenance-wrapper">
+
+    {% if maintenance is not empty %}
+
+    {% trans from 'maintenance' %}redirectPath{% endtrans %}: {{ maintenance.redirectPath }}<br/>
+    {% trans from 'maintenance' %}mode{% endtrans %}: {{ maintenance.mode }}<br/>
+    {% trans from 'maintenance' %}ips{% endtrans %}: {{ maintenance.ips }}<br/>
+    {% trans from 'maintenance' %}uuid{% endtrans %}: {{ maintenance.uuid }}<br/>
+    {% trans from 'maintenance' %}archived{% endtrans %}: {{ maintenance.archived }}<br/>
+
+    <a href="{{ path('maintenance.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
+    <a href="{{ path('maintenance.update', {"uuid": maintenance.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>
+    <a href="{{ path('maintenance.delete', {"uuid": maintenance.uuid}) }}">{% trans from 'global' %}Delete{% endtrans %}</a>
+    {% endif %}
+
+</div>
+
+ {% endblock %}

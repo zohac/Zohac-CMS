@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Service\{{ entity.shortName }};
+namespace App\Service\Maintenance;
 
-use App\Dto\{{ entity.shortName }}\{{ entity.shortName }}Dto;
-use App\Entity\{{ entity.shortName }};
+use App\Dto\Maintenance\MaintenanceDto;
+use App\Entity\Maintenance;
 use App\Exception\UuidException;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\EntityHydratorInterface;
 use App\Service\UuidService;
 
-class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
+class MaintenanceHydratorService implements EntityHydratorInterface
 {
     /**
      * @var UuidService
@@ -18,7 +18,7 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     private $uuidService;
 
     /**
-     * {{ entity.shortName }}HydratorService constructor.
+     * MaintenanceHydratorService constructor.
      *
      * @param UuidService $uuidService
      */
@@ -37,20 +37,19 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     *
     * @throws UuidException
     *
-    * @var {{ entity.shortName }}    $entity
-    * @var {{ entity.shortName }}Dto $dto
+    * @var Maintenance    $entity
+    * @var MaintenanceDto $dto
     */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        /** @var {{ entity.shortName }} $entity */
-        /** @var {{ entity.shortName }}Dto $dto */
+        /** @var Maintenance $entity */
+        /** @var MaintenanceDto $dto */
 
         $entity->setUuid($this->getUuid($dto->uuid))
-{% for property in entity.properties %}
-{% if property.name not in ['id', 'uuid'] %}
-            ->set{{ property.name|capitalize }}($dto->{{ property.name }})
-{% endif %}
-{% endfor %}
+            ->setRedirectpath($dto->redirectPath)
+            ->setMode($dto->mode)
+            ->setIps($dto->ips)
+            ->setArchived($dto->archived)
         ;
 
         return $entity;
@@ -69,16 +68,16 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     /**
     * {@inheritdoc}
     *
-    * @var {{ entity.shortName }}
-    * @var {{ entity.shortName }}Dto $dto
+    * @var Maintenance
+    * @var MaintenanceDto $dto
     */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
-{% for property in entity.properties %}
-{% if 'id' != property.name %}
-        $dto->{{ property.name }} = $entity->get{{ property.name|capitalize }}();
-{% endif %}
-{% endfor %}
+        $dto->redirectPath = $entity->getRedirectpath();
+        $dto->mode = $entity->getMode();
+        $dto->ips = $entity->getIps();
+        $dto->uuid = $entity->getUuid();
+        $dto->archived = $entity->getArchived();
 
         return $dto;
     }
@@ -88,6 +87,6 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     */
     public function canHandle(EntityInterface $entity): bool
     {
-        return $entity instanceof {{ entity.shortName }};
+        return $entity instanceof Maintenance;
     }
 }
