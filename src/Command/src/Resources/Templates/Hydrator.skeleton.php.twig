@@ -42,9 +42,10 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
+        /** @var {{ entity.shortName }} $entity */
+        /** @var {{ entity.shortName }}Dto $dto */
 
-        $entity->setUuid($uuid)
+        $entity->setUuid($this->getUuid($dto->uuid))
 {% for property in entity.properties %}
 {% if property.name not in ['id', 'uuid'] %}
             ->set{{ property.name|capitalize }}($dto->{{ property.name }})
@@ -56,13 +57,13 @@ class {{ entity.shortName }}HydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @throws UuidException
-    */
+     * {@inheritdoc}
+     *
+     * @throws UuidException
+     */
     public function getUuid(): string
     {
-        return $this->uuidService->create();
+        return (null !== $uuid) ? $uuid : $this->uuidService->create();
     }
 
     /**

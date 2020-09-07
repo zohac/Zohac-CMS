@@ -36,21 +36,16 @@ class ParameterHydratorService implements EntityHydratorInterface
      * @return EntityInterface
      *
      * @throws UuidException
-     *
-     * @var Parameter    $entity
-     * @var ParameterDto $dto
      */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
         /** @var Parameter $entity */
         /** @var ParameterDto $dto */
-        $uuid = (null !== $dto->uuid) ? $dto->uuid : $this->getUuid();
-        /** @var array $value */
         $value = (is_array($dto->value)) ? $dto->value : [$dto->value];
-
-        $entity->setUuid($uuid)
+dump($value);
+        $entity->setUuid($this->getUuid($dto->uuid))
             ->setName($dto->name)
-            ->setValue(json_encode($value));
+            ->setValue($value);
 
         return $entity;
     }
@@ -60,9 +55,9 @@ class ParameterHydratorService implements EntityHydratorInterface
      *
      * @throws UuidException
      */
-    public function getUuid(): string
+    public function getUuid(?string $uuid = null): string
     {
-        return $this->uuidService->create();
+        return (null !== $uuid) ? $uuid : $this->uuidService->create();
     }
 
     /**

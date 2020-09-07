@@ -8,7 +8,9 @@
     {% if parameter is not empty %}
 
     {% trans from 'parameter' %}name{% endtrans %}: {{ parameter.name }}<br/>
-    {% trans from 'parameter' %}value{% endtrans %}: {{ parameter.value }}<br/>
+    {% for value in parameter.value  %}
+    {% trans from 'parameter' %}value{% endtrans %}: {{ value }}<br/>
+    {% endfor %}
 
     <a href="{{ path('parameter.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
     <a href="{{ path('parameter.update', {"uuid": parameter.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>

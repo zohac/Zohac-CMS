@@ -17,15 +17,25 @@
     </div>
 
     <div>
-        {% if form.value.vars.errors|length %}
-        <div class="form-error-wrapper">
-            {{ form_errors(form.value) }}
-        </div>
-        {% endif %}
-        {{ form_label(form.value) }}
-        {{ form_widget(form.value) }}
-    </div>
+        <ul id="role-fields-list"
+            data-prototype="{{ form_widget(form.value.vars.prototype)|e }}"
+            data-widget-tags="{{ 'li'|e }}"
+            data-widget-counter="{{ form.value|length }}">
+            {% for value in form.value %}
+                <li>
+                    {{ form_errors(value) }}
+                    {{ form_widget(value) }}
+                    <button type="button" class="remove">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
 
+        <button type="button"
+                id="add-another-collection-widget"
+                data-list-selector="role-fields-list">{% trans from 'role' %}Add translation{% endtrans %}</button>
+    </div>
 
     <div>
         {{ form_widget(form.save) }}
@@ -33,4 +43,11 @@
 
     {{ form_end(form) }}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('CollectionType') }}
+    {#    <script src="{{ asset('/assets/js/CollectionType.js') }}"></script>#}
+
 {% endblock %}
