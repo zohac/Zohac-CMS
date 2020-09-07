@@ -5,7 +5,6 @@ namespace App\Dto\Maintenance;
 use App\Entity\Maintenance;
 use App\Interfaces\Dto\DtoInterface;
 use App\Interfaces\EntityInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class MaintenanceDto.

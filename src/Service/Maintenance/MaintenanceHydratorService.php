@@ -28,22 +28,22 @@ class MaintenanceHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @param EntityInterface $entity
-    * @param DtoInterface    $dto
-    *
-    * @return EntityInterface
-    *
-    * @throws UuidException
-    *
-    * @var Maintenance    $entity
-    * @var MaintenanceDto $dto
-    */
+     * {@inheritdoc}
+     *
+     * @param EntityInterface $entity
+     * @param DtoInterface    $dto
+     *
+     * @return EntityInterface
+     *
+     * @throws UuidException
+     *
+     * @var Maintenance    $entity
+     * @var MaintenanceDto $dto
+     */
     public function hydrateEntityWithDto(EntityInterface $entity, DtoInterface $dto): EntityInterface
     {
-        /** @var Maintenance $entity */
-        /** @var MaintenanceDto $dto */
+        /* @var Maintenance $entity */
+        /* @var MaintenanceDto $dto */
 
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setRedirectpath($dto->redirectPath)
@@ -66,11 +66,11 @@ class MaintenanceHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    *
-    * @var Maintenance
-    * @var MaintenanceDto $dto
-    */
+     * {@inheritdoc}
+     *
+     * @var Maintenance
+     * @var MaintenanceDto $dto
+     */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
         $dto->redirectPath = $entity->getRedirectpath();
@@ -83,8 +83,8 @@ class MaintenanceHydratorService implements EntityHydratorInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function canHandle(EntityInterface $entity): bool
     {
         return $entity instanceof Maintenance;

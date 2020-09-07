@@ -68,10 +68,10 @@ class MaintenanceEvent extends Event implements EventInterface
     }
 
     /**
-    * @param MaintenanceDto $maintenanceDto
-    *
-    * @return $this
-    */
+     * @param MaintenanceDto $maintenanceDto
+     *
+     * @return $this
+     */
     public function setMaintenanceDto(MaintenanceDto $maintenanceDto): self
     {
         $this->maintenanceDto = $maintenanceDto;
@@ -80,18 +80,18 @@ class MaintenanceEvent extends Event implements EventInterface
     }
 
     /**
-    * @return mixed
-    */
+     * @return mixed
+     */
     public function getForm()
     {
         return $this->form;
     }
 
     /**
-    * @param FormInterface $form
-    *
-    * @return $this
-    */
+     * @param FormInterface $form
+     *
+     * @return $this
+     */
     public function setForm(FormInterface $form): self
     {
         $this->form = $form;
@@ -100,18 +100,18 @@ class MaintenanceEvent extends Event implements EventInterface
     }
 
     /**
-    * @return Maintenance
-    */
+     * @return Maintenance
+     */
     public function getMaintenance(): Maintenance
     {
         return $this->maintenance;
     }
 
     /**
-    * @param Maintenance $maintenance
-    *
-    * @return $this
-    */
+     * @param Maintenance $maintenance
+     *
+     * @return $this
+     */
     public function setMaintenance(Maintenance $maintenance): self
     {
         $this->maintenance = $maintenance;
@@ -120,8 +120,8 @@ class MaintenanceEvent extends Event implements EventInterface
     }
 
     /**
-    * @return string
-    */
+     * @return string
+     */
     public function getRelatedEntity(): string
     {
         return self::ENTITY_NAME;

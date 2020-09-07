@@ -42,7 +42,7 @@ class ParameterHydratorService implements EntityHydratorInterface
         /** @var Parameter $entity */
         /** @var ParameterDto $dto */
         $value = (is_array($dto->value)) ? $dto->value : [$dto->value];
-dump($value);
+        dump($value);
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setName($dto->name)
             ->setValue($value);

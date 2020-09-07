@@ -46,19 +46,19 @@ class MaintenanceController extends AbstractController implements ControllerInte
     }
 
     /**
-    * @Route(
-    *     "/{uuid}/",
-    *     name="maintenance.detail",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET"}
-    * )
-    *
-    * @param Maintenance|null $maintenance
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
+     * @Route(
+     *     "/{uuid}/",
+     *     name="maintenance.detail",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET"}
+     * )
+     *
+     * @param Maintenance|null $maintenance
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
     public function maintenanceShow(?Maintenance $maintenance = null): Response
     {
         if (!$maintenance) {
@@ -69,8 +69,8 @@ class MaintenanceController extends AbstractController implements ControllerInte
     }
 
     /**
-    * @return Response
-    */
+     * @return Response
+     */
     public function maintenanceNotFound(): Response
     {
         $this->addAndTransFlashMessage(
@@ -84,37 +84,37 @@ class MaintenanceController extends AbstractController implements ControllerInte
     }
 
     /**
-    * @Route("/create/", name="maintenance.create", methods={"GET", "POST"})
-    *
-    * @param Request $request
-    * @param MaintenanceDto $maintenanceDto
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
+     * @Route("/create/", name="maintenance.create", methods={"GET", "POST"})
+     *
+     * @param Request        $request
+     * @param MaintenanceDto $maintenanceDto
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
     public function maintenanceNew(Request $request, MaintenanceDto $maintenanceDto): Response
     {
         return $this->new($request, $maintenanceDto, Maintenance::class, MaintenanceType::class);
     }
 
     /**
-    * @Route(
-    *     "/{uuid}/update/",
-    *     name="maintenance.update",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET", "POST"}
-    * )
-    *
-    * @param Request   $request
-    * @param Maintenance|null $maintenance
-    *
-    * @return Response
-    *
-    * @throws HydratorException
-    * @throws ReflectionException
-    * @throws DtoHandlerException
-    */
+     * @Route(
+     *     "/{uuid}/update/",
+     *     name="maintenance.update",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET", "POST"}
+     * )
+     *
+     * @param Request          $request
+     * @param Maintenance|null $maintenance
+     *
+     * @return Response
+     *
+     * @throws HydratorException
+     * @throws ReflectionException
+     * @throws DtoHandlerException
+     */
     public function maintenanceEdit(Request $request, ?Maintenance $maintenance = null): Response
     {
         if (!$maintenance) {
@@ -125,21 +125,21 @@ class MaintenanceController extends AbstractController implements ControllerInte
     }
 
     /**
-    * @Route(
-    *     "/{uuid}/delete/",
-    *     name="maintenance.delete",
-    *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-    *     methods={"GET", "POST"}
-    * )
-    *
-    * @param Request     $request
-    * @param MaintenanceService $service
-    * @param Maintenance|null   $maintenance
-    *
-    * @return Response
-    *
-    * @throws ReflectionException
-    */
+     * @Route(
+     *     "/{uuid}/delete/",
+     *     name="maintenance.delete",
+     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
+     *     methods={"GET", "POST"}
+     * )
+     *
+     * @param Request            $request
+     * @param MaintenanceService $service
+     * @param Maintenance|null   $maintenance
+     *
+     * @return Response
+     *
+     * @throws ReflectionException
+     */
     public function maintenanceDelete(Request $request, MaintenanceService $service, ?Maintenance $maintenance = null): Response
     {
         if (!$maintenance) {

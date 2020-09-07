@@ -36,40 +36,40 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     }
 
     /**
-    * @param MaintenanceEvent $event
-    *
-    * @throws HydratorException
-    */
+     * @param MaintenanceEvent $event
+     *
+     * @throws HydratorException
+     */
     public function onMaintenanceCreate(MaintenanceEvent $event)
     {
         $this->maintenanceService->createMaintenanceFromDto($event->getMaintenanceDto());
     }
 
     /**
-    * @param MaintenanceEvent $event
-    *
-    * @throws HydratorException
-    */
+     * @param MaintenanceEvent $event
+     *
+     * @throws HydratorException
+     */
     public function onMaintenanceUpdate(MaintenanceEvent $event)
     {
         $this->maintenanceService->updateMaintenanceFromDto($event->getMaintenanceDto(), $event->getMaintenance());
     }
 
     /**
-    * @param MaintenanceEvent $event
-    *
-    * @throws ReflectionException
-    */
+     * @param MaintenanceEvent $event
+     *
+     * @throws ReflectionException
+     */
     public function onMaintenanceDelete(MaintenanceEvent $event)
     {
         $this->maintenanceService->deleteMaintenance($event->getMaintenance());
     }
 
     /**
-    * @param MaintenanceEvent $event
-    *
-    * @throws ReflectionException
-    */
+     * @param MaintenanceEvent $event
+     *
+     * @throws ReflectionException
+     */
     public function onMaintenanceSoftDelete(MaintenanceEvent $event)
     {
         $this->maintenanceService->deleteSoftMaintenance($event->getMaintenance());

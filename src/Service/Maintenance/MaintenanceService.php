@@ -48,12 +48,12 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-    * @param MaintenanceDto $maintenanceDto
-    *
-    * @return Maintenance
-    *
-    * @throws HydratorException
-    */
+     * @param MaintenanceDto $maintenanceDto
+     *
+     * @return Maintenance
+     *
+     * @throws HydratorException
+     */
     public function createMaintenanceFromDto(MaintenanceDto $maintenanceDto): Maintenance
     {
         /** @var Maintenance $maintenance */
@@ -73,13 +73,13 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-    * @param MaintenanceDto $maintenanceDto
-    * @param Maintenance    $maintenance
-    *
-    * @return Maintenance
-    *
-    * @throws HydratorException
-    */
+     * @param MaintenanceDto $maintenanceDto
+     * @param Maintenance    $maintenance
+     *
+     * @return Maintenance
+     *
+     * @throws HydratorException
+     */
     public function updateMaintenanceFromDto(MaintenanceDto $maintenanceDto, Maintenance $maintenance): Maintenance
     {
         /** @var Maintenance $maintenance */
@@ -99,12 +99,12 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-    * @param Maintenance $maintenance
-    *
-    * @return $this
-    *
-    * @throws ReflectionException
-    */
+     * @param Maintenance $maintenance
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
     public function deleteMaintenance(Maintenance $maintenance): self
     {
         $this->entityService
@@ -124,12 +124,12 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-    * @param Maintenance $maintenance
-    *
-    * @return $this
-    *
-    * @throws ReflectionException
-    */
+     * @param Maintenance $maintenance
+     *
+     * @return $this
+     *
+     * @throws ReflectionException
+     */
     public function deleteSoftMaintenance(Maintenance $maintenance)
     {
         $maintenance->setArchived(true);
@@ -151,10 +151,10 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-    * @param EntityInterface $entity
-    *
-    * @return string
-    */
+     * @param EntityInterface $entity
+     *
+     * @return string
+     */
     public function getDeleteMessage(EntityInterface $entity): string
     {
         // TODO: Change the Delete Message
