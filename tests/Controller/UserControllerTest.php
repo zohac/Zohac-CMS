@@ -111,7 +111,7 @@ class UserControllerTest extends WebTestCase
         $this->loginUser();
 
         $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
-        $crawler = $this->client->request('POST', '/user/create/');
+        $crawler = $this->client->request('POST', '/admin/user/create/');
         $form = $crawler->selectButton('user[save]')->form($badCredential);
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -122,7 +122,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $crawler = $this->client->request('POST', '/user/create/');
+        $crawler = $this->client->request('POST', '/admin/user/create/');
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
             'user[password][first]' => '123456',
@@ -130,7 +130,7 @@ class UserControllerTest extends WebTestCase
             'user[language]' => $this->fixtures['language_1']->getUuid(),
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/user/');
+        $this->assertResponseRedirects('/admin/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
@@ -146,7 +146,7 @@ class UserControllerTest extends WebTestCase
         $this->loginUser();
 
         $badCredential['user[language]'] = $this->fixtures['language_1']->getUuid();
-        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
+        $uri = sprintf('/admin/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form($badCredential);
         $this->client->submit($form);
@@ -158,7 +158,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $uri = sprintf('/user/%s/update/', $this->fixtures['user_1']->getUuid());
+        $uri = sprintf('/admin/user/%s/update/', $this->fixtures['user_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('user[save]')->form([
             'user[email]' => uniqid().'@test.com',
@@ -167,7 +167,7 @@ class UserControllerTest extends WebTestCase
             'user[language]' => $this->fixtures['language_1']->getUuid(),
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/user/');
+        $this->assertResponseRedirects('/admin/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
@@ -177,11 +177,11 @@ class UserControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $uri = sprintf('/user/%s/delete/', $this->fixtures['user_2']->getUuid());
+        $uri = sprintf('/admin/user/%s/delete/', $this->fixtures['user_2']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
         $this->client->submit($form);
-        $this->assertResponseRedirects('/user/');
+        $this->assertResponseRedirects('/admin/user/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
@@ -190,18 +190,18 @@ class UserControllerTest extends WebTestCase
     public function provideUrls()
     {
         yield ['/'];
-        yield ['/user/'];
-        yield ['/user/%s/'];
-        yield ['/user/create/'];
-        yield ['/user/%s/update/'];
-        yield ['/user/%s/delete/'];
+        yield ['/admin/user/'];
+        yield ['/admin/user/%s/'];
+        yield ['/admin/user/create/'];
+        yield ['/admin/user/%s/update/'];
+        yield ['/admin/user/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/user/%s/'];
-        yield ['/user/%s/update/'];
-        yield ['/user/%s/delete/'];
+        yield ['/admin/user/%s/'];
+        yield ['/admin/user/%s/update/'];
+        yield ['/admin/user/%s/delete/'];
     }
 
     public function provideBadUserCredentials()

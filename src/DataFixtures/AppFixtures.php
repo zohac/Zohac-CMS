@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Language;
+use App\Entity\Maintenance;
 use App\Entity\Role;
 use App\Entity\Translatable;
 use App\Entity\Translation;
@@ -78,6 +79,9 @@ class AppFixtures extends Fixture
         if (User::class === $entityType) {
             $this->loadUser($entities);
         }
+        if (Maintenance::class === $entityType) {
+            $this->loadMaintenance($entities);
+        }
     }
 
     public function loadLanguage(array $entities)
@@ -145,6 +149,19 @@ class AppFixtures extends Fixture
                 ->setPassword($password);
 
             $this->manager->persist($user);
+        }
+    }
+
+    public function loadMaintenance(array $entities)
+    {
+        foreach ($entities as $entity) {
+            $maintenance = new Maintenance();
+
+            $maintenance->setUuid($this->uuidService->create())
+                ->setRedirectPath($entity['redirectPath'])
+                ->setMode($entity['mode']);
+
+            $this->manager->persist($maintenance);
         }
     }
 }

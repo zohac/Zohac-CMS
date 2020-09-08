@@ -113,7 +113,7 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $crawler = $this->client->request('POST', '/language/create/');
+        $crawler = $this->client->request('POST', '/admin/language/create/');
         $form = $crawler->selectButton('language[save]')->form($badCredential);
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -124,7 +124,7 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $crawler = $this->client->request('POST', '/language/create/');
+        $crawler = $this->client->request('POST', '/admin/language/create/');
         $form = $crawler->selectButton('language[save]')->form([
             'language[name]' => 'German',
             'language[alternateName]' => 'Allemand',
@@ -134,7 +134,7 @@ class LanguageControllerTest extends WebTestCase
             'language[iso6392B]' => 'deu',
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/language/');
+        $this->assertResponseRedirects('/admin/language/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue créée avec succès.');
@@ -149,7 +149,7 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
+        $uri = sprintf('/admin/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form($badCredential);
         $this->client->submit($form);
@@ -161,7 +161,7 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $uri = sprintf('/language/%s/update/', $this->fixtures['language_1']->getUuid());
+        $uri = sprintf('/admin/language/%s/update/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('language[save]')->form([
             'language[name]' => 'test_update',
@@ -172,7 +172,7 @@ class LanguageControllerTest extends WebTestCase
             'language[iso6392B]' => 'fra',
         ]);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/language/');
+        $this->assertResponseRedirects('/admin/language/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue mise à jour avec succès.');
@@ -182,11 +182,11 @@ class LanguageControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $uri = sprintf('/language/%s/delete/', $this->fixtures['language_1']->getUuid());
+        $uri = sprintf('/admin/language/%s/delete/', $this->fixtures['language_1']->getUuid());
         $crawler = $this->client->request('POST', $uri);
         $form = $crawler->selectButton('delete[delete]')->form();
         $this->client->submit($form);
-        $this->assertResponseRedirects('/language/');
+        $this->assertResponseRedirects('/admin/language/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue supprimée avec succès.');
@@ -194,18 +194,18 @@ class LanguageControllerTest extends WebTestCase
 
     public function provideUrls()
     {
-        yield ['/language/'];
-        yield ['/language/%s/'];
-        yield ['/language/create/'];
-        yield ['/language/%s/update/'];
-        yield ['/language/%s/delete/'];
+        yield ['/admin/language/'];
+        yield ['/admin/language/%s/'];
+        yield ['/admin/language/create/'];
+        yield ['/admin/language/%s/update/'];
+        yield ['/admin/language/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/language/%s/'];
-        yield ['/language/%s/update/'];
-        yield ['/language/%s/delete/'];
+        yield ['/admin/language/%s/'];
+        yield ['/admin/language/%s/update/'];
+        yield ['/admin/language/%s/delete/'];
     }
 
     public function provideBadLanguageCredentials()

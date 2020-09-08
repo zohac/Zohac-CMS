@@ -36,16 +36,6 @@
         {{ form_widget(form.ips) }}
     </div>
 
-    <div>
-        {% if form.archived.vars.errors|length %}
-        <div class="form-error-wrapper">
-            {{ form_errors(form.archived) }}
-        </div>
-        {% endif %}
-        {{ form_label(form.archived) }}
-        {{ form_widget(form.archived) }}
-    </div>
-
 
     <div>
         {{ form_widget(form.save) }}

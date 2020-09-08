@@ -16,7 +16,6 @@ class MaintenanceType extends AbstractType
             ->add('redirectPath')
             ->add('mode')
             ->add('ips')
-            ->add('archived')
 
             ->add('save', SubmitType::class, [
                 'label' => 'save',

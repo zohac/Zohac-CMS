@@ -1,3 +1,9 @@
+App\Entity\Maintenance:
+  maintenance_1:
+    uuid: <uuid()>
+    redirectPath: "/"
+    mode: false
+
 App\Entity\Language:
   language_1:
     uuid: <uuid()>

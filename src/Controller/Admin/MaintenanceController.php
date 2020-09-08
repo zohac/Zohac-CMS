@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Maintenance;
 use App\Exception\DtoHandlerException;
@@ -12,6 +12,7 @@ use App\Repository\MaintenanceRepository;
 use App\Service\FlashBagService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,9 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class MaintenanceController.
  *
- * @Route("/maintenance")
+ * @Route("/admin/maintenance")
+ *
+ * @IsGranted("ROLE_ADMIN")
  */
 class MaintenanceController extends AbstractController implements ControllerInterface
 {

@@ -111,10 +111,10 @@ class RoleControllerTest extends WebTestCase
             $role['role[translatable][0][language]'] = $this->fixtures['language_1']->getUuid();
         }
 
-        $crawler = $this->client->request('POST', '/role/create/');
+        $crawler = $this->client->request('POST', '/admin/role/create/');
         $form = $crawler->selectButton('role[save]')->form($role);
         $this->client->submit($form);
-        $this->assertResponseRedirects('/role/');
+        $this->assertResponseRedirects('/admin/role/');
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
@@ -122,18 +122,18 @@ class RoleControllerTest extends WebTestCase
 
     public function provideUrls()
     {
-        yield ['/role/'];
-        yield ['/role/%s/'];
-        yield ['/role/create/'];
-        yield ['/role/%s/update/'];
-        yield ['/role/%s/delete/'];
+        yield ['/admin/role/'];
+        yield ['/admin/role/%s/'];
+        yield ['/admin/role/create/'];
+        yield ['/admin/role/%s/update/'];
+        yield ['/admin/role/%s/delete/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/role/%s/'];
-        yield ['/role/%s/update/'];
-        yield ['/role/%s/delete/'];
+        yield ['/admin/role/%s/'];
+        yield ['/admin/role/%s/update/'];
+        yield ['/admin/role/%s/delete/'];
     }
 
     public function provideRole()
