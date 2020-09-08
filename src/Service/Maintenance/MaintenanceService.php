@@ -5,6 +5,7 @@ namespace App\Service\Maintenance;
 use App\Dto\Maintenance\MaintenanceDto;
 use App\Entity\Maintenance;
 use App\Event\Maintenance\MaintenanceEvent;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
@@ -15,6 +16,8 @@ use ReflectionException;
 
 class MaintenanceService implements ServiceInterface
 {
+    const MAINTENANCE = 'maintenance';
+
     /**
      * @var EventService
      */
@@ -52,6 +55,7 @@ class MaintenanceService implements ServiceInterface
      *
      * @return Maintenance
      *
+     * @throws EventException
      * @throws HydratorException
      */
     public function createMaintenanceFromDto(MaintenanceDto $maintenanceDto): Maintenance
@@ -60,13 +64,13 @@ class MaintenanceService implements ServiceInterface
         $maintenance = $this->entityService->hydrateEntityWithDto(new Maintenance(), $maintenanceDto);
 
         $this->eventService->dispatchEvent(MaintenanceEvent::POST_CREATE, [
-            'maintenance' => $maintenance,
+            self::MAINTENANCE => $maintenance,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Maintenance',
+            ucfirst(self::MAINTENANCE),
             'Maintenance successfully created.',
-            'maintenance'
+            self::MAINTENANCE
         );
 
         return $maintenance;
@@ -78,6 +82,7 @@ class MaintenanceService implements ServiceInterface
      *
      * @return Maintenance
      *
+     * @throws EventException
      * @throws HydratorException
      */
     public function updateMaintenanceFromDto(MaintenanceDto $maintenanceDto, Maintenance $maintenance): Maintenance
@@ -86,13 +91,13 @@ class MaintenanceService implements ServiceInterface
         $maintenance = $this->entityService->hydrateEntityWithDto($maintenance, $maintenanceDto);
 
         $this->eventService->dispatchEvent(MaintenanceEvent::POST_UPDATE, [
-            'maintenance' => $maintenance,
+            self::MAINTENANCE => $maintenance,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Maintenance',
+            ucfirst(self::MAINTENANCE),
             'Maintenance successfully updated.',
-            'maintenance'
+            self::MAINTENANCE
         );
 
         return $maintenance;
@@ -103,6 +108,7 @@ class MaintenanceService implements ServiceInterface
      *
      * @return $this
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function deleteMaintenance(Maintenance $maintenance): self
@@ -113,7 +119,7 @@ class MaintenanceService implements ServiceInterface
             ->flush();
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Maintenance',
+            ucfirst(self::MAINTENANCE),
             'Maintenance successfully deleted.',
             $this->entityService->getEntityNameToLower()
         );
@@ -129,6 +135,7 @@ class MaintenanceService implements ServiceInterface
      * @return $this
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function deleteSoftMaintenance(Maintenance $maintenance)
     {
@@ -140,7 +147,7 @@ class MaintenanceService implements ServiceInterface
             ->flush();
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Maintenance',
+            ucfirst(self::MAINTENANCE),
             'Maintenance successfully deleted.',
             $this->entityService->getEntityNameToLower()
         );
@@ -157,15 +164,11 @@ class MaintenanceService implements ServiceInterface
      */
     public function getDeleteMessage(EntityInterface $entity): string
     {
-        // TODO: Change the Delete Message
-
         /* @var Maintenance $entity */
-        //  return $this->flashBagService->trans(
-        //      'Are you sure you want to delete this maintenance (%maintenance%) ?',
-        //      'maintenance',
-        //      ['maintenance' => $entity->getName()]
-        //  );
-
-        return 'Are you sure you want to delete this maintenance  ?';
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this maintenance (%maintenance%) ?',
+            self::MAINTENANCE,
+            [self::MAINTENANCE => $entity->getUuid()]
+        );
     }
 }

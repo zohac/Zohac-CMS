@@ -48,9 +48,7 @@ class MaintenanceHydratorService implements EntityHydratorInterface
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setRedirectpath($dto->redirectPath)
             ->setMode($dto->mode)
-            ->setIps($dto->ips)
-            ->setArchived($dto->archived)
-        ;
+            ->setIps($dto->ips);
 
         return $entity;
     }
@@ -67,17 +65,15 @@ class MaintenanceHydratorService implements EntityHydratorInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @var Maintenance
-     * @var MaintenanceDto $dto
      */
     public function hydrateDtoWithEntity(EntityInterface $entity, DtoInterface $dto): DtoInterface
     {
+        /* @var Maintenance $entity */
+        /* @var MaintenanceDto $dto */
         $dto->redirectPath = $entity->getRedirectpath();
         $dto->mode = $entity->getMode();
         $dto->ips = $entity->getIps();
         $dto->uuid = $entity->getUuid();
-        $dto->archived = $entity->getArchived();
 
         return $dto;
     }

@@ -19,8 +19,6 @@ class MaintenanceDto implements DtoInterface
 
     public $uuid;
 
-    public $archived;
-
     /**
      * @param EntityInterface $entity
      *

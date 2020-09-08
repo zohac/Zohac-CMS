@@ -2,15 +2,14 @@
 
 namespace App\Controller;
 
-use App\Dto\Maintenance\MaintenanceDto;
 use App\Entity\Maintenance;
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\MaintenanceType;
 use App\Interfaces\ControllerInterface;
 use App\Repository\MaintenanceRepository;
 use App\Service\FlashBagService;
-use App\Service\Maintenance\MaintenanceService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,19 +29,20 @@ class MaintenanceController extends AbstractController implements ControllerInte
     /**
      * @Route("/", name="maintenance.list", methods={"GET"})
      *
-     * @param MaintenanceRepository $maintenanceRepository
+     * @param MaintenanceRepository $repository
      *
      * @return Response
      *
+     * @throws EventException
      * @throws ReflectionException
      */
-    public function maintenanceIndex(MaintenanceRepository $maintenanceRepository): Response
+    public function maintenanceIndex(MaintenanceRepository $repository): Response
     {
         $repositoryOptions = [];
 
         // TODO: if $soft, $repositoryOptions = ['archived' => false];
 
-        return $this->index($maintenanceRepository, Maintenance::class, $repositoryOptions);
+        return $this->index($repository, Maintenance::class, $repositoryOptions);
     }
 
     /**
@@ -58,6 +58,7 @@ class MaintenanceController extends AbstractController implements ControllerInte
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function maintenanceShow(?Maintenance $maintenance = null): Response
     {
@@ -84,21 +85,6 @@ class MaintenanceController extends AbstractController implements ControllerInte
     }
 
     /**
-     * @Route("/create/", name="maintenance.create", methods={"GET", "POST"})
-     *
-     * @param Request        $request
-     * @param MaintenanceDto $maintenanceDto
-     *
-     * @return Response
-     *
-     * @throws ReflectionException
-     */
-    public function maintenanceNew(Request $request, MaintenanceDto $maintenanceDto): Response
-    {
-        return $this->new($request, $maintenanceDto, Maintenance::class, MaintenanceType::class);
-    }
-
-    /**
      * @Route(
      *     "/{uuid}/update/",
      *     name="maintenance.update",
@@ -111,9 +97,10 @@ class MaintenanceController extends AbstractController implements ControllerInte
      *
      * @return Response
      *
+     * @throws DtoHandlerException
+     * @throws EventException
      * @throws HydratorException
      * @throws ReflectionException
-     * @throws DtoHandlerException
      */
     public function maintenanceEdit(Request $request, ?Maintenance $maintenance = null): Response
     {
@@ -122,30 +109,5 @@ class MaintenanceController extends AbstractController implements ControllerInte
         }
 
         return $this->edit($request, $maintenance, MaintenanceType::class);
-    }
-
-    /**
-     * @Route(
-     *     "/{uuid}/delete/",
-     *     name="maintenance.delete",
-     *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
-     *     methods={"GET", "POST"}
-     * )
-     *
-     * @param Request            $request
-     * @param MaintenanceService $service
-     * @param Maintenance|null   $maintenance
-     *
-     * @return Response
-     *
-     * @throws ReflectionException
-     */
-    public function maintenanceDelete(Request $request, MaintenanceService $service, ?Maintenance $maintenance = null): Response
-    {
-        if (!$maintenance) {
-            return $this->maintenanceNotFound();
-        }
-
-        return $this->delete($request, $maintenance, $service);
     }
 }

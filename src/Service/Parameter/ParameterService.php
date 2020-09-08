@@ -5,6 +5,7 @@ namespace App\Service\Parameter;
 use App\Dto\Parameter\ParameterDto;
 use App\Entity\Parameter;
 use App\Event\Parameter\ParameterEvent;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
@@ -15,6 +16,8 @@ use ReflectionException;
 
 class ParameterService implements ServiceInterface
 {
+    const PARAMETER = 'parameter';
+
     /**
      * @var EventService
      */
@@ -53,6 +56,7 @@ class ParameterService implements ServiceInterface
      * @return Parameter
      *
      * @throws HydratorException
+     * @throws EventException
      */
     public function createParameterFromDto(ParameterDto $parameterDto): Parameter
     {
@@ -60,13 +64,13 @@ class ParameterService implements ServiceInterface
         $parameter = $this->entityService->hydrateEntityWithDto(new Parameter(), $parameterDto);
 
         $this->eventService->dispatchEvent(ParameterEvent::POST_CREATE, [
-            'parameter' => $parameter,
+            self::PARAMETER => $parameter,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Parameter',
+            ucfirst(self::PARAMETER),
             'Parameter successfully created.',
-            'parameter'
+            self::PARAMETER
         );
 
         return $parameter;
@@ -78,6 +82,7 @@ class ParameterService implements ServiceInterface
      *
      * @return Parameter
      *
+     * @throws EventException
      * @throws HydratorException
      */
     public function updateParameterFromDto(ParameterDto $parameterDto, Parameter $parameter): Parameter
@@ -86,13 +91,13 @@ class ParameterService implements ServiceInterface
         $parameter = $this->entityService->hydrateEntityWithDto($parameter, $parameterDto);
 
         $this->eventService->dispatchEvent(ParameterEvent::POST_UPDATE, [
-            'parameter' => $parameter,
+            self::PARAMETER => $parameter,
         ]);
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Parameter',
+            ucfirst(self::PARAMETER),
             'Parameter successfully updated.',
-            'parameter'
+            self::PARAMETER
         );
 
         return $parameter;
@@ -103,6 +108,7 @@ class ParameterService implements ServiceInterface
      *
      * @return $this
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function deleteParameter(Parameter $parameter): self
@@ -113,7 +119,7 @@ class ParameterService implements ServiceInterface
             ->flush();
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Parameter',
+            ucfirst(self::PARAMETER),
             'Parameter successfully deleted.',
             $this->entityService->getEntityNameToLower()
         );
@@ -128,6 +134,7 @@ class ParameterService implements ServiceInterface
      *
      * @return $this
      *
+     * @throws EventException
      * @throws ReflectionException
      */
     public function deleteSoftParameter(Parameter $parameter)
@@ -140,7 +147,7 @@ class ParameterService implements ServiceInterface
             ->flush();
 
         $this->flashBagService->addAndTransFlashMessage(
-            'Parameter',
+            ucfirst(self::PARAMETER),
             'Parameter successfully deleted.',
             $this->entityService->getEntityNameToLower()
         );
@@ -157,15 +164,11 @@ class ParameterService implements ServiceInterface
      */
     public function getDeleteMessage(EntityInterface $entity): string
     {
-        // TODO: Change the Delete Message
-
         /* @var Parameter $entity */
-        //  return $this->flashBagService->trans(
-        //      'Are you sure you want to delete this parameter (%parameter%) ?',
-        //      'parameter',
-        //      ['parameter' => $entity->getName()]
-        //  );
-
-        return 'Are you sure you want to delete this parameter  ?';
+        return $this->flashBagService->trans(
+            'Are you sure you want to delete this parameter (%parameter%) ?',
+            self::PARAMETER,
+            [self::PARAMETER => $entity->getName()]
+        );
     }
 }
