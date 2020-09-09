@@ -27,15 +27,26 @@
     </div>
 
     <div>
-        {% if form.ips.vars.errors|length %}
-        <div class="form-error-wrapper">
-            {{ form_errors(form.ips) }}
-        </div>
-        {% endif %}
         {{ form_label(form.ips) }}
-        {{ form_widget(form.ips) }}
-    </div>
+        <ul id="role-fields-lit"
+            data-prototype="{{ form_widget(form.ips.vars.prototype)|e }}"
+            data-widget-tags="{{ 'li'|e }}"
+            data-widget-counter="{{ form.ips|length }}">
+            {% for ip in form.ips %}
+                <li>
+                    {{ form_errors(ip) }}
+                    {{ form_widget(ip) }}
+                    <button type="button" class="remove">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
 
+        <button type="button"
+                id="add-another-collection-widget"
+                data-list-selector="role-fields-list">{% trans from 'role' %}Add ip address{% endtrans %}</button>
+    </div>
 
     <div>
         {{ form_widget(form.save) }}
@@ -43,4 +54,11 @@
 
     {{ form_end(form) }}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    {{ encore_entry_script_tags('CollectionType') }}
+
 {% endblock %}

@@ -9,6 +9,7 @@ use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
+use App\Repository\MaintenanceRepository;
 use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
@@ -34,20 +35,27 @@ class MaintenanceService implements ServiceInterface
     private $entityService;
 
     /**
+     * @var MaintenanceRepository
+     */
+    private $repository;
+
+    /**
      * MaintenanceService constructor.
-     *
-     * @param EventService    $eventService
+     * @param EventService $eventService
      * @param FlashBagService $flashBagService
-     * @param EntityService   $entityService
+     * @param EntityService $entityService
+     * @param MaintenanceRepository $repository
      */
     public function __construct(
         EventService $eventService,
         FlashBagService $flashBagService,
-        EntityService $entityService
+        EntityService $entityService,
+        MaintenanceRepository $repository
     ) {
         $this->eventService = $eventService;
         $this->flashBagService = $flashBagService;
         $this->entityService = $entityService;
+        $this->repository = $repository;
     }
 
     /**
@@ -170,5 +178,10 @@ class MaintenanceService implements ServiceInterface
             self::MAINTENANCE,
             [self::MAINTENANCE => $entity->getUuid()]
         );
+    }
+
+    public function isInMaintenance(): bool
+    {
+        return false;
     }
 }

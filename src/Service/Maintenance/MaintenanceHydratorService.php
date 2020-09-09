@@ -44,10 +44,11 @@ class MaintenanceHydratorService implements EntityHydratorInterface
     {
         /* @var Maintenance $entity */
         /* @var MaintenanceDto $dto */
+        $mode = (empty($dto->mode)) ? false : true;
 
         $entity->setUuid($this->getUuid($dto->uuid))
             ->setRedirectpath($dto->redirectPath)
-            ->setMode($dto->mode)
+            ->setMode($mode)
             ->setIps($dto->ips);
 
         return $entity;
