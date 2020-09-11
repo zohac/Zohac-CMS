@@ -7,6 +7,7 @@ use App\Entity\Maintenance;
 use App\Event\Maintenance\MaintenanceEvent;
 use App\Exception\EventException;
 use App\Exception\HydratorException;
+use App\Exception\MaintenanceException;
 use App\Interfaces\EntityInterface;
 use App\Interfaces\Service\ServiceInterface;
 use App\Repository\MaintenanceRepository;
@@ -41,9 +42,10 @@ class MaintenanceService implements ServiceInterface
 
     /**
      * MaintenanceService constructor.
-     * @param EventService $eventService
-     * @param FlashBagService $flashBagService
-     * @param EntityService $entityService
+     *
+     * @param EventService          $eventService
+     * @param FlashBagService       $flashBagService
+     * @param EntityService         $entityService
      * @param MaintenanceRepository $repository
      */
     public function __construct(
@@ -180,8 +182,17 @@ class MaintenanceService implements ServiceInterface
         );
     }
 
+    /**
+     * @return bool
+     *
+     * @throws MaintenanceException
+     */
     public function isInMaintenance(): bool
     {
-        return false;
+        if ($maintenance = $this->repository->getMaintenance()) {
+            return $maintenance->getMode();
+        }
+
+        throw new MaintenanceException('La maintenance n\'a pas était trouvé.');
     }
 }

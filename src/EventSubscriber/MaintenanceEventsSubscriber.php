@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 use App\Event\Maintenance\MaintenanceEvent;
 use App\Exception\EventException;
 use App\Exception\HydratorException;
+use App\Exception\MaintenanceException;
 use App\Service\Maintenance\MaintenanceService;
 use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,12 +36,13 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
             MaintenanceEvent::UPDATE => ['onMaintenanceUpdate', 0],
             MaintenanceEvent::DELETE => ['onMaintenanceDelete', 0],
             MaintenanceEvent::SOFT_DELETE => ['onMaintenanceSoftDelete', 0],
-            'kernel.request' => ['onMaintenance', 0]
+            'kernel.request' => ['onMaintenance', 0],
         ];
     }
 
     /**
      * @param MaintenanceEvent $event
+     *
      * @throws EventException
      * @throws HydratorException
      */
@@ -51,6 +53,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param MaintenanceEvent $event
+     *
      * @throws EventException
      * @throws HydratorException
      */
@@ -61,6 +64,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param MaintenanceEvent $event
+     *
      * @throws EventException
      * @throws ReflectionException
      */
@@ -71,6 +75,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param MaintenanceEvent $event
+     *
      * @throws ReflectionException
      * @throws EventException
      */
@@ -81,6 +86,8 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param RequestEvent $event
+     *
+     * @throws MaintenanceException
      */
     public function onMaintenance(RequestEvent $event)
     {

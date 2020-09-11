@@ -54,4 +54,18 @@ class MaintenanceRepository extends ServiceEntityRepository
 
         return $query->execute();
     }
+
+    /**
+     * @return Maintenance|null
+     */
+    public function getMaintenance(): ?Maintenance
+    {
+        $maintenances = $this->findAll();
+
+        if (empty($maintenances)) {
+            return null;
+        }
+
+        return $maintenances[0];
+    }
 }
