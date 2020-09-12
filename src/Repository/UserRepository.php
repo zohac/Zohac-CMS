@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,9 +23,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, RepositoryInterface
 {
-    const ARCHIVED = 'archived';
+    use RepositoryTrait;
+
     const USER = 'u, r, l';
     const USER_ROLES = 'u.roles';
     const USER_LANGUAGE = 'u.language';
@@ -114,7 +117,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @return User[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->getQuery();
 
@@ -125,9 +128,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter(self::ARCHIVED, $archived);
         }
 
-        $query = $query->getQuery();
-
-        return $query->execute();
+        return $this->executeQuery($query, $options);
     }
 
     private function getQuery(): QueryBuilder

@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Parameter;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,9 +15,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Parameter[]    findAll()
  * @method Parameter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ParameterRepository extends ServiceEntityRepository
+class ParameterRepository extends ServiceEntityRepository implements RepositoryInterface
 {
-    const ARCHIVED = 'archived';
+    use RepositoryTrait;
 
     /**
      * ParameterRepository constructor.
@@ -32,31 +34,11 @@ class ParameterRepository extends ServiceEntityRepository
      *
      * @return Parameter[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->createQueryBuilder('p')
             ->select('p');
 
         return $this->executeQuery($query, $options);
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param array        $options
-     *
-     * @return array
-     */
-    private function executeQuery(QueryBuilder $query, array $options = []): array
-    {
-        if (\array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('l.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->getQuery();
-
-        return $query->execute();
     }
 }

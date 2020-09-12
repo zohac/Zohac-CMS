@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Maintenance;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,8 +15,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Maintenance[]    findAll()
  * @method Maintenance[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MaintenanceRepository extends ServiceEntityRepository
+class MaintenanceRepository extends ServiceEntityRepository implements RepositoryInterface
 {
+    use RepositoryTrait;
+
     const ARCHIVED = 'archived';
 
     public function __construct(ManagerRegistry $registry)
@@ -27,32 +31,12 @@ class MaintenanceRepository extends ServiceEntityRepository
      *
      * @return Maintenance[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->createQueryBuilder('m')
             ->select('m');
 
         return $this->executeQuery($query, $options);
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param array        $options
-     *
-     * @return array
-     */
-    private function executeQuery(QueryBuilder $query, array $options = []): array
-    {
-        if (\array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('l.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->getQuery();
-
-        return $query->execute();
     }
 
     /**

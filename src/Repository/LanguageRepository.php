@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Language;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,9 +15,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Language[]    findAll()
  * @method Language[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LanguageRepository extends ServiceEntityRepository
+class LanguageRepository extends ServiceEntityRepository implements RepositoryInterface
 {
-    const ARCHIVED = 'archived';
+    use RepositoryTrait;
 
     private $temporaryCache = null;
 
@@ -29,7 +31,7 @@ class LanguageRepository extends ServiceEntityRepository
      *
      * @return Language[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->createQueryBuilder('l')
             ->select('l');
@@ -65,25 +67,5 @@ class LanguageRepository extends ServiceEntityRepository
         }
 
         return $this->temporaryCache;
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param array        $options
-     *
-     * @return array
-     */
-    private function executeQuery(QueryBuilder $query, array $options = []): array
-    {
-        if (\array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('l.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->getQuery();
-
-        return $query->execute();
     }
 }

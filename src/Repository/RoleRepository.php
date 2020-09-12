@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Role;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -15,9 +17,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Role[]    findAll()
  * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RoleRepository extends ServiceEntityRepository
+class RoleRepository extends ServiceEntityRepository implements RepositoryInterface
 {
-    const ARCHIVED = 'archived';
+    use RepositoryTrait;
 
     private $temporaryCache = null;
 
@@ -65,31 +67,11 @@ class RoleRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder $query
-     * @param array        $options
-     *
-     * @return array
-     */
-    private function executeQuery(QueryBuilder $query, array $options = []): array
-    {
-        if (array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('r.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->getQuery();
-
-        return $query->execute();
-    }
-
-    /**
      * @param array $options
      *
      * @return Role[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->createQueryBuilder('r')
             ->select('r, t, tr, l')
