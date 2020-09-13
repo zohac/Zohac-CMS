@@ -12,6 +12,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MaintenanceEventsSubscriber implements EventSubscriberInterface
 {
@@ -21,13 +25,19 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     private $maintenanceService;
 
     /**
-     * UserPostCreateSubscriber constructor.
+     * @var Environment
+     */
+    private $twigEnvironment;
+
+    /**
+     * MaintenanceEventsSubscriber constructor.
      *
      * @param MaintenanceService $maintenanceService
      */
-    public function __construct(MaintenanceService $maintenanceService)
+    public function __construct(MaintenanceService $maintenanceService, Environment $twigEnvironment)
     {
         $this->maintenanceService = $maintenanceService;
+        $this->twigEnvironment = $twigEnvironment;
     }
 
     public static function getSubscribedEvents()
@@ -37,7 +47,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
             MaintenanceEvent::UPDATE => ['onMaintenanceUpdate', 0],
             MaintenanceEvent::DELETE => ['onMaintenanceDelete', 0],
             MaintenanceEvent::SOFT_DELETE => ['onMaintenanceSoftDelete', 0],
-            KernelEvents::REQUEST => ['onMaintenance', 1000],
+            KernelEvents::REQUEST => ['onMaintenance', 0],
         ];
     }
 
@@ -89,16 +99,19 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
      * @param RequestEvent $event
      *
      * @throws MaintenanceException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function onMaintenance(RequestEvent $event)
     {
-        if ($this->maintenanceService->isInMaintenance()) {
-            $event->setResponse(
-                new Response(
-                    'site is in maintenance mode',
-                    Response::HTTP_SERVICE_UNAVAILABLE
-                )
-            );
+        if (
+            $this->maintenanceService->isInMaintenance() &&
+            !$this->maintenanceService->isAuthorizedPath($event->getRequest())
+        ) {
+            $template = $this->twigEnvironment->render('maintenance.html.twig');
+
+            $event->setResponse(new Response($template, Response::HTTP_SERVICE_UNAVAILABLE));
             $event->stopPropagation();
         }
     }

@@ -15,6 +15,7 @@ use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
+use Symfony\Component\HttpFoundation\Request;
 
 class MaintenanceService implements ServiceInterface
 {
@@ -194,5 +195,18 @@ class MaintenanceService implements ServiceInterface
         }
 
         throw new MaintenanceException('La maintenance n\'a pas était trouvé.');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function isAuthorizedPath(Request $request): bool
+    {
+        $admin = preg_match('#^/admin/#', $request->getRequestUri());
+        $login = preg_match('#^/login#', $request->getRequestUri());
+
+        return  $admin || $login;
     }
 }
