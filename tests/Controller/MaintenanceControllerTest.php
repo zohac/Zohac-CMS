@@ -81,6 +81,8 @@ class MaintenanceControllerTest extends WebTestCase
         $url = sprintf($url, $this->fixtures['maintenance_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -93,10 +95,14 @@ class MaintenanceControllerTest extends WebTestCase
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function loginUser()
     {
+        $this->client->disableReboot();
+
         /** @var User $user */
         $user = $this->fixtures['user_1'];
 

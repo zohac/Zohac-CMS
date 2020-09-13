@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Maintenance;
 use App\Entity\User;
 use App\Repository\RoleRepository;
 use App\Service\UuidService;
@@ -53,6 +54,11 @@ class UserControllerTest extends WebTestCase
         ]);
 
         foreach ($this->fixtures as $fixture) {
+            if ($fixture instanceof Maintenance) {
+                $fixture->setUuid($this->uuidService->create());
+
+                $entityManager->persist($fixture);
+            }
             if ($fixture instanceof User) {
                 $fixture->setUuid($this->uuidService->create());
 
@@ -82,6 +88,8 @@ class UserControllerTest extends WebTestCase
 
     public function loginUser()
     {
+        $this->client->disableReboot();
+
         /** @var User $user */
         $user = $this->fixtures['user_1'];
 
@@ -99,6 +107,8 @@ class UserControllerTest extends WebTestCase
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -116,6 +126,8 @@ class UserControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorExists('.form-error-wrapper');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testCreateUser()
@@ -134,6 +146,8 @@ class UserControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur créé avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -152,6 +166,8 @@ class UserControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorExists('.form-error-wrapper');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testUpdateUser()
@@ -171,6 +187,8 @@ class UserControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur mis à jour avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testDeleteUser()
@@ -185,6 +203,8 @@ class UserControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Utilisateur supprimé avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function provideUrls()

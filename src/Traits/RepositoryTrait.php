@@ -8,16 +8,16 @@ trait RepositoryTrait
 {
     /**
      * @param QueryBuilder $query
-     * @param array        $options
-     *
+     * @param string $entityType
+     * @param array $options
      * @return array
      */
-    public function executeQuery(QueryBuilder $query, array $options = []): array
+    public function executeQuery(QueryBuilder $query, string $entityType, array $options = []): array
     {
         if (\array_key_exists(self::ARCHIVED, $options)) {
             $archived = (bool) $options[self::ARCHIVED];
 
-            $query = $query->andWhere('l.archived = :archived')
+            $query = $query->andWhere($entityType.'.archived = :archived')
                 ->setParameter(self::ARCHIVED, $archived);
         }
 

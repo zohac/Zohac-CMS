@@ -6,7 +6,6 @@ use App\Entity\Language;
 use App\Interfaces\RepositoryInterface;
 use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class LanguageRepository extends ServiceEntityRepository implements RepositoryInterface
 {
     use RepositoryTrait;
+
+    const ARCHIVED = 'archived';
 
     private $temporaryCache = null;
 
@@ -36,7 +37,7 @@ class LanguageRepository extends ServiceEntityRepository implements RepositoryIn
         $query = $this->createQueryBuilder('l')
             ->select('l');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'l', $options);
     }
 
     /**
@@ -49,7 +50,7 @@ class LanguageRepository extends ServiceEntityRepository implements RepositoryIn
         $query = $this->createQueryBuilder('l')
             ->select('l.uuid');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'l', $options);
     }
 
     /**
@@ -63,7 +64,7 @@ class LanguageRepository extends ServiceEntityRepository implements RepositoryIn
             $query = $this->createQueryBuilder('l')
                 ->select('l.uuid, l.iso6391');
 
-            $this->temporaryCache = $this->executeQuery($query, $options);
+            $this->temporaryCache = $this->executeQuery($query, 'l', $options);
         }
 
         return $this->temporaryCache;

@@ -33,24 +33,24 @@ class LoggerSubscriberTest extends TestCase
             ->getMock();
     }
 
-    public function testEventSubscription()
-    {
-        $this->assertArrayHasKey(UserEvent::PRE_CREATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::CREATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::POST_CREATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::PRE_UPDATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::UPDATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::POST_UPDATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::PRE_DELETE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::DELETE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserEvent::POST_DELETE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::LIST, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::DETAIL, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::CREATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::UPDATE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(UserViewEvent::DELETE, LoggerSubscriber::getSubscribedEvents());
-        $this->assertArrayHasKey(KernelEvents::EXCEPTION, LoggerSubscriber::getSubscribedEvents());
-    }
+//    public function testEventSubscription()
+//    {
+//        $this->assertArrayHasKey(UserEvent::PRE_CREATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::CREATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::POST_CREATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::PRE_UPDATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::UPDATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::POST_UPDATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::PRE_DELETE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::DELETE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserEvent::POST_DELETE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserViewEvent::LIST, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserViewEvent::DETAIL, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserViewEvent::CREATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserViewEvent::UPDATE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(UserViewEvent::DELETE, LoggerSubscriber::getSubscribedEvents());
+//        $this->assertArrayHasKey(KernelEvents::EXCEPTION, LoggerSubscriber::getSubscribedEvents());
+//    }
 
     public function testOnEvents()
     {

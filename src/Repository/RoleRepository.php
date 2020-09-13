@@ -5,10 +5,8 @@ namespace App\Repository;
 use App\Entity\Role;
 use App\Interfaces\RepositoryInterface;
 use App\Traits\RepositoryTrait;
-use function array_key_exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,6 +18,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class RoleRepository extends ServiceEntityRepository implements RepositoryInterface
 {
     use RepositoryTrait;
+
+    const ARCHIVED = 'archived';
 
     private $temporaryCache = null;
 
@@ -60,7 +60,7 @@ class RoleRepository extends ServiceEntityRepository implements RepositoryInterf
             $query = $this->createQueryBuilder('r')
                 ->select('r.uuid, r.name');
 
-            $this->temporaryCache = $this->executeQuery($query, $options);
+            $this->temporaryCache = $this->executeQuery($query, 'r',$options);
         }
 
         return $this->temporaryCache;
@@ -79,6 +79,6 @@ class RoleRepository extends ServiceEntityRepository implements RepositoryInterf
             ->leftJoin('t.translations', 'tr')
             ->leftJoin('tr.language', 'l');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'r',$options);
     }
 }

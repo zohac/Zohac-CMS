@@ -6,7 +6,6 @@ use App\Entity\Parameter;
 use App\Interfaces\RepositoryInterface;
 use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class ParameterRepository extends ServiceEntityRepository implements RepositoryInterface
 {
     use RepositoryTrait;
+
+    const ARCHIVED = 'archived';
 
     /**
      * ParameterRepository constructor.
@@ -39,6 +40,6 @@ class ParameterRepository extends ServiceEntityRepository implements RepositoryI
         $query = $this->createQueryBuilder('p')
             ->select('p');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'p', $options);
     }
 }

@@ -27,6 +27,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 {
     use RepositoryTrait;
 
+    const ARCHIVED = 'archived';
     const USER = 'u, r, l';
     const USER_ROLES = 'u.roles';
     const USER_LANGUAGE = 'u.language';
@@ -128,7 +129,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter(self::ARCHIVED, $archived);
         }
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'u', $options);
     }
 
     private function getQuery(): QueryBuilder

@@ -81,10 +81,14 @@ class LanguageControllerTest extends WebTestCase
         $url = sprintf($url, $this->fixtures['language_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function loginUser()
     {
+        $this->client->disableReboot();
+
         /** @var User $user */
         $user = $this->fixtures['user_1'];
 
@@ -102,6 +106,8 @@ class LanguageControllerTest extends WebTestCase
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -118,6 +124,8 @@ class LanguageControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorExists('.form-error-wrapper');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testCreateLanguage()
@@ -138,6 +146,8 @@ class LanguageControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue créée avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -155,6 +165,8 @@ class LanguageControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorExists('.form-error-wrapper');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testUpdateLanguage()
@@ -176,6 +188,8 @@ class LanguageControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue mise à jour avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function testDeleteLanguage()
@@ -190,6 +204,8 @@ class LanguageControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Langue supprimée avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function provideUrls()

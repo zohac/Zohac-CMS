@@ -11,6 +11,7 @@ use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class MaintenanceEventsSubscriber implements EventSubscriberInterface
 {
@@ -36,7 +37,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
             MaintenanceEvent::UPDATE => ['onMaintenanceUpdate', 0],
             MaintenanceEvent::DELETE => ['onMaintenanceDelete', 0],
             MaintenanceEvent::SOFT_DELETE => ['onMaintenanceSoftDelete', 0],
-            'kernel.request' => ['onMaintenance', 0],
+            KernelEvents::REQUEST => ['onMaintenance', 1000],
         ];
     }
 
@@ -92,8 +93,6 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     public function onMaintenance(RequestEvent $event)
     {
         if ($this->maintenanceService->isInMaintenance()) {
-            dump($event);
-
             $event->setResponse(
                 new Response(
                     'site is in maintenance mode',

@@ -6,7 +6,6 @@ use App\Entity\Maintenance;
 use App\Interfaces\RepositoryInterface;
 use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,7 +35,7 @@ class MaintenanceRepository extends ServiceEntityRepository implements Repositor
         $query = $this->createQueryBuilder('m')
             ->select('m');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'm', $options);
     }
 
     /**

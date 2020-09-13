@@ -77,10 +77,14 @@ class RoleControllerTest extends WebTestCase
         $url = sprintf($url, $this->fixtures['role_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function loginUser()
     {
+        $this->client->disableReboot();
+
         /** @var User $user */
         $user = $this->fixtures['user_1'];
 
@@ -98,6 +102,8 @@ class RoleControllerTest extends WebTestCase
         $url = sprintf($url, $this->uuidService->create());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+
+        $this->client->getCookieJar()->clear();
     }
 
     /**
@@ -118,6 +124,8 @@ class RoleControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists('.alert.alert-success');
         $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
+
+        $this->client->getCookieJar()->clear();
     }
 
     public function provideUrls()

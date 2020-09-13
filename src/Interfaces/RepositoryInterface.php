@@ -6,18 +6,18 @@ use Doctrine\ORM\QueryBuilder;
 
 interface RepositoryInterface
 {
-    const ARCHIVED = 'archived';
-
     /**
      * @param array $options
+     *
      * @return array
      */
     public function findAllInOneRequest(array $options = []): array;
 
     /**
      * @param QueryBuilder $query
+     * @param string $entityType
      * @param array $options
      * @return array
      */
-    public function executeQuery(QueryBuilder $query, array $options = []): array;
+    public function executeQuery(QueryBuilder $query, string $entityType, array $options = []): array;
 }
