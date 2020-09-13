@@ -60,7 +60,7 @@ class RoleRepository extends ServiceEntityRepository implements RepositoryInterf
             $query = $this->createQueryBuilder('r')
                 ->select('r.uuid, r.name');
 
-            $this->temporaryCache = $this->executeQuery($query, 'r',$options);
+            $this->temporaryCache = $this->executeQuery($query, 'r', $options);
         }
 
         return $this->temporaryCache;
@@ -79,6 +79,6 @@ class RoleRepository extends ServiceEntityRepository implements RepositoryInterf
             ->leftJoin('t.translations', 'tr')
             ->leftJoin('tr.language', 'l');
 
-        return $this->executeQuery($query, 'r',$options);
+        return $this->executeQuery($query, 'r', $options);
     }
 }

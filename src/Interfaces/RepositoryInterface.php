@@ -15,8 +15,9 @@ interface RepositoryInterface
 
     /**
      * @param QueryBuilder $query
-     * @param string $entityType
-     * @param array $options
+     * @param string       $entityType
+     * @param array        $options
+     *
      * @return array
      */
     public function executeQuery(QueryBuilder $query, string $entityType, array $options = []): array;
