@@ -26,7 +26,7 @@ class DefaultController extends AbstractController implements ControllerInterfac
      */
     public function defaultIndex(): Response
     {
-        $this->getViewService()->setData('base.html.twig');
+        $this->getViewService()->setData('home/home.html.twig');
 
         $this->dispatchEvent(IndexViewEvent::INDEX, ['viewService' => $this->getViewService()]);
 
