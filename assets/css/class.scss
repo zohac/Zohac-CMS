@@ -1,0 +1,26 @@
+@import "color";
+
+.p-15 {
+  padding: 15px;
+}
+
+.m-15 {
+  margin: 15px;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.bg-linear-gradient {
+  background: $main_color;
+  background: linear-gradient(145deg, $main_color 0%, $second_color 100%);
+}
+
+.bg-dark {
+  background-color: $main_color_dark;
+}
+
+.text-color {
+  color: $third_color;
+}
