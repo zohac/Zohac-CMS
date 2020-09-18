@@ -19,6 +19,12 @@
 
 .bg-dark {
   background-color: $main_color_dark;
+  color: $text_color_light;
+}
+
+.bg-light {
+  background-color: $third_color;
+  color: $text_color_dark;
 }
 
 .text-color {
