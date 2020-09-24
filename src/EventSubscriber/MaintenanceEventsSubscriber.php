@@ -107,7 +107,8 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     {
         if (
             $this->maintenanceService->isInMaintenance() &&
-            !$this->maintenanceService->isAuthorizedPath($event->getRequest())
+            !$this->maintenanceService->isAuthorizedPath($event->getRequest()) &&
+            !$this->maintenanceService->isAuthorizedIP($event->getRequest())
         ) {
             $template = $this->twigEnvironment->render('maintenance.html.twig');
 

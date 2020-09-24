@@ -209,4 +209,18 @@ class MaintenanceService implements ServiceInterface
 
         return  $admin || $login;
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function isAuthorizedIP(Request $request): bool
+    {
+        $ips = $this->repository->getAuthorizedIP();
+
+        $clientIP = $request->getClientIp();
+
+        return in_array($clientIP, $ips);
+    }
 }

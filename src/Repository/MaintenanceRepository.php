@@ -51,4 +51,11 @@ class MaintenanceRepository extends ServiceEntityRepository implements Repositor
 
         return $maintenances[0];
     }
+
+    public function getAuthorizedIP(): array
+    {
+        $maintenace = $this->getMaintenance();
+
+        return $maintenace->getIps();
+    }
 }

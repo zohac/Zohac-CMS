@@ -28,7 +28,7 @@
 
     <div>
         {{ form_label(form.ips) }}
-        <ul id="role-fields-lit"
+        <ul id="maintenance-fields-list"
             data-prototype="{{ form_widget(form.ips.vars.prototype)|e }}"
             data-widget-tags="{{ 'li'|e }}"
             data-widget-counter="{{ form.ips|length }}">
@@ -45,7 +45,7 @@
 
         <button type="button"
                 id="add-another-collection-widget"
-                data-list-selector="role-fields-list">{% trans from 'role' %}Add ip address{% endtrans %}</button>
+                data-list-selector="maintenance-fields-list">{% trans from 'role' %}Add ip address{% endtrans %}</button>
     </div>
 
     <div>
