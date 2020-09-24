@@ -1,9 +1,11 @@
 {# Flash messages defined by the bundle controllers are displayed. #}
 
-{% if app.session.flashbag.all() is not empty %}
+{% set flashMessages = app.session.flashbag.all() %}
+
+{% if flashMessages is not empty %}
 
     <div class="st-message-container">
-        {% for key, messages in app.session.flashbag.all() %}
+        {% for key, messages in flashMessages %}
             {% for content in messages %}
                 <div class="st-message">
                     <div class="container mt-3 alert alert-{{ key }} alert-dismissible fade show" role="alert">

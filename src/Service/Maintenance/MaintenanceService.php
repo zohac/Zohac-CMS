@@ -15,7 +15,6 @@ use App\Service\EntityService;
 use App\Service\EventService;
 use App\Service\FlashBagService;
 use ReflectionException;
-use Symfony\Component\HttpFoundation\Request;
 
 class MaintenanceService implements ServiceInterface
 {
@@ -184,6 +183,19 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
+     * @param string $clientIP
+     * @param string $uri
+     *
+     * @return bool
+     *
+     * @throws MaintenanceException
+     */
+    public function isAuthorized(string $clientIP, string $uri)
+    {
+        return $this->isInMaintenance() && !$this->isAuthorizedPath($uri) && !$this->isAuthorizedIP($clientIP);
+    }
+
+    /**
      * @return bool
      *
      * @throws MaintenanceException
@@ -198,28 +210,26 @@ class MaintenanceService implements ServiceInterface
     }
 
     /**
-     * @param Request $request
+     * @param string $uri
      *
      * @return bool
      */
-    public function isAuthorizedPath(Request $request): bool
+    public function isAuthorizedPath(string $uri): bool
     {
-        $admin = preg_match('#^/admin/#', $request->getRequestUri());
-        $login = preg_match('#^/login#', $request->getRequestUri());
+        $admin = preg_match('#^/admin/#', $uri);
+        $login = preg_match('#^/login#', $uri);
 
         return  $admin || $login;
     }
 
     /**
-     * @param Request $request
+     * @param string $clientIP
      *
      * @return bool
      */
-    public function isAuthorizedIP(Request $request): bool
+    public function isAuthorizedIP(string $clientIP): bool
     {
         $ips = $this->repository->getAuthorizedIP();
-
-        $clientIP = $request->getClientIp();
 
         return in_array($clientIP, $ips);
     }

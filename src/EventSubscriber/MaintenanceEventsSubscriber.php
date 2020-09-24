@@ -31,8 +31,8 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
 
     /**
      * MaintenanceEventsSubscriber constructor.
-     *
      * @param MaintenanceService $maintenanceService
+     * @param Environment $twigEnvironment
      */
     public function __construct(MaintenanceService $maintenanceService, Environment $twigEnvironment)
     {
@@ -105,11 +105,9 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
      */
     public function onMaintenance(RequestEvent $event)
     {
-        if (
-            $this->maintenanceService->isInMaintenance() &&
-            !$this->maintenanceService->isAuthorizedPath($event->getRequest()) &&
-            !$this->maintenanceService->isAuthorizedIP($event->getRequest())
-        ) {
+        $request = $event->getRequest();
+
+        if ($this->maintenanceService->isAuthorized($request->getClientIp(), $request->getRequestUri())) {
             $template = $this->twigEnvironment->render('maintenance.html.twig');
 
             $event->setResponse(new Response($template, Response::HTTP_SERVICE_UNAVAILABLE));
