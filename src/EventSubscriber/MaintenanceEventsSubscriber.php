@@ -6,16 +6,14 @@ use App\Event\Maintenance\MaintenanceEvent;
 use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Exception\MaintenanceException;
+use App\Service\Maintenance\MaintenanceResponseService;
 use App\Service\Maintenance\MaintenanceService;
+use App\Service\ResponseService;
 use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Twig\Error as TwigError;
 
 class MaintenanceEventsSubscriber implements EventSubscriberInterface
 {
@@ -25,19 +23,20 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     private $maintenanceService;
 
     /**
-     * @var Environment
+     * @var ResponseService
      */
-    private $twigEnvironment;
+    private $responseService;
 
     /**
      * MaintenanceEventsSubscriber constructor.
-     * @param MaintenanceService $maintenanceService
-     * @param Environment $twigEnvironment
+     *
+     * @param MaintenanceService         $maintenanceService
+     * @param MaintenanceResponseService $responseService
      */
-    public function __construct(MaintenanceService $maintenanceService, Environment $twigEnvironment)
+    public function __construct(MaintenanceService $maintenanceService, MaintenanceResponseService $responseService)
     {
         $this->maintenanceService = $maintenanceService;
-        $this->twigEnvironment = $twigEnvironment;
+        $this->responseService = $responseService;
     }
 
     public static function getSubscribedEvents()
@@ -99,18 +98,18 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
      * @param RequestEvent $event
      *
      * @throws MaintenanceException
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws TwigError\LoaderError
+     * @throws TwigError\RuntimeError
+     * @throws TwigError\SyntaxError
      */
     public function onMaintenance(RequestEvent $event)
     {
         $request = $event->getRequest();
 
-        if ($this->maintenanceService->isAuthorized($request->getClientIp(), $request->getRequestUri())) {
-            $template = $this->twigEnvironment->render('maintenance.html.twig');
+        if ($this->maintenanceService->isNotAuthorized($request->getClientIp(), $request->getRequestUri())) {
+            $response = $this->responseService->getResponse('maintenance.html.twig', $request->getRequestUri());
 
-            $event->setResponse(new Response($template, Response::HTTP_SERVICE_UNAVAILABLE));
+            $event->setResponse($response);
             $event->stopPropagation();
         }
     }

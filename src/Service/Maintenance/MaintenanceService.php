@@ -190,7 +190,7 @@ class MaintenanceService implements ServiceInterface
      *
      * @throws MaintenanceException
      */
-    public function isAuthorized(string $clientIP, string $uri)
+    public function isNotAuthorized(string $clientIP, string $uri)
     {
         return $this->isInMaintenance() && !$this->isAuthorizedPath($uri) && !$this->isAuthorizedIP($clientIP);
     }
@@ -202,7 +202,7 @@ class MaintenanceService implements ServiceInterface
      */
     public function isInMaintenance(): bool
     {
-        if ($maintenance = $this->repository->getMaintenance()) {
+        if ($maintenance = $this->getMaintenance()) {
             return $maintenance->getMode();
         }
 
@@ -232,5 +232,10 @@ class MaintenanceService implements ServiceInterface
         $ips = $this->repository->getAuthorizedIP();
 
         return in_array($clientIP, $ips);
+    }
+
+    public function getMaintenance()
+    {
+        return $this->repository->getMaintenance();
     }
 }
