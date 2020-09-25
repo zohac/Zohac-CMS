@@ -8,7 +8,6 @@ use App\Exception\HydratorException;
 use App\Exception\MaintenanceException;
 use App\Service\Maintenance\MaintenanceResponseService;
 use App\Service\Maintenance\MaintenanceService;
-use App\Service\ResponseService;
 use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -23,7 +22,7 @@ class MaintenanceEventsSubscriber implements EventSubscriberInterface
     private $maintenanceService;
 
     /**
-     * @var ResponseService
+     * @var MaintenanceResponseService
      */
     private $responseService;
 

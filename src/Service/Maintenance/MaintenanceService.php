@@ -234,7 +234,10 @@ class MaintenanceService implements ServiceInterface
         return in_array($clientIP, $ips);
     }
 
-    public function getMaintenance()
+    /**
+     * @return Maintenance
+     */
+    public function getMaintenance(): Maintenance
     {
         return $this->repository->getMaintenance();
     }
