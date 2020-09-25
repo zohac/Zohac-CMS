@@ -54,8 +54,18 @@ Encore
         config.corejs = 3;
     })
 
+    // .enableLessLoader()
+    .addStyleEntry('tailwind', './assets/css/tailwind.css')
+    // enable post css loader
+    .enablePostCssLoader((options) => {
+        options.config = {
+            // directory where the postcss.config.js file is stored
+            path: './postcss.config.js'
+        };
+    })
+
     // enables Sass/SCSS support
-    //.enableSassLoader()
+    .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

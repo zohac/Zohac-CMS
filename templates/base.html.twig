@@ -1,35 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+            {{ encore_entry_link_tags('tailwind') }}
         {% endblock %}
     </head>
-    <body>
+    <body class="flex flex-col justify-center items-center w-screen max-w-screen h-auto min-h-screen bg-gradient-to-r from-aubergine-canonical-100 to-orange-ubuntu-100">
 
-        {# Flash messages defined by the bundle controllers are displayed. #}
-        <div class="st-message-container">
-            {% for key, messages in app.session.flashbag.all() %}
-                {% for content in messages %}
-                    <div class="st-message">
-                        <div class="container mt-3 alert alert-{{ key }} alert-dismissible fade show" role="alert">
-                            <div>{{ content.title }}</div>
-                            <div>{{ content.message|raw }}</div>
-                            {% if content.context is defined %}
-                            <div>{{ content.context|raw }}</div>
-                            {% endif %}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        </div>
+        {% include 'flash_message.html.twig' %}
 
-        {% block body %}{% endblock %}
+        {% include 'partial/header.html.twig' %}
+
+        <main class="flex flex-wrap justify-center items-center xl:flex-no-wrap xl:items-center w-screen max-w-screen h-auto p-10 xl:mt-auto mb-auto">
+            {% block body %}{% endblock %}
+        </main>
+
+{#        {% include 'partial/content.html.twig' %}#}
+
+        {% include 'partial/footer.html.twig' %}
+
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
