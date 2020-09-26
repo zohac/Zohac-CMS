@@ -77,8 +77,23 @@ services:
     App\Command\src\Service\Generator:
         public: true
 
-    App\Command\src\Helper\CrudHelper:
+    App\Command\src\Helper\CommandHelper:
         arguments:
             - '@App\Command\src\Helper\DoctrineHelper'
             - '@App\Command\src\Service\Generator'
             - '%kernel.project_dir%'
+
+    App\EventSubscriber\LanguageEventsSubscriber:
+        lazy: true
+    App\EventSubscriber\LocaleSubscriber:
+        lazy: true
+    App\EventSubscriber\LoggerSubscriber:
+        lazy: true
+    App\EventSubscriber\MaintenanceEventsSubscriber:
+        lazy: true
+    App\EventSubscriber\ParameterEventsSubscriber:
+        lazy: true
+    App\EventSubscriber\RoleEventsSubscriber:
+        lazy: true
+    App\EventSubscriber\UserEventsSubscriber:
+        lazy: true
