@@ -113,11 +113,14 @@ module.exports = {
         15: '#F2F1F0',
         10: '#F6F6F5',
       },
-      'grey-cool': {
-        100: '#333333',
+      'grey': {
+        'cool': '#333333',
+        'ubuntu': '#111111',
       },
-      'grey-ubuntu': {
-        100: '#111111',
+      'shell': {
+        'blue': '#34659A',
+        'green': '#4E9A06',
+        'red': '#CC0000',
       }
     }
   },
