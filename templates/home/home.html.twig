@@ -9,7 +9,7 @@
         <div class="flex flex-col w-full xl:w-auto xl:flex-wrap xl:flex-row bg-grey-warm-20 text-grey-cool rounded-lg xl:rounded shadow-lg overflow-hidden transition-all">
             <img src="assets/images/portrait.jpg"
                  alt="portrait"
-                 class="w-1/2 xl:w-1/4 h-auto rounded-full ml-auto mr-auto mt-10 xl:m-0 xl:p-5">
+                 class="w-1/2 xl:w-1/4 h-auto rounded-full ml-auto mr-auto mt-10 xl:m-0 xl:p-5 hover:animate-pulse">
             <div class="flex flex-col justify-center w-auto m-10 text-center xl:text-left xl:w-2/4 xl:m-0 xl:p-5">
                 <span class="text-6xl xl:text-2xl font-bold">Simon JOUAN</span>
                 <span class="text-4xl xl:text-base text-grey-warm-100">Développeur Web FullStack</span>
@@ -36,7 +36,7 @@
 
         <div id="shell-simulator"
              class="h-full w-full text-grey-warm-20 hidden"
-             data-httphost="{{ httpHost }}"
+             data-http-host="{{ httpHost }}"
              data-username="{{ username }}">
            <div id="shell-simulator-header" class="bg-grey-cool text-center w-full h-auto rounded-t p-1">{{ httpHost }}</div>
             <div id="shell-simulator-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1">

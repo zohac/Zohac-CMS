@@ -54,6 +54,9 @@ Encore
         config.useBuiltIns = 'usage';
         config.corejs = 3;
     })
+    .configureBabel((config) => {
+        config.plugins.push('@babel/plugin-proposal-class-properties')
+    })
 
     // .enableLessLoader()
     .addStyleEntry('tailwind', './assets/css/tailwind.css')

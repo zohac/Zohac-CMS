@@ -124,7 +124,9 @@ module.exports = {
       }
     }
   },
-  variants: {},
+  variants: {
+    animation: ['responsive', 'hover'],
+  },
   plugins: [],
   prefix: '',
   corePlugins: {

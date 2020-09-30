@@ -1,36 +1,48 @@
 class Shell {
+    form = null;
+    input = null;
+    content = null;
+    simulator = null;
+    userName = null;
+    httpHost = null;
+
+    /**
+     * @param shellForm {string}
+     */
     constructor(shellForm = "shell-form") {
-        this.shellForm = document.getElementById(shellForm);
-        this.initEventListener();
+        this.form = document.getElementById(shellForm);
+        this.input = document.getElementById('shell-input');
+        this.content = document.getElementById("shell-simulator-content");
+        this.simulator = document.getElementById('shell-simulator');
+        this.userName = this.simulator.dataset.username;
+        this.httpHost = this.simulator.dataset.httpHost;
     }
 
-    initEventListener() {
-        this.shellForm.addEventListener("submit", this.shellFormSubmit);
-        document.addEventListener("keydown", this.openShellOnKeyPress);
-    }
-
-    openShellOnKeyPress(event) {
-        if (event.ctrlKey && event.altKey && event.key === "t") {  // case sensitive
-            document.getElementById("shell-simulator").classList.remove("hidden")
+    /**
+     * @param event
+     * @param shell {Shell}
+     */
+    openShellOnKeyPress(event, shell) {
+        if (event.ctrlKey && event.altKey && (event.key === "t" || event.key === "r")) {  // case sensitive
+            shell.simulator.classList.remove("hidden");
+            shell.input.focus();
         }
     }
 
-    shellFormSubmit(event, shell = this) {
-        console.log(shell);
+    /**
+     * @param event
+     * @param shell {Shell}
+     * @returns {boolean}
+     */
+    shellFormSubmit(event, shell) {
+        console.log(event, shell);
         event.preventDefault();
 
         let newElement = document.createElement("div");
-        const shellForm = document.getElementById("shell-form");
-        const shellInput = document.getElementById('shell-input');
-        const shellContent = document.getElementById("shell-simulator-content");
-        const shellSimulator = document.getElementById('shell-simulator');
-        const userName = shellSimulator.dataset.username;
-        const httpHost = shellSimulator.dataset.httphost;
+        newElement.innerHTML = `<span class="text-shell-green">${this.userName}@${this.httpHost}</span>:<span class="text-shell-blue">~</span>$ ${this.shellInput.value}`;
 
-        newElement.innerHTML = '<span class="text-shell-green">' + userName + '@' + httpHost + '</span>:<span class="text-shell-blue">~</span>$' + shellInput.value;
-
-        shellContent.insertBefore(newElement, shellForm);
-        shellInput.value = null;
+        this.shellContent.insertBefore(newElement, this.shellForm);
+        this.shellInput.value = null;
 
         return false;
     }
@@ -41,5 +53,13 @@ class Shell {
     shell(window, document);
 }(function (window, document) {
     const shell = new Shell();
+
+    shell.form.addEventListener("submit", function (event, shell) {
+        shell.shellFormSubmit(event, shell);
+    });
+    document.addEventListener("keydown", function (event, shell) {
+        console.log(shell);
+        // shell.openShellOnKeyPress(event, shell);
+    });
 }));
 
