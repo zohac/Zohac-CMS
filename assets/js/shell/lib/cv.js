@@ -21,17 +21,17 @@ export default class Cv {
     }
 
     /**
-     * @param description {string}
-     */
-    set description(description) {
-        this.description = description;
-    }
-
-    /**
      * @returns {null|string}
      */
     get description() {
         return this.description;
+    }
+
+    /**
+     * @param description {string}
+     */
+    set description(description) {
+        this.description = description;
     }
 
     /**
