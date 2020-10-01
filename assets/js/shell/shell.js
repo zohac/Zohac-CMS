@@ -1,3 +1,7 @@
+import Command from './lib/command';
+import Cmd from './lib/cmd';
+import Cv from './lib/cv';
+
 class Shell {
 
     /**
@@ -115,137 +119,13 @@ class Shell {
     }
 }
 
-class Command {
-
-    /**
-     *
-     * @type {null|string}
-     */
-    name = null;
-
-    command = null;
-
-    /**
-     * @param name {string}
-     * @param command
-     */
-    constructor(name, command) {
-        // if (null === this.command || null === this.functionToCall) {
-        //     throw 'command or functionToCall can\'t be null';
-        // }
-
-        this.name = name;
-        this.command = command;
-    }
-
-    get name() {
-        return this.name;
-    }
-
-    get command() {
-        return this.command;
-    }
-}
-
-class Cmd {
-    static COMMAND_NAME = 'cmd';
-
-    /**
-     *
-     * @type {null|string}
-     */
-    description = null;
-
-    /**
-     * @type {null|Shell}
-     */
-    shell = null;
-
-    /**
-     * @param shell {Shell}
-     * @param description {null|string}
-     */
-    constructor(shell, description = null) {
-        this.shell = shell;
-        this.description = description
-    }
-
-    /**
-     * @param description {string}
-     */
-    set description(description) {
-        this.description = description;
-    }
-
-    /**
-     * @returns {null|string}
-     */
-    get description() {
-        return this.description;
-    }
-
-    /**
-     * @returns {null|HTMLDivElement}
-     */
-    execute() {
-        let newElement = null;
-        for (const command of this.shell.command) {
-            newElement = document.createElement("div");
-            newElement.className = "flex w-full";
-            newElement.innerHTML = `<div class="w-20 mr-4">${command.name}</div>${command.command.description}`;
-
-            this.shell.content.insertBefore(newElement, this.shell.form);
-        }
-
-        return newElement;
-    }
-}
-
-class test {
-    static COMMAND_NAME = 'test';
-
-    /**
-     *
-     * @type {null|string}
-     */
-    description = null;
-
-    /**
-     * @param description {null|string}
-     */
-    constructor(description = null) {
-        this.description = description
-    }
-
-    /**
-     * @param description {string}
-     */
-    set description(description) {
-        this.description = description;
-    }
-
-    /**
-     * @returns {null|string}
-     */
-    get description() {
-        return this.description;
-    }
-
-    /**
-     * @returns {HTMLDivElement}
-     */
-    execute() {
-        console.log(this);
-    }
-}
-
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {
     shell(window, document);
 }(function (window, document) {
     const shell = new Shell();
-    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell, 'Affiche les commandes disponible.')));
-    shell.addCommand(new Command(test.COMMAND_NAME, new test('une commande de test.')));
+    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
+    shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
 
     shell.form.addEventListener("submit", function (event) {
         shell.shellFormSubmit(event, shell);
