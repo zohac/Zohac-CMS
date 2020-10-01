@@ -31,7 +31,7 @@ class Shell {
     httpHost = null;
 
     /**
-     * @type {[]}
+     * @type {Command[]}
      */
     command = [];
 
@@ -72,19 +72,44 @@ class Shell {
     }
 
     /**
+     * @param command {string}
+     * @returns {null|HTMLDivElement}
+     */
+    executeCommand(command) {
+        let response = null;
+
+        /**
+         * @param obCmd {Command}
+         */
+        for (const obCmd of this.command) {
+            if (obCmd.name === command) {
+                response = obCmd.command.execute();
+            }
+        }
+        return response;
+    }
+
+    /**
      * @param event
      * @param shell {Shell}
      * @returns {Shell}
      */
     shellFormSubmit(event, shell) {
-        console.log(shell);
         event.preventDefault();
 
         let newElement = document.createElement("div");
-        newElement.innerHTML = `<span class="text-shell-green">${this.userName}@${this.httpHost}</span>:<span class="text-shell-blue">~</span>$ ${this.input.value}`;
+        let inputValue = this.input.value;
+
+        newElement.innerHTML = `<span class="text-shell-green">${this.userName}@${this.httpHost}</span>:
+<span class="text-shell-blue">~</span>$ ${inputValue}`;
 
         this.content.insertBefore(newElement, this.form);
         this.input.value = null;
+
+        const response = this.executeCommand(inputValue);
+        if (response) {
+            this.content.insertBefore(response, this.form);
+        }
 
         return this;
     }
@@ -96,33 +121,121 @@ class Command {
      *
      * @type {null|string}
      */
+    name = null;
+
     command = null;
 
     /**
-     *
-     * @type {null|string}
-     */
-    functionToCall = null;
-
-    /**
+     * @param name {string}
      * @param command
-     * @param functionToCall
      */
-    constructor(command, functionToCall) {
+    constructor(name, command) {
         // if (null === this.command || null === this.functionToCall) {
-        //     throw 'command or funtionToCall can\'t be null';
+        //     throw 'command or functionToCall can\'t be null';
         // }
 
+        this.name = name;
         this.command = command;
-        this.functionToCall = functionToCall
+    }
+
+    get name() {
+        return this.name;
     }
 
     get command() {
         return this.command;
     }
+}
 
-    get functionToCall() {
-        return this.functionToCall;
+class Cmd {
+    static COMMAND_NAME = 'cmd';
+
+    /**
+     *
+     * @type {null|string}
+     */
+    description = null;
+
+    /**
+     * @type {null|Shell}
+     */
+    shell = null;
+
+    /**
+     * @param shell {Shell}
+     * @param description {null|string}
+     */
+    constructor(shell, description = null) {
+        this.shell = shell;
+        this.description = description
+    }
+
+    /**
+     * @param description {string}
+     */
+    set description(description) {
+        this.description = description;
+    }
+
+    /**
+     * @returns {null|string}
+     */
+    get description() {
+        return this.description;
+    }
+
+    /**
+     * @returns {null|HTMLDivElement}
+     */
+    execute() {
+        let newElement = null;
+        for (const command of this.shell.command) {
+            newElement = document.createElement("div");
+            newElement.className = "flex w-full";
+            newElement.innerHTML = `<div class="w-20 mr-4">${command.name}</div>${command.command.description}`;
+
+            this.shell.content.insertBefore(newElement, this.shell.form);
+        }
+
+        return newElement;
+    }
+}
+
+class test {
+    static COMMAND_NAME = 'test';
+
+    /**
+     *
+     * @type {null|string}
+     */
+    description = null;
+
+    /**
+     * @param description {null|string}
+     */
+    constructor(description = null) {
+        this.description = description
+    }
+
+    /**
+     * @param description {string}
+     */
+    set description(description) {
+        this.description = description;
+    }
+
+    /**
+     * @returns {null|string}
+     */
+    get description() {
+        return this.description;
+    }
+
+    /**
+     * @returns {HTMLDivElement}
+     */
+    execute() {
+        console.log(this);
     }
 }
 
@@ -131,8 +244,8 @@ class Command {
     shell(window, document);
 }(function (window, document) {
     const shell = new Shell();
-
-    shell.addCommand(new Command('cmd', 'uneFonction'));
+    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell, 'Affiche les commandes disponible.')));
+    shell.addCommand(new Command(test.COMMAND_NAME, new test('une commande de test.')));
 
     shell.form.addEventListener("submit", function (event) {
         shell.shellFormSubmit(event, shell);
@@ -141,4 +254,3 @@ class Command {
         shell.openShellOnKeyPress(event, shell);
     });
 }));
-
