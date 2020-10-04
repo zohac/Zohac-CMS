@@ -1,8 +1,4 @@
-import Command from './lib/command';
-import Cmd from './lib/cmd';
-import Cv from './lib/cv';
-
-class Shell {
+export default class Shell {
 
     /**
      * @type {HTMLElement}
@@ -40,6 +36,11 @@ class Shell {
     command = [];
 
     /**
+     * @type {[]}
+     */
+    historic = [];
+
+    /**
      * @param shellForm {string}
      */
     constructor(shellForm = "shell-form") {
@@ -50,7 +51,43 @@ class Shell {
         this.userName = this.simulator.dataset.username;
         this.httpHost = this.simulator.dataset.httpHost;
 
-        console.log(this.input);
+        this.init();
+    }
+
+    init() {
+        const scheme = [
+            '&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;',
+            '&nbsp;&nbsp;&nbsp;/$$/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;$$&nbsp;&nbsp;',
+            '&nbsp;&nbsp;/$$/&nbsp;&nbsp;&nbsp;/$$$$$$$&nbsp;/$$&nbsp;\\&nbsp;&nbsp;$$&nbsp;',
+            '&nbsp;/$$/&nbsp;&nbsp;&nbsp;/$$_____/|__/&nbsp;&nbsp;\\&nbsp;&nbsp;$$',
+            '|&nbsp;&nbsp;$$&nbsp;&nbsp;|&nbsp;&nbsp;$$$$$$&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;/$$/',
+            '&nbsp;\\&nbsp;&nbsp;$$&nbsp;&nbsp;\\____&nbsp;&nbsp;$$|&nbsp;$$&nbsp;&nbsp;/$$/&nbsp;',
+            '&nbsp;&nbsp;\\&nbsp;&nbsp;$$&nbsp;/$$$$$$$/|&nbsp;$$&nbsp;/$$/&nbsp;&nbsp;',
+            '&nbsp;&nbsp;&nbsp;\\__/|_______/&nbsp;|&nbsp;$$|__/&nbsp;&nbsp;&nbsp;',
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;|&nbsp;$$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;$$$$$$/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\______/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+        ];
+
+        let newElement = null;
+        const content = this.content;
+        const form = this.form;
+
+        scheme.forEach(function(item) {
+            newElement = document.createElement("div");
+            newElement.className = "flex w-full text-shell-green font-mono";
+            newElement.innerHTML = item;
+
+            content.insertBefore(newElement, form);
+        });
+
+        newElement = document.createElement("div");
+        newElement.className = "flex w-full";
+        newElement.innerHTML = 'Bienvenue, pour voir les commandes disponible commencez par taper \'cmd\'';
+
+        content.insertBefore(newElement, form);
+
+        return this;
     }
 
     /**
@@ -62,6 +99,14 @@ class Shell {
             shell.simulator.classList.remove("hidden");
             shell.input.focus();
         }
+    }
+
+    /**
+     * @param event
+     * @param shell {Shell}
+     */
+    closeShell(event, shell) {
+        shell.simulator.classList.add("hidden");
     }
 
     /**
@@ -94,6 +139,16 @@ class Shell {
     }
 
     /**
+     * @param command {string}
+     * @returns {Shell}
+     */
+    addCommandToHistoric(command) {
+        this.historic.push(command);
+
+        return this;
+    }
+
+    /**
      * @param event
      * @param shell {Shell}
      * @returns {Shell}
@@ -103,6 +158,7 @@ class Shell {
 
         let newElement = document.createElement("div");
         let inputValue = this.input.value;
+        this.addCommandToHistoric(inputValue);
 
         newElement.innerHTML = `<span class="text-shell-green">${this.userName}@${this.httpHost}</span>:
 <span class="text-shell-blue">~</span>$ ${inputValue}`;
@@ -118,19 +174,3 @@ class Shell {
         return this;
     }
 }
-
-// IIFE - Immediately Invoked Function Expression
-(function (shell) {
-    shell(window, document);
-}(function (window, document) {
-    const shell = new Shell();
-    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
-    shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
-
-    shell.form.addEventListener("submit", function (event) {
-        shell.shellFormSubmit(event, shell);
-    });
-    document.addEventListener("keydown", function (event) {
-        shell.openShellOnKeyPress(event, shell);
-    });
-}));

@@ -28,7 +28,7 @@
 
     <section class="xl:flex xl:flex-1 justify-center items-center xl:w-1/2 h-full">
         {% set httpHost = app.request.getHttpHost %}
-        {% if is_granted("ROLE") %}
+        {% if is_granted("ROLE_USER") %}
             {% set username = app.user.username %}
         {% else %}
             {% set username = 'anon.' %}
@@ -38,7 +38,12 @@
              class="h-full w-full text-grey-warm-20 hidden"
              data-http-host="{{ httpHost }}"
              data-username="{{ username }}">
-           <div id="shell-simulator-header" class="bg-grey-cool text-center w-full h-auto rounded-t p-1">{{ httpHost }}</div>
+           <div id="shell-simulator-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1">
+               <div></div>
+               <div>{{ httpHost }}</div>
+               <div id="shell-close" class="cursor-pointer rounded-full m-1 w-4 h-4 bg-gradient-to-br from-shell-red-light to-shell-red-dark shadow-shell">
+               </div>
+           </div>
             <div id="shell-simulator-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1">
                 <form id="shell-form" autocomplete="off">
                     <label class="flex flex-no-wrap">

@@ -15,6 +15,19 @@ module.exports = {
       '7xl': '5rem',
       '8xl': '6rem',
     },
+    boxShadow: {
+      xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
+      none: 'none',
+      shell: '2px 2px 3px rgba(20, 20, 20, 1), -2px -2px 3px rgba(82, 82, 82, 1)',
+    },
     extend: {},
     colors: {
       'orange-ubuntu': {
@@ -115,12 +128,16 @@ module.exports = {
       },
       'grey': {
         'cool': '#333333',
+        'cool-light': '#525252',
+        'cool-dark': '#141414',
         'ubuntu': '#111111',
       },
       'shell': {
         'blue': '#34659A',
         'green': '#4E9A06',
         'red': '#CC0000',
+        'red-light': '#DA0000',
+        'red-dark': '#B80000',
       }
     }
   },
