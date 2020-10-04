@@ -27,32 +27,27 @@
     </section>
 
     <section class="xl:flex xl:flex-1 justify-center items-center xl:w-1/2 h-full">
-        {% set httpHost = app.request.getHttpHost %}
-        {% if is_granted("ROLE_USER") %}
-            {% set username = app.user.username %}
-        {% else %}
-            {% set username = 'anon.' %}
-        {% endif %}
-
-        <div id="shell-simulator"
-             class="h-full w-full text-grey-warm-20 hidden"
-             data-http-host="{{ httpHost }}"
-             data-username="{{ username }}">
-           <div id="shell-simulator-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1">
-               <div></div>
-               <div>{{ httpHost }}</div>
-               <div id="shell-close" class="cursor-pointer rounded-full m-1 w-4 h-4 bg-gradient-to-br from-shell-red-light to-shell-red-dark shadow-shell">
-               </div>
-           </div>
-            <div id="shell-simulator-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1">
-                <form id="shell-form" autocomplete="off">
-                    <label class="flex flex-no-wrap">
-                        <span class="text-shell-green">{{ username }}@{{ httpHost }}</span>:<span class="text-shell-blue">~</span>$
-                        <input id="shell-input" type="text" class="bg-aubergine-dark-100 w-full">
-                    </label>
-                </form>
+        <div class="w-full">
+            Ouvrer le comme si vous étiez sous
+            <div class="relative inline-block">
+                &nbsp;<span class="border-dotted border-b">linux</span>.
+                <div class="absolute z-10 py-1 px-4 w-32 text-center rounded-lg bg-aubergine-dark-100 text-grey-warm-20"
+                     style="bottom: 100%;
+                        left: 50%;
+                        margin-left: -60px;">
+                    'ctrl + alt + t'
+                    <svg class="absolute text-aubergine-dark-100 w-full left-0 top-full h-5"
+                         x="0px"
+                         y="0px"
+                         viewBox="0 0 255 255"
+                         xml:space="preserve">
+                    <polygon class="fill-current" points="0,0 127.5,127.5 255,0"/>
+                </svg>
+                </div>
             </div>
         </div>
+
+        {% include 'shell/shell.html.twig' %}
     </section>
 
 {% endblock %}
