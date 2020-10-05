@@ -18,6 +18,39 @@ function addEventListenerOnShell(shell) {
     });
 }
 
+/**
+ * @param shell {Shell}
+ */
+function moveShell(shell) {
+    let mousePosition;
+    let offset = [0,0];
+    let isDown = false;
+
+    shell.simulator.addEventListener('mousedown', function(e) {
+        isDown = true;
+        offset = [
+            div.offsetLeft - e.clientX,
+            div.offsetTop - e.clientY
+        ];
+    }, true);
+
+    document.addEventListener('mouseup', function() {
+        isDown = false;
+    }, true);
+
+    document.addEventListener('mousemove', function(event) {
+        event.preventDefault();
+        if (isDown) {
+            mousePosition = {
+                x : event.clientX,
+                y : event.clientY
+            };
+            shell.simulator.style.left = (mousePosition.x + offset[0]) + 'px';
+            shell.simulator.style.top  = (mousePosition.y + offset[1]) + 'px';
+        }
+    }, true);
+}
+
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {
     shell(window, document);
@@ -27,4 +60,6 @@ function addEventListenerOnShell(shell) {
     shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
 
     addEventListenerOnShell(shell);
+
+    moveShell(shell);
 }));
