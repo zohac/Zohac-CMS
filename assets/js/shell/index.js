@@ -55,7 +55,12 @@ function moveShell(shell) {
 (function (shell) {
     shell(window, document);
 }(function (window, document) {
-    const shell = new Shell();
+    const options = {
+      width: 600,
+      height: 300,
+    };
+
+    const shell = new Shell(options);
     shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
     shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
 

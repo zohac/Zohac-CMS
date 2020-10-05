@@ -6,7 +6,7 @@
         {% endif %}
 
 <div id="shell-simulator"
-     class="h-1/2 w-1/2 text-grey-warm-20 hidden absolute mx-auto my-auto inset-0 z-20"
+     class="text-grey-warm-20 hidden absolute mx-auto my-auto inset-0 z-20"
      data-http-host="{{ httpHost }}"
      data-username="{{ username }}">
     <div id="shell-simulator-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1">
@@ -15,7 +15,7 @@
         <div id="shell-close" class="cursor-pointer rounded-full m-1 w-4 h-4 bg-gradient-to-br from-shell-red-light to-shell-red-dark shadow-shell">
         </div>
     </div>
-    <div id="shell-simulator-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1">
+    <div id="shell-simulator-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1 overflow-x-auto">
         <form id="shell-form" autocomplete="off">
             <label class="flex flex-no-wrap">
                 <span class="text-shell-green">{{ username }}@{{ httpHost }}</span>:<span class="text-shell-blue">~</span>$

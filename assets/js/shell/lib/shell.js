@@ -41,20 +41,63 @@ export default class Shell {
     historic = [];
 
     /**
-     * @param shellForm {string}
+     * @type {number}
      */
-    constructor(shellForm = "shell-form") {
-        this.form = document.getElementById(shellForm);
-        this.input = document.getElementById('shell-input');
-        this.content = document.getElementById("shell-simulator-content");
+    width = 300;
+
+    /**
+     * @type {number}
+     */
+    height = 200;
+
+
+    /**
+     * @param {Object} options
+     */
+    constructor(options = {}) {
+        if (!this.isEmpty(options)) {
+            this.loadOptions(options);
+        }
+
         this.simulator = document.getElementById('shell-simulator');
+        this.content = document.getElementById('shell-simulator-content');
+        this.input = document.getElementById('shell-input');
+        this.form = document.getElementById('shell-form');
         this.userName = this.simulator.dataset.username;
         this.httpHost = this.simulator.dataset.httpHost;
 
         this.init();
     }
 
+    /**
+     * @param {Object} obj
+     * @returns {boolean}
+     */
+    isEmpty(obj) {
+        for(const key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param {Object} options
+     */
+    loadOptions(options) {
+        for(const key in options) {
+            if(this.hasOwnProperty(key)) {
+                this[key] = options[key];
+            }
+        }
+    }
+
     init() {
+        this.simulator.style.width = this.width + 'px';
+        this.simulator.style.height = this.height + 'px';
+        this.content.style.maxHeight = this.height + 'px';
+
         const scheme = [
             '&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;',
             '&nbsp;&nbsp;&nbsp;/$$/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;$$&nbsp;&nbsp;',
@@ -170,6 +213,8 @@ export default class Shell {
         if (response) {
             this.content.insertBefore(response, this.form);
         }
+
+        this.content.scrollTop = this.content.scrollHeight;
 
         return this;
     }
