@@ -29,8 +29,8 @@ function moveShell(shell) {
     shell.simulator.addEventListener('mousedown', function(e) {
         isDown = true;
         offset = [
-            div.offsetLeft - e.clientX,
-            div.offsetTop - e.clientY
+            shell.simulator.offsetLeft - e.clientX,
+            shell.simulator.offsetTop - e.clientY
         ];
     }, true);
 
