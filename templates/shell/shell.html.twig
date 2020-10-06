@@ -6,10 +6,10 @@
         {% endif %}
 
 <div id="shell-simulator"
-     class="text-grey-warm-20 hidden absolute mx-auto my-auto inset-0 z-20"
+     class="text-grey-warm-20 hidden absolute z-20"
      data-http-host="{{ httpHost }}"
      data-username="{{ username }}">
-    <div id="shell-simulator-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1">
+    <div id="shell-simulator-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1 cursor-move">
         <div></div>
         <div>{{ httpHost }}</div>
         <div id="shell-close" class="cursor-pointer rounded-full m-1 w-4 h-4 bg-gradient-to-br from-shell-red-light to-shell-red-dark shadow-shell">
