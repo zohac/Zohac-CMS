@@ -1,5 +1,16 @@
 module.exports = {
   theme: {
+    extends: {
+      keyframes: {
+        rotateThis: {
+          '0%': {transform: 'rotate(0deg) scale(1)'},
+          '100%': {transform: 'rotate(360deg) scale(1)'},
+        },
+      },
+      animation: {
+        'rotate-this': 'rotateThis 1s linear infinite',
+      },
+    },
     fontSize: {
       'xs': '.75rem',
       'sm': '.875rem',

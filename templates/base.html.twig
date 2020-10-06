@@ -19,15 +19,13 @@
             {% block body %}{% endblock %}
         </main>
 
-{#        {% include 'partial/content.html.twig' %}#}
-
         {% include 'partial/footer.html.twig' %}
+
+        {% include 'shell/shell.html.twig' %}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
             {{ encore_entry_script_tags('shell') }}
         {% endblock %}
-
-        {% include 'shell/shell.html.twig' %}
     </body>
 </html>
