@@ -1,16 +1,5 @@
 module.exports = {
   theme: {
-    extends: {
-      keyframes: {
-        rotateThis: {
-          '0%': {transform: 'rotate(0deg) scale(1)'},
-          '100%': {transform: 'rotate(360deg) scale(1)'},
-        },
-      },
-      animation: {
-        'rotate-this': 'rotateThis 1s linear infinite',
-      },
-    },
     fontSize: {
       'xs': '.75rem',
       'sm': '.875rem',
@@ -38,8 +27,41 @@ module.exports = {
       outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
       none: 'none',
       shell: '2px 2px 3px rgba(20, 20, 20, 1), -2px -2px 3px rgba(82, 82, 82, 1)',
+      slide: '0 0 10px 3px rgba(255,255,255,1)',
     },
-    extend: {},
+    extend: {
+      keyframes: {
+        slide: {
+          '0%': {
+            left: '0',
+            opacity: 1,
+          },
+          '100%': {
+            left: '100vw',
+            opacity: 1,
+          },
+        },
+        'width-100': {
+          '0%': {
+            width: '0',
+            opacity: 1,
+          },
+          '100%': {
+            width: '100vw',
+            opacity: 1,
+          },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 }
+        }
+      },
+      animation: {
+        slide: '2s linear 0s 1 slide',
+        'width-100': '2s linear 0s 1 width-100',
+        'fade-in-4': '4s linear 0s 1 fadeIn',
+      },
+    },
     colors: {
       'orange-ubuntu': {
         100: '#E95420',
