@@ -25,6 +25,7 @@ Encore
      */
     .addEntry('app', './assets/js/app.js')
     .addEntry('CollectionType', './assets/js/CollectionType.js')
+    .addEntry('shell', './assets/js/shell/index.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
@@ -52,6 +53,9 @@ Encore
     .configureBabelPresetEnv((config) => {
         config.useBuiltIns = 'usage';
         config.corejs = 3;
+    })
+    .configureBabel((config) => {
+        config.plugins.push('@babel/plugin-proposal-class-properties')
     })
 
     // .enableLessLoader()

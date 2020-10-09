@@ -15,7 +15,53 @@ module.exports = {
       '7xl': '5rem',
       '8xl': '6rem',
     },
-    extend: {},
+    boxShadow: {
+      xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
+      none: 'none',
+      shell: '2px 2px 3px rgba(20, 20, 20, 1), -2px -2px 3px rgba(82, 82, 82, 1)',
+      slide: '0 0 10px 3px rgba(255,255,255,1)',
+    },
+    extend: {
+      keyframes: {
+        slide: {
+          '0%': {
+            left: '0',
+            opacity: 1,
+          },
+          '100%': {
+            left: '100vw',
+            opacity: 1,
+          },
+        },
+        'width-100': {
+          '0%': {
+            width: '0',
+            opacity: 1,
+          },
+          '100%': {
+            width: '100vw',
+            opacity: 1,
+          },
+        },
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 }
+        }
+      },
+      animation: {
+        slide: '2s linear 0s 1 slide',
+        'width-100': '2s linear 0s 1 width-100',
+        'fade-in-4': '4s linear 0s 1 fadeIn',
+      },
+    },
     colors: {
       'orange-ubuntu': {
         100: '#E95420',
@@ -113,15 +159,24 @@ module.exports = {
         15: '#F2F1F0',
         10: '#F6F6F5',
       },
-      'grey-cool': {
-        100: '#333333',
+      'grey': {
+        'cool': '#333333',
+        'cool-light': '#525252',
+        'cool-dark': '#141414',
+        'ubuntu': '#111111',
       },
-      'grey-ubuntu': {
-        100: '#111111',
+      'shell': {
+        'blue': '#34659A',
+        'green': '#4E9A06',
+        'red': '#CC0000',
+        'red-light': '#DA0000',
+        'red-dark': '#B80000',
       }
     }
   },
-  variants: {},
+  variants: {
+    animation: ['responsive', 'hover'],
+  },
   plugins: [],
   prefix: '',
   corePlugins: {
