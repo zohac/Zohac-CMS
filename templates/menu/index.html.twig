@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List!{% endblock %}
+
+{% block body %}
+<div class="menus-wrapper">
+
+    {% for menu in menus %}
+    <div class="menu-wrapper">
+
+        {% trans from 'menu' %}items{% endtrans %}: {{ menu.items }}<br/>
+        {% trans from 'menu' %}archived{% endtrans %}: {{ menu.archived }}<br/>
+
+        <a href="{{ path('menu.detail', {"uuid": menu.uuid}) }}">{% trans from 'global' %}Detail{% endtrans %}</a>
+    </div>
+    {% endfor %}
+
+</div>
+<a href="{{ path('menu.create') }}">{% trans from 'global' %}Create{% endtrans %}</a>
+{% endblock %}
