@@ -15,6 +15,8 @@ class MenuDto implements DtoInterface
 
     public $uuid;
 
+    public $name;
+
     public $archived;
 
     /**

@@ -21,6 +21,11 @@ class Menu implements EntityInterface
      */
     private $items;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -53,6 +58,18 @@ class Menu implements EntityInterface
                 $item->setMenu(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
