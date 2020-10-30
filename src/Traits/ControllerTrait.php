@@ -87,6 +87,11 @@ trait ControllerTrait
         return $this->viewIndex($entities);
     }
 
+    public function getTemplatePath(): ?string
+    {
+        return defined('self::TEMPLATE') ? self::TEMPLATE.'/' : '';
+    }
+
     /**
      * @param array $entities
      *
@@ -97,7 +102,9 @@ trait ControllerTrait
      */
     public function viewIndex(array $entities): Response
     {
-        $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/index.html.twig', [
+        $path = $this->getTemplatePath().$this->entityService->getEntityNameToLower().'/index.html.twig';
+
+        $this->getViewService()->setData($path, [
             $this->entityService->getEntityNamePlural() => $entities,
         ]);
 
@@ -170,7 +177,9 @@ trait ControllerTrait
     {
         $this->entityService->setEntity($entity);
 
-        $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/detail.html.twig', [
+        $path = $this->getTemplatePath().$this->entityService->getEntityNameToLower().'/detail.html.twig';
+
+        $this->getViewService()->setData($path, [
             $this->entityService->getEntityNameToLower() => $entity,
         ]);
 
@@ -212,7 +221,9 @@ trait ControllerTrait
             return $this->redirectToList();
         }
 
-        $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/type.html.twig', [
+        $path = $this->getTemplatePath().$this->entityService->getEntityNameToLower().'/type.html.twig';
+
+        $this->getViewService()->setData($path, [
             'form' => $form->createView(),
         ]);
 
@@ -279,7 +290,9 @@ trait ControllerTrait
             return $this->redirectToList();
         }
 
-        $this->getViewService()->setData($this->entityService->getEntityNameToLower().'/type.html.twig', [
+        $path = $this->getTemplatePath().$this->entityService->getEntityNameToLower().'/type.html.twig';
+
+        $this->getViewService()->setData($path, [
             'form' => $form->createView(),
         ]);
 
@@ -329,7 +342,7 @@ trait ControllerTrait
             return $this->redirectToList();
         }
 
-        $this->getViewService()->setData('delete.html.twig', [
+        $this->getViewService()->setData($this->getTemplatePath().'/delete.html.twig', [
             'form' => $form->createView(),
             'message' => $service->getDeleteMessage($entity),
         ]);
