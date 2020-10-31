@@ -30,6 +30,8 @@ class LanguageController extends AbstractController implements ControllerInterfa
 {
     use ControllerTrait;
 
+    const TEMPLATE = '@admin';
+
     /**
      * @Route("/", name="language.list", methods={"GET"})
      *
