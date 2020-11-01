@@ -32,7 +32,8 @@
         "symfony/webpack-encore-bundle": "1.7.*",
         "symfony/yaml": "5.1.*",
         "symfonycasts/reset-password-bundle": "^1.1",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

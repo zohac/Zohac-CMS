@@ -8,6 +8,7 @@ parameters:
     locale: 'fr'
     app.log.dev: 'app.dev'
     app.log: 'app'
+    theme_folder: 'ubuntu'
 
 services:
     # default configuration for services in *this* file

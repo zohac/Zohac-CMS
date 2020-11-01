@@ -1,0 +1,112 @@
+<?php
+
+namespace App\DependencyInjection\Manager;
+
+use Exception;
+use \PDO;
+use PDOStatement;
+
+class PDOAdapter implements DataBaseConnectionInterface
+{
+    /**
+     * A PDO instance
+     *
+     * @var PDO|null
+     */
+    protected $DB = null;
+
+    /**
+     * The host name for the connexion to the database
+     *
+     * @var string
+     */
+    private $host;
+
+    /**
+     * The name of the database
+     *
+     * @var string
+     */
+    private $dbname;
+
+    /**
+     * The name of the user for the connexion to the database
+     *
+     * @var string
+     */
+    private $user;
+
+    /**
+     * The password for the connexion to the database
+     *
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @var PDOStatement
+     */
+    private $query = null;
+
+    /**
+     * Retrieving DB connection configuration, and connection
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        // Recording DB connection data
+        $this->host = $config['host'];
+        $this->dbname = $config['dbname'];
+        $this->user = $config['user'];
+        $this->password = $config['password'];
+
+        // DB connection request
+        $this->getConnection();
+    }
+
+    /**
+     * Returns a connection object to the DB by initiating the connection as needed
+     */
+    private function getConnection()
+    {
+        // If the variable is strictly null
+        if ($this->DB === null) {
+            // Create a new connection to DB using PDO
+            $this->DB = new PDO(
+                'mysql:host='.$this->host.';dbname='.$this->dbname.';charset=utf8',
+                $this->user,
+                $this->password,
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            );
+        }
+    }
+
+    public function addQuery(string $query): DataBaseConnectionInterface
+    {
+        $this->query = $this->DB->prepare($query);
+
+        return $this;
+    }
+
+    public function setParameter(string $parameter, $value, $option): DataBaseConnectionInterface
+    {
+        $this->query->bindValue($parameter, $value, $option);
+
+        return $this;
+    }
+
+    /**
+     * @return iterable
+     *
+     * @throws Exception
+     */
+    public function execute(): iterable
+    {
+        if (null === $this->query) {
+            throw new Exception();
+        }
+
+        $this->query->execute();
+        return $this->query->fetch();
+    }
+}
