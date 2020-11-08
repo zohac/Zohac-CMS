@@ -23,6 +23,7 @@ class ParametersCompilerPass implements CompilerPassInterface
             'user' => $_ENV['DB_USER'],
             'password' => $_ENV['DB_PASSWORD'],
         ];
+
         $dataBaseConnection = new PDOAdapter($config);
         $this->parameterManager = new ParameterManager($dataBaseConnection);
     }

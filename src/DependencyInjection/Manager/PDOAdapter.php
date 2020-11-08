@@ -2,7 +2,7 @@
 
 namespace App\DependencyInjection\Manager;
 
-use Exception;
+use App\Exception\PDOAdapterException;
 use PDO;
 use PDOStatement;
 
@@ -13,7 +13,7 @@ class PDOAdapter implements DataBaseConnectionInterface
      *
      * @var PDO|null
      */
-    protected $DB = null;
+    protected $dataBase = null;
 
     /**
      * The host name for the connexion to the database.
@@ -71,9 +71,9 @@ class PDOAdapter implements DataBaseConnectionInterface
     private function getConnection()
     {
         // If the variable is strictly null
-        if (null === $this->DB) {
+        if (null === $this->dataBase) {
             // Create a new connection to DB using PDO
-            $this->DB = new PDO(
+            $this->dataBase = new PDO(
                 'mysql:host='.$this->host.';dbname='.$this->dbname.';charset=utf8',
                 $this->user,
                 $this->password,
@@ -84,7 +84,7 @@ class PDOAdapter implements DataBaseConnectionInterface
 
     public function addQuery(string $query): DataBaseConnectionInterface
     {
-        $this->query = $this->DB->prepare($query);
+        $this->query = $this->dataBase->prepare($query);
 
         return $this;
     }
@@ -99,12 +99,12 @@ class PDOAdapter implements DataBaseConnectionInterface
     /**
      * @return iterable
      *
-     * @throws Exception
+     * @throws PDOAdapterException
      */
     public function execute(): iterable
     {
         if (null === $this->query) {
-            throw new Exception();
+            throw new PDOAdapterException();
         }
 
         $this->query->execute();

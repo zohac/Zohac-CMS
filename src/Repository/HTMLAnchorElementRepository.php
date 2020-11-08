@@ -18,33 +18,4 @@ class HTMLAnchorElementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, HTMLAnchorElement::class);
     }
-
-    // /**
-    //  * @return HTMLAnchorElement[] Returns an array of HTMLAnchorElement objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('h.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?HTMLAnchorElement
-    {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
