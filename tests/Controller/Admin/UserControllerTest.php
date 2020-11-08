@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Admin;
 
 use App\Entity\Maintenance;
 use App\Entity\User;
@@ -50,7 +50,7 @@ class UserControllerTest extends WebTestCase
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {

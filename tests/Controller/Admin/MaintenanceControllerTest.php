@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Admin;
 
-use App\Entity\Role;
+use App\Entity\Maintenance;
 use App\Entity\User;
 use App\Repository\RoleRepository;
 use App\Service\UuidService;
@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleControllerTest extends WebTestCase
+class MaintenanceControllerTest extends WebTestCase
 {
     use FixturesTrait;
 
@@ -31,10 +31,16 @@ class RoleControllerTest extends WebTestCase
      */
     private $uuidService = null;
 
+    /**
+     * @var RoleRepository
+     */
+    private $roleRepository;
+
     public function setUp(): void
     {
         $this->client = static::createClient();
         $this->uuidService = self::$container->get(UuidService::class);
+        $this->roleRepository = self::$container->get(RoleRepository::class);
 
         $this->loadFixtures();
     }
@@ -43,14 +49,12 @@ class RoleControllerTest extends WebTestCase
     {
         /** @var ObjectManager $entityManager */
         $entityManager = self::$container->get('doctrine.orm.default_entity_manager');
-        $roleRepository = self::$container->get(RoleRepository::class);
-
         $this->fixtures = $this->loadFixtureFiles([
-            __DIR__.'/../DataFixtures/Fixtures.yaml',
+            __DIR__.'/../../DataFixtures/Fixtures.yaml',
         ]);
 
         foreach ($this->fixtures as $fixture) {
-            if ($fixture instanceof Role) {
+            if ($fixture instanceof Maintenance) {
                 $fixture->setUuid($this->uuidService->create());
 
                 $entityManager->persist($fixture);
@@ -58,7 +62,7 @@ class RoleControllerTest extends WebTestCase
             if ($fixture instanceof User) {
                 $fixture->setUuid($this->uuidService->create());
 
-                $role = $roleRepository->findOneBy(['id' => $this->fixtures['role_1']]);
+                $role = $this->roleRepository->findOneBy(['id' => $this->fixtures['role_1']]);
                 $fixture->addRole($role);
 
                 $entityManager->persist($fixture);
@@ -74,9 +78,23 @@ class RoleControllerTest extends WebTestCase
     {
         $this->loginUser();
 
-        $url = sprintf($url, $this->fixtures['role_1']->getUuid());
+        $url = sprintf($url, $this->fixtures['maintenance_1']->getUuid());
         $this->client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $this->client->getCookieJar()->clear();
+    }
+
+    /**
+     * @dataProvider provideUrlsForRedirection
+     */
+    public function testPageIsRedirectedIfMaintenanceIsNotInDB($url)
+    {
+        $this->loginUser();
+
+        $url = sprintf($url, $this->uuidService->create());
+        $this->client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
         $this->client->getCookieJar()->clear();
     }
@@ -92,72 +110,17 @@ class RoleControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    /**
-     * @dataProvider provideUrlsForRedirection
-     */
-    public function testPageIsRedirectedIfRoleIsNotInDB($url)
-    {
-        $this->loginUser();
-
-        $url = sprintf($url, $this->uuidService->create());
-        $this->client->request('GET', $url);
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-
-        $this->client->getCookieJar()->clear();
-    }
-
-    /**
-     * @dataProvider provideRole
-     */
-    public function testCreateRole($role)
-    {
-        $this->loginUser();
-
-        if (isset($role['role[translatable][0][language]'])) {
-            $role['role[translatable][0][language]'] = $this->fixtures['language_1']->getUuid();
-        }
-
-        $crawler = $this->client->request('POST', '/admin/role/create/');
-        $form = $crawler->selectButton('role[save]')->form($role);
-        $this->client->submit($form);
-        $this->assertResponseRedirects('/admin/role/');
-        $this->client->followRedirect();
-        $this->assertSelectorExists('.alert.alert-success');
-        $this->assertSelectorTextContains('div', 'Rôle créé avec succès.');
-
-        $this->client->getCookieJar()->clear();
-    }
-
     public function provideUrls()
     {
-        yield ['/admin/role/'];
-        yield ['/admin/role/%s/'];
-        yield ['/admin/role/create/'];
-        yield ['/admin/role/%s/update/'];
-        yield ['/admin/role/%s/delete/'];
+        yield ['/admin/maintenance/'];
+        yield ['/admin/maintenance/%s/'];
+        yield ['/admin/maintenance/%s/update/'];
     }
 
     public function provideUrlsForRedirection()
     {
-        yield ['/admin/role/%s/'];
-        yield ['/admin/role/%s/update/'];
-        yield ['/admin/role/%s/delete/'];
-    }
-
-    public function provideRole()
-    {
-        yield [
-            [
-                'role[name]' => 'role_test',
-            ],
-        ];
-//        yield [
-//            [
-//                'role[name]' => 'role_test',
-//                'role[translatable][0][message]' => 'message test',
-//                'role[translatable][0][language]' => '',
-//            ],
-//        ];
+        yield ['/admin/maintenance/%s/'];
+        yield ['/admin/maintenance/%s/update/'];
     }
 
     protected function tearDown(): void
