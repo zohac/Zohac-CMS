@@ -1,13 +1,9 @@
 <?php
 
-
 namespace App\DependencyInjection\Compiler;
-
 
 use App\DependencyInjection\Manager\ParameterManager;
 use App\DependencyInjection\Manager\PDOAdapter;
-use App\Entity\Parameter;
-use App\Repository\ParameterRepository;
 use Exception;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,18 +17,28 @@ class ParametersCompilerPass implements CompilerPassInterface
 
     public function __construct()
     {
-        $dataBaseConnection = new PDOAdapter([]);
+        $config = [
+            'host' => 'localhost',
+            'dbname' => $_ENV['DB_NAME'],
+            'user' => $_ENV['DB_USER'],
+            'password' => $_ENV['DB_PASSWORD'],
+        ];
+        $dataBaseConnection = new PDOAdapter($config);
         $this->parameterManager = new ParameterManager($dataBaseConnection);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @throws Exception
      */
     public function process(ContainerBuilder $container)
     {
         $themeFolderParameter = $this->parameterManager->findOneByName('theme_folder');
-        $container->setParameter('theme_folder', $themeFolderParameter->getValue());
+
+        if ($themeFolderParameter) {
+            $themeFolder = $themeFolderParameter->getValue();
+            $container->setParameter('theme_folder', $themeFolder['name']);
+        }
     }
 }

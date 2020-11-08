@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Dto\Parameter\ParameterDto;
 use App\Entity\Parameter;
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\ParameterType;
 use App\Interfaces\ControllerInterface;
@@ -13,6 +14,7 @@ use App\Service\FlashBagService;
 use App\Service\Parameter\ParameterService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,11 +23,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class ParameterController.
  *
- * @Route("/parameter")
+ * @Route("/admin/parameter")
+ * @IsGranted("ROLE_ADMIN")
  */
 class ParameterController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
+
+    const TEMPLATE = '@admin';
 
     /**
      * @Route("/", name="parameter.list", methods={"GET"})
@@ -35,6 +40,7 @@ class ParameterController extends AbstractController implements ControllerInterf
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function parameterIndex(ParameterRepository $parameterRepository): Response
     {
@@ -58,6 +64,7 @@ class ParameterController extends AbstractController implements ControllerInterf
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function parameterShow(?Parameter $parameter = null): Response
     {
@@ -92,6 +99,7 @@ class ParameterController extends AbstractController implements ControllerInterf
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function parameterNew(Request $request, ParameterDto $parameterDto): Response
     {
@@ -114,6 +122,7 @@ class ParameterController extends AbstractController implements ControllerInterf
      * @throws HydratorException
      * @throws ReflectionException
      * @throws DtoHandlerException
+     * @throws EventException
      */
     public function parameterEdit(Request $request, ?Parameter $parameter = null): Response
     {
@@ -139,6 +148,7 @@ class ParameterController extends AbstractController implements ControllerInterf
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function parameterDelete(Request $request, ParameterService $service, ?Parameter $parameter = null): Response
     {

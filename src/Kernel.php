@@ -3,9 +3,9 @@
 namespace App;
 
 use App\DependencyInjection\Compiler\ParametersCompilerPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use function dirname;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;

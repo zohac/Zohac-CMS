@@ -3,41 +3,41 @@
 namespace App\DependencyInjection\Manager;
 
 use Exception;
-use \PDO;
+use PDO;
 use PDOStatement;
 
 class PDOAdapter implements DataBaseConnectionInterface
 {
     /**
-     * A PDO instance
+     * A PDO instance.
      *
      * @var PDO|null
      */
     protected $DB = null;
 
     /**
-     * The host name for the connexion to the database
+     * The host name for the connexion to the database.
      *
      * @var string
      */
     private $host;
 
     /**
-     * The name of the database
+     * The name of the database.
      *
      * @var string
      */
     private $dbname;
 
     /**
-     * The name of the user for the connexion to the database
+     * The name of the user for the connexion to the database.
      *
      * @var string
      */
     private $user;
 
     /**
-     * The password for the connexion to the database
+     * The password for the connexion to the database.
      *
      * @var string
      */
@@ -49,7 +49,8 @@ class PDOAdapter implements DataBaseConnectionInterface
     private $query = null;
 
     /**
-     * Retrieving DB connection configuration, and connection
+     * Retrieving DB connection configuration, and connection.
+     *
      * @param array $config
      */
     public function __construct(array $config)
@@ -65,18 +66,18 @@ class PDOAdapter implements DataBaseConnectionInterface
     }
 
     /**
-     * Returns a connection object to the DB by initiating the connection as needed
+     * Returns a connection object to the DB by initiating the connection as needed.
      */
     private function getConnection()
     {
         // If the variable is strictly null
-        if ($this->DB === null) {
+        if (null === $this->DB) {
             // Create a new connection to DB using PDO
             $this->DB = new PDO(
                 'mysql:host='.$this->host.';dbname='.$this->dbname.';charset=utf8',
                 $this->user,
                 $this->password,
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
         }
     }
@@ -88,7 +89,7 @@ class PDOAdapter implements DataBaseConnectionInterface
         return $this;
     }
 
-    public function setParameter(string $parameter, $value, $option): DataBaseConnectionInterface
+    public function setParameter(string $parameter, $value, $option = null): DataBaseConnectionInterface
     {
         $this->query->bindValue($parameter, $value, $option);
 
@@ -107,6 +108,11 @@ class PDOAdapter implements DataBaseConnectionInterface
         }
 
         $this->query->execute();
-        return $this->query->fetch();
+
+        if ($response = $this->query->fetch()) {
+            return $response;
+        }
+
+        return [];
     }
 }

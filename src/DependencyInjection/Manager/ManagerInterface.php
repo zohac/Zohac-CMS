@@ -14,7 +14,7 @@ interface ManagerInterface
     /**
      * @param string $name
      *
-     * @return Parameter
+     * @return Parameter|null
      */
-    public function findOneByName(string $name): Parameter;
+    public function findOneByName(string $name): ?Parameter;
 }

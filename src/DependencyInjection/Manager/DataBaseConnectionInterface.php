@@ -2,7 +2,6 @@
 
 namespace App\DependencyInjection\Manager;
 
-use App\DependencyInjection\Manager\PDOAdapter;
 use Exception;
 
 interface DataBaseConnectionInterface
@@ -18,9 +17,10 @@ interface DataBaseConnectionInterface
      * @param string $parameter
      * @param $value
      * @param $option
+     *
      * @return $this
      */
-    public function setParameter(string $parameter, $value, $option): self;
+    public function setParameter(string $parameter, $value, $option = null): self;
 
     /**
      * @return iterable
