@@ -42,8 +42,8 @@ class Kernel extends BaseKernel
     /**
      * @param ContainerBuilder $container
      */
-    protected function build(ContainerBuilder $container): void
+    /*protected function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ParametersCompilerPass());
-    }
+    }*/
 }
