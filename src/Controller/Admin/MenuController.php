@@ -29,6 +29,8 @@ class MenuController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
 
+    const TEMPLATE = '@admin';
+
     /**
      * @Route("/", name="menu.list", methods={"GET"})
      *

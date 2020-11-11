@@ -31,6 +31,8 @@ class UserController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
 
+    const TEMPLATE = '@admin';
+
     /**
      * @Route("/", name="user.list", methods={"GET"})
      *

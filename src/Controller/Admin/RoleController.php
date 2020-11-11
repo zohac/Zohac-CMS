@@ -31,6 +31,8 @@ class RoleController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
 
+    const TEMPLATE = '@admin';
+
     /**
      * @Route("/", name="role.list", methods={"GET"})
      *
