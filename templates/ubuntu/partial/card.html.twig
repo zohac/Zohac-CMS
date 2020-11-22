@@ -1,0 +1,29 @@
+{% use 'partial/class.html.twig' %}
+
+{#
+options = {
+    'class': '',
+    'attrs': {
+        'attr_1': 'value',
+        'attr_1': 'value',
+        ...
+    }
+}
+#}
+{% macro card(card_content, card_picture = '', options = '') %}
+
+    <article class="{{ block('card_class') }}{% if options.class is defined %} {{ options.class }}{% endif %}"
+        {% if options.attrs is defined %}
+            {% for attr, value in options.attrs %}
+                {{ ' ' ~ attr ~ '="' ~ value ~ '"' }}
+            {% endfor %}
+        {% endif %}
+    >
+
+        {{ card_picture }}
+
+        {{ card_content }}
+
+    </article>
+
+{% endmacro %}

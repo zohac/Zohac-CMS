@@ -1,34 +1,52 @@
 {% extends 'base.html.twig' %}
 
+{% from 'partial/card.html.twig' import card %}
+{% from 'partial/picture.html.twig' import picture %}
+
 {% block title %}Home!{% endblock %}
 
 {% block body %}
 
+{%  set img = {
+    'sources': {
+        0: {
+            'srcset': 'assets/images/portrait.jpg'
+        }
+    },
+    'img': {
+        'src': 'assets/images/portrait.jpg',
+        'alt': 'portrait',
+        'class': 'rounded-full'
+    }
+} %}
+
+{% set card_content %}
+
+    <div class="flex flex-col justify-center lg:w-1/2 my-10 mx-auto text-center lg:text-left">
+        <h1 class="text-2xl font-bold">Simon JOUAN</h1>
+        <h2 class="text-grey-warm-100">Développeur Web FullStack</h2>
+    </div>
+
+    <div class="flex w-full lg:w-1/4 justify-center items-center bg-aubergine-dark-100 lg:bg-grey-warm-20 text-grey-warm-20 py-2 text-4xl">
+        <a href="#" class="mr-2">
+            <i class="fab fa-github-square lg:text-aubergine-dark-100"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-twitter-square lg:text-aubergine-dark-100"></i>
+        </a>
+    </div>
+
+{% endset %}
+
 <main class="flex flex-wrap justify-center items-center sm:flex-no-wrap w-screen max-w-screen p-5 my-auto">
 
-    <section class="flex flex-col lg:flex-row w-full sm:w-1/2 bg-grey-warm-20 rounded shadow-lg overflow-hidden h-full">
+    {{ card(
+        card_content,
+        picture(img, {'class': 'w-1/2 lg:w-1/4 h-auto mx-auto mt-10 lg:m-5'}),
+        {'class': 'bg-grey-warm-20', 'attrs': {'onClick': 'console.log("clicked");'}}
+    ) }}
 
-            <img src="assets/images/portrait.jpg"
-                 alt="portrait"
-                 class="w-1/2 lg:w-1/4 h-auto rounded-full mx-auto mt-10 lg:m-5">
-
-            <div class="flex flex-col lg:w-1/2 my-10 mx-auto text-center lg:text-left">
-                <span class="text-2xl font-bold">Simon JOUAN</span>
-                <span class="text-grey-warm-100">Développeur Web FullStack</span>
-            </div>
-
-            <div class="flex w-full lg:w-1/4 justify-center items-center bg-aubergine-dark-100 lg:bg-grey-warm-20 text-grey-warm-20 py-2 text-4xl">
-                <a href="#" class="mr-2">
-                    <i class="fab fa-github-square lg:text-aubergine-dark-100"></i>
-                </a>
-                <a href="#">
-                    <i class="fab fa-twitter-square lg:text-aubergine-dark-100"></i>
-                </a>
-            </div>
-
-    </section>
-
-    <section class="lg:flex lg:flex-1 justify-center items-center lg:w-1/2 h-full hidden">
+    <aside class="lg:flex lg:flex-1 justify-center items-center lg:w-1/2 h-full hidden">
         <div class="w-full text-center text-base">
             Ouvrer le comme si vous étiez sous
             <div class="relative inline-block tooltip">
@@ -48,7 +66,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </aside>
 
 </main>
 

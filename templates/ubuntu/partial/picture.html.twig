@@ -1,0 +1,58 @@
+{#
+    picture = {
+        'sources': {
+            0: {
+                'srcset': 'value',
+                'type': 'value',
+                'media': 'value'
+            },
+        },
+        'img': {
+            'src': 'value',
+            'alt': 'value',
+            'class': 'value',
+            'attrs': {
+                'attr_1': 'value',
+                'attr_1': 'value',
+                ...
+            }
+        }
+    }
+
+    options = {
+        'class': '',
+        'attrs': {
+            'attr_1': 'value',
+            'attr_1': 'value',
+            ...
+        }
+    }
+#}
+{% macro picture(picture, options = '') %}
+
+<picture {% if options.class is defined %}class="{{ options.class }}"{% endif %}>
+
+    {% if picture.sources is defined %}
+        {% for source in picture.sources %}
+    <source srcset="{{ source.srcset }}"
+            {% if source.type is defined %}type="{{ source.type }}"{% endif %}
+            {% if source.media is defined %}media="{{ source.media }}"{% endif %}>
+        {% endfor %}
+    {% endif %}
+
+    {% set img = picture.img %}
+
+    <img src="{{ img.src }}"
+         alt="{{ img.alt }}"
+        {% if img.class is defined %}
+         class="{{ img.class }}"
+        {% endif %}
+        {% if img.attrs is defined %}
+            {% for attr, value in img.attrs %}
+                {{ ' ' ~ attr ~ '="' ~ value ~ '"' }}
+            {% endfor %}
+        {% endif %}
+    >
+</picture>
+
+{% endmacro %}
