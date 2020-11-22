@@ -1,6 +1,11 @@
 export default class Shell {
 
     /**
+     * @type {string}
+     */
+    shellSimulatorId = 'shell-simulator';
+
+    /**
      * @type {HTMLElement}
      */
     form = null;
@@ -46,14 +51,14 @@ export default class Shell {
     historic = [];
 
     /**
-     * @type {number}
+     * @type {string}
      */
-    width = 300;
+    width = '300px';
 
     /**
-     * @type {number}
+     * @type {string}
      */
-    height = 200;
+    height = '200px';
 
     /**
      * @type {[]}
@@ -69,11 +74,11 @@ export default class Shell {
             this.loadOptions(options);
         }
 
-        this.simulator = document.getElementById('shell-simulator');
-        this.content = document.getElementById('shell-simulator-content');
-        this.input = document.getElementById('shell-input');
-        this.form = document.getElementById('shell-form');
-        this.header = document.getElementById('shell-simulator-header');
+        this.simulator = document.getElementById(this.shellSimulatorId);
+        this.content = document.getElementById(this.shellSimulatorId + '-content');
+        this.input = document.getElementById(this.shellSimulatorId + '-input');
+        this.form = document.getElementById(this.shellSimulatorId + '-form');
+        this.header = document.getElementById(this.shellSimulatorId + '-header');
         this.userName = this.simulator.dataset.username;
         this.httpHost = this.simulator.dataset.httpHost;
 
@@ -105,9 +110,9 @@ export default class Shell {
     }
 
     init() {
-        this.simulator.style.width = this.width + 'px';
-        this.simulator.style.height = this.height + 'px';
-        this.content.style.maxHeight = this.height + 'px';
+        this.simulator.style.width = this.width;
+        this.simulator.style.height = this.height;
+        this.content.style.maxHeight = this.height;
 
         let newElement = null;
         const content = this.content;

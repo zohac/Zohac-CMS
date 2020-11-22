@@ -1,7 +1,7 @@
 import Shell from './lib/shell';
-import Command from "./lib/command";
-import Cmd from "./lib/cmd";
-import Cv from "./lib/cv";
+import Command from './lib/command';
+import Cmd from './lib/cmd';
+import Cv, {addEventListenerOnCV, moveCV} from './lib/cv';
 
 /**
  * @param shell {Shell}
@@ -13,13 +13,13 @@ function addEventListenerOnShell(shell) {
     document.addEventListener("keydown", function (event) {
         shell.openShellOnKeyPress(event, shell);
     });
-    document.getElementById("shell-close").addEventListener("click", function (event){
+    document.getElementById("shell-simulator-close").addEventListener("click", function (event){
         shell.closeShell(event, shell);
     });
 }
 
 /**
- * @param shell {Shell}
+ * @param shell {Shell|Cv}
  */
 function moveShell(shell) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -61,8 +61,8 @@ function moveShell(shell) {
     shell(window, document);
 }(function (window, document) {
     const options = {
-        width: 800,
-        height: 400,
+        width: '800px',
+        height: '400px',
         scheme: [
             '&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/$$&nbsp;&nbsp;&nbsp;',
             '&nbsp;&nbsp;&nbsp;/$$/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;$$&nbsp;&nbsp;',
@@ -80,9 +80,13 @@ function moveShell(shell) {
 
     const shell = new Shell(options);
     shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
-    // shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
+
+    const cv = new Cv();
+    shell.addCommand(new Command(Cv.COMMAND_NAME, cv));
 
     addEventListenerOnShell(shell);
-
     moveShell(shell);
+
+    addEventListenerOnCV(cv);
+    moveShell(cv);
 }));
