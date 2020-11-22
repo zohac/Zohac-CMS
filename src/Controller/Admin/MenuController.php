@@ -2,19 +2,17 @@
 
 namespace App\Controller\Admin;
 
-use App\Dto\User\UserDto;
-use App\Entity\User;
+use App\Dto\Menu\MenuDto;
+use App\Entity\Menu;
 use App\Exception\DtoHandlerException;
-use App\Exception\EventException;
 use App\Exception\HydratorException;
-use App\Form\UserType;
+use App\Form\MenuType;
 use App\Interfaces\ControllerInterface;
-use App\Repository\UserRepository;
+use App\Repository\MenuRepository;
 use App\Service\FlashBagService;
-use App\Service\User\UserService;
+use App\Service\Menu\MenuService;
 use App\Traits\ControllerTrait;
 use ReflectionException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,143 +20,136 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class UserController.
+ * Class MenuController.
  *
- * @Route("/admin/user")
+ * @Route("/admin/menu")
  * @IsGranted("ROLE_ADMIN")
  */
-class UserController extends AbstractController implements ControllerInterface
+class MenuController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
 
     const TEMPLATE = '@admin';
 
     /**
-     * @Route("/", name="user.list", methods={"GET"})
+     * @Route("/", name="menu.list", methods={"GET"})
      *
-     * @param UserRepository $userRepository
+     * @param MenuRepository $menuRepository
      *
      * @return Response
      *
      * @throws ReflectionException
-     * @throws EventException
      */
-    public function userIndex(UserRepository $userRepository): Response
+    public function menuIndex(MenuRepository $menuRepository): Response
     {
         $repositoryOptions = [];
 
         // TODO: if $soft, $repositoryOptions = ['archived' => false];
 
-        return $this->index($userRepository, User::class, $repositoryOptions);
+        return $this->index($menuRepository, Menu::class, $repositoryOptions);
     }
 
     /**
      * @Route(
      *     "/{uuid}/",
-     *     name="user.detail",
+     *     name="menu.detail",
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
      *     methods={"GET"}
      * )
-     * @Entity("user", expr="repository.findOneByUuid(uuid)")
      *
-     * @param User|null $user
+     * @param Menu|null $menu
      *
      * @return Response
      *
      * @throws ReflectionException
-     * @throws EventException
      */
-    public function userShow(?User $user = null): Response
+    public function menuShow(?Menu $menu = null): Response
     {
-        if (!$user) {
-            return $this->userNotFound();
+        if (!$menu) {
+            return $this->menuNotFound();
         }
 
-        return $this->show($user);
+        return $this->show($menu);
     }
 
     /**
      * @return Response
      */
-    public function userNotFound(): Response
+    public function menuNotFound(): Response
     {
         $this->addAndTransFlashMessage(
             FlashBagService::FLASH_ERROR,
-            'User',
-            'The user was not found.',
-            'user'
+            'Menu',
+            'The menu was not found.',
+            'menu'
         );
 
-        return $this->redirectToRoute('user.list');
+        return $this->redirectToRoute('menu.list');
     }
 
     /**
-     * @Route("/create/", name="user.create", methods={"GET", "POST"})
+     * @Route("/create/", name="menu.create", methods={"GET", "POST"})
      *
      * @param Request $request
-     * @param UserDto $userDto
+     * @param MenuDto $menuDto
      *
      * @return Response
      *
      * @throws ReflectionException
-     * @throws EventException
      */
-    public function userNew(Request $request, UserDto $userDto): Response
+    public function menuNew(Request $request, MenuDto $menuDto): Response
     {
-        return $this->new($request, $userDto, User::class, UserType::class);
+        return $this->new($request, $menuDto, Menu::class, MenuType::class);
     }
 
     /**
      * @Route(
      *     "/{uuid}/update/",
-     *     name="user.update",
+     *     name="menu.update",
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
      *     methods={"GET", "POST"}
      * )
-     * @Entity("user", expr="repository.findOneByUuid(uuid)")
      *
      * @param Request   $request
-     * @param User|null $user
+     * @param Menu|null $menu
      *
      * @return Response
      *
      * @throws HydratorException
      * @throws ReflectionException
      * @throws DtoHandlerException
-     * @throws EventException
      */
-    public function userEdit(Request $request, ?User $user = null): Response
+    public function menuEdit(Request $request, ?Menu $menu = null): Response
     {
-        if (!$user) {
-            return $this->userNotFound();
+        if (!$menu) {
+            return $this->menuNotFound();
         }
 
-        return $this->edit($request, $user, UserType::class);
+        return $this->edit($request, $menu, MenuType::class);
     }
 
     /**
      * @Route(
      *     "/{uuid}/delete/",
-     *     name="user.delete",
+     *     name="menu.delete",
      *     requirements={"uuid"="[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}"},
      *     methods={"GET", "POST"}
      * )
      *
      * @param Request     $request
-     * @param UserService $service
-     * @param User|null   $user
+     * @param MenuService $service
+     * @param Menu|null   $menu
      *
      * @return Response
      *
      * @throws ReflectionException
-     * @throws EventException
      */
-    public function userDelete(Request $request, UserService $service, ?User $user = null): Response
+    public function menuDelete(Request $request, MenuService $service, ?Menu $menu = null): Response
     {
-        if (!$user) {
-            return $this->userNotFound();
+        if (!$menu) {
+            return $this->menuNotFound();
         }
 
-        return $this->delete($request, $user, $service);
+        return $this->delete($request, $menu, $service);
     }
 }

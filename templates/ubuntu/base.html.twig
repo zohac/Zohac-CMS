@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+
+    {% include 'partial/head.html.twig' %}
+
+    <body class="flex flex-col justify-center items-center w-screen max-w-screen h-auto min-h-screen bg-gradient-to-r from-aubergine-canonical-100 to-orange-ubuntu-100 overflow-hidden text-base">
+
+        {% include 'flash_message.html.twig' %}
+
+        {% include 'partial/header.html.twig' %}
+
+        {% block body %}{% endblock %}
+
+        {% include 'partial/footer.html.twig' %}
+
+        {% include 'shell/shell.html.twig' %}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('shell') }}
+        {% endblock %}
+    </body>
+</html>

@@ -29,6 +29,8 @@ class MaintenanceController extends AbstractController implements ControllerInte
 {
     use ControllerTrait;
 
+    const TEMPLATE = '@admin';
+
     /**
      * @Route("/", name="maintenance.list", methods={"GET"})
      *

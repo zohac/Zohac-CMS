@@ -1,0 +1,21 @@
+{% extends '@admin/admin_base.html.twig' %}
+
+{% block title %}Detail!{% endblock %}
+
+{% block body %}
+<div class="menu-wrapper">
+
+    {% if menu is not empty %}
+
+    {% trans from 'menu' %}items{% endtrans %}: {{ menu.items }}<br/>
+    {% trans from 'menu' %}uuid{% endtrans %}: {{ menu.uuid }}<br/>
+    {% trans from 'menu' %}archived{% endtrans %}: {{ menu.archived }}<br/>
+
+    <a href="{{ path('menu.list') }}">{% trans from 'global' %}List{% endtrans %}</a>
+    <a href="{{ path('menu.update', {"uuid": menu.uuid}) }}">{% trans from 'global' %}Update{% endtrans %}</a>
+    <a href="{{ path('menu.delete', {"uuid": menu.uuid}) }}">{% trans from 'global' %}Delete{% endtrans %}</a>
+    {% endif %}
+
+</div>
+
+ {% endblock %}
