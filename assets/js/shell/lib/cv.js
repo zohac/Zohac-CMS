@@ -2,8 +2,11 @@
  * @param cv {Cv}
  */
 export function addEventListenerOnCV(cv) {
-    document.getElementById("shell-simulator-cv-close").addEventListener("click", function (event){
-        cv.closeCv();
+    document
+        .getElementById("shell-simulator-cv-close")
+        .addEventListener("click", function (event){
+            cv.closeCv();
+            console.log('merde');
     });
 }
 
@@ -42,9 +45,7 @@ export default class Cv {
     /**
      * @type {string}
      */
-    height = '100vw';
-
-
+    height = '100vh';
 
     /**
      * @param description {null|string}
@@ -54,13 +55,12 @@ export default class Cv {
             this.description = description
         }
 
-        this.simulator = document.getElementById(this.shellSimulatorCvId);
-        this.header = document.getElementById(this.shellSimulatorCvId + '-header');
-
         this.init();
     }
 
     init() {
+        this.simulator = document.getElementById(this.shellSimulatorCvId);
+        this.header = document.getElementById(this.shellSimulatorCvId + '-header');
         this.simulator.style.width = this.width;
         this.simulator.style.height = this.height;
 

@@ -1,3 +1,18 @@
+/**
+ * @param shell {Shell}
+ */
+export function addEventListenerOnShell(shell) {
+    shell.form.addEventListener("submit", function (event) {
+        shell.shellFormSubmit(event, shell);
+    });
+    document.addEventListener("keydown", function (event) {
+        shell.openShellOnKeyPress(event, shell);
+    });
+    document.getElementById("shell-simulator-close").addEventListener("click", function (event){
+        shell.closeShell(event, shell);
+    });
+}
+
 export default class Shell {
 
     /**

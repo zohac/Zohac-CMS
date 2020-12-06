@@ -1,60 +1,8 @@
-import Shell from './lib/shell';
+import Window from './lib/window';
+import Shell, {addEventListenerOnShell} from './lib/shell';
 import Command from './lib/command';
 import Cmd from './lib/cmd';
-import Cv, {addEventListenerOnCV, moveCV} from './lib/cv';
-
-/**
- * @param shell {Shell}
- */
-function addEventListenerOnShell(shell) {
-    shell.form.addEventListener("submit", function (event) {
-        shell.shellFormSubmit(event, shell);
-    });
-    document.addEventListener("keydown", function (event) {
-        shell.openShellOnKeyPress(event, shell);
-    });
-    document.getElementById("shell-simulator-close").addEventListener("click", function (event){
-        shell.closeShell(event, shell);
-    });
-}
-
-/**
- * @param shell {Shell|Cv}
- */
-function moveShell(shell) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-    /* the header is where you move the DIV from:*/
-    shell.header.onmousedown = dragMouseDown;
-
-    function dragMouseDown(event) {
-        event.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = event.clientX;
-        pos4 = event.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-    }
-
-    function elementDrag(event) {
-        event.preventDefault();
-        // calculate the new cursor position:
-        pos1 = pos3 - event.clientX;
-        pos2 = pos4 - event.clientY;
-        pos3 = event.clientX;
-        pos4 = event.clientY;
-        // set the element's new position:
-        shell.simulator.style.top = (shell.simulator.offsetTop - pos2) + "px";
-        shell.simulator.style.left = (shell.simulator.offsetLeft - pos1) + "px";
-    }
-
-    function closeDragElement() {
-        /* stop moving when mouse button is released:*/
-        document.onmouseup = null;
-        document.onmousemove = null;
-    }
-}
+import Cv, {addEventListenerOnCV} from './lib/cv';
 
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {
@@ -79,14 +27,16 @@ function moveShell(shell) {
     };
 
     const shell = new Shell(options);
+    const shellWindow = new Window();
     shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
 
     const cv = new Cv();
+    const shellCv = new Window();
     shell.addCommand(new Command(Cv.COMMAND_NAME, cv));
 
     addEventListenerOnShell(shell);
-    moveShell(shell);
+    shellWindow.move(shell);
 
     addEventListenerOnCV(cv);
-    moveShell(cv);
+    shellCv.move(cv);
 }));
