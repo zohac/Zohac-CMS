@@ -1,8 +1,8 @@
-import Window from './lib/window';
-import Shell, {addEventListenerOnShell} from './lib/shell';
-import Command from './lib/command';
-import Cmd from './lib/cmd';
-import Cv, {addEventListenerOnCV} from './lib/cv';
+import Shell from './src/shell';
+import Command from './src/command';
+import Cmd from './src/cmd';
+import Cv from './src/cv';
+import shellWindow from "./src/shellWindow";
 
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {
@@ -27,16 +27,6 @@ import Cv, {addEventListenerOnCV} from './lib/cv';
     };
 
     const shell = new Shell(options);
-    const shellWindow = new Window();
     shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
-
-    const cv = new Cv();
-    const shellCv = new Window();
-    shell.addCommand(new Command(Cv.COMMAND_NAME, cv));
-
-    addEventListenerOnShell(shell);
-    shellWindow.move(shell);
-
-    addEventListenerOnCV(cv);
-    shellCv.move(cv);
+    shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
 }));

@@ -1,7 +1,9 @@
+import ShellWindow from './shellWindow';
+
 /**
  * @param shell {Shell}
  */
-export function addEventListenerOnShell(shell) {
+function addEventListenerOnShell(shell) {
     shell.form.addEventListener("submit", function (event) {
         shell.shellFormSubmit(event, shell);
     });
@@ -11,9 +13,12 @@ export function addEventListenerOnShell(shell) {
     document.getElementById("shell-simulator-close").addEventListener("click", function (event){
         shell.closeShell(event, shell);
     });
+    shell.header.addEventListener("click", function (event) {
+       shell.simulator.style.zIndex = shell.displayFront();
+    });
 }
 
-export default class Shell {
+export default class Shell extends ShellWindow {
 
     /**
      * @type {string}
@@ -80,11 +85,12 @@ export default class Shell {
      */
     scheme = [];
 
-
     /**
      * @param {Object} options
      */
     constructor(options = {}) {
+        super();
+
         if (!this.isEmpty(options)) {
             this.loadOptions(options);
         }
@@ -125,6 +131,9 @@ export default class Shell {
     }
 
     init() {
+        this.move(this);
+        addEventListenerOnShell(this);
+
         this.simulator.style.width = this.width;
         this.simulator.style.height = this.height;
         this.content.style.maxHeight = this.height;

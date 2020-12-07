@@ -1,10 +1,40 @@
-export default class Window {
+export default class ShellWindow {
+
+    /**
+     * @type {ShellWindow[]}
+     */
+    static instances = [];
+
+    /**
+     * @type {number}
+     */
+    z_index = 1000;
+
+    constructor() {
+        this.calculateZ_index();
+
+        ShellWindow.instances.push(this);
+    }
+
+    calculateZ_index () {
+        if (0 < ShellWindow.instances.length) {
+            let z_indexes = [];
+            ShellWindow.instances.forEach(element => z_indexes.push(element.z_index));
+            let z_indexMax = Math.max.apply(null, z_indexes);
+            this.z_index = z_indexMax + 1;
+        }
+    }
+
+    displayFront() {
+        this.calculateZ_index();
+
+        return this.z_index.toString();
+    }
 
     /**
      * @param shell {Shell|Cv}
      */
     move(shell) {
-        console.log(document);
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
         /* the header is where you move the DIV from:*/
