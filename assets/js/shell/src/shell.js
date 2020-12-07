@@ -10,11 +10,11 @@ function addEventListenerOnShell(shell) {
     document.addEventListener("keydown", function (event) {
         shell.openShellOnKeyPress(event, shell);
     });
-    document.getElementById("shell-simulator-close").addEventListener("click", function (event){
+    document.getElementById("shell-simulator-close").addEventListener("click", function (event) {
         shell.closeShell(event, shell);
     });
     shell.header.addEventListener("click", function (event) {
-       shell.simulator.style.zIndex = shell.displayFront();
+        shell.simulator.style.zIndex = shell.displayFront();
     });
 }
 
@@ -111,8 +111,8 @@ export default class Shell extends ShellWindow {
      * @returns {boolean}
      */
     isEmpty(obj) {
-        for(const key in obj) {
-            if(obj.hasOwnProperty(key))
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key))
                 return false;
         }
 
@@ -123,8 +123,8 @@ export default class Shell extends ShellWindow {
      * @param {Object} options
      */
     loadOptions(options) {
-        for(const key in options) {
-            if(this.hasOwnProperty(key)) {
+        for (const key in options) {
+            if (this.hasOwnProperty(key)) {
                 this[key] = options[key];
             }
         }
@@ -142,7 +142,7 @@ export default class Shell extends ShellWindow {
         const content = this.content;
         const form = this.form;
 
-        this.scheme.forEach(function(item) {
+        this.scheme.forEach(function (item) {
             newElement = document.createElement("div");
             newElement.className = "flex w-full text-shell-green font-mono";
             newElement.innerHTML = item;

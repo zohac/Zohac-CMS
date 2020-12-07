@@ -2,7 +2,6 @@ import Shell from './src/shell';
 import Command from './src/command';
 import Cmd from './src/cmd';
 import Cv from './src/cv';
-import shellWindow from "./src/shellWindow";
 
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {

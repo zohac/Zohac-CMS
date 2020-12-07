@@ -6,9 +6,9 @@ import ShellWindow from './shellWindow';
 function addEventListenerOnCV(cv) {
     document
         .getElementById("shell-simulator-cv-close")
-        .addEventListener("click", function (event){
+        .addEventListener("click", function (event) {
             cv.closeCv();
-    });
+        });
     cv.header.addEventListener("click", function (event) {
         cv.simulator.style.zIndex = cv.displayFront();
     });
@@ -64,6 +64,20 @@ export default class Cv extends ShellWindow {
         this.init();
     }
 
+    /**
+     * @returns {null|string}
+     */
+    get description() {
+        return this.description;
+    }
+
+    /**
+     * @param description {string}
+     */
+    set description(description) {
+        this.description = description;
+    }
+
     init() {
         this.simulator = document.getElementById(this.shellSimulatorCvId);
         this.header = document.getElementById(this.shellSimulatorCvId + '-header');
@@ -82,20 +96,6 @@ export default class Cv extends ShellWindow {
 
     closeCv() {
         this.simulator.classList.add("hidden");
-    }
-
-    /**
-     * @returns {null|string}
-     */
-    get description() {
-        return this.description;
-    }
-
-    /**
-     * @param description {string}
-     */
-    set description(description) {
-        this.description = description;
     }
 
     /**

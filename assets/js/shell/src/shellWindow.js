@@ -16,7 +16,7 @@ export default class ShellWindow {
         ShellWindow.instances.push(this);
     }
 
-    calculateZ_index () {
+    calculateZ_index() {
         if (0 < ShellWindow.instances.length) {
             let z_indexes = [];
             ShellWindow.instances.forEach(element => z_indexes.push(element.z_index));
