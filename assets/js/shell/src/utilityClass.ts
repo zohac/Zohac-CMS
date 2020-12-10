@@ -19,7 +19,6 @@ export default class UtilityClass {
     loadOptions(options) {
         for (const key in options) {
             if (this.hasOwnProperty(key)) {
-                console.log(key);
                 this[key] = options[key];
             }
         }
@@ -30,7 +29,6 @@ export default class UtilityClass {
      * @returns {number}
      */
     convertToInt(value) {
-        console.log(value)
         const parsed = parseInt(value, 10);
 
         if (isNaN(parsed)) {

@@ -1,7 +1,7 @@
-import Shell from './src/shell';
-import Command from './src/command';
-import Cmd from './src/cmd';
-import Cv from './src/cv';
+import Shell from './shell';
+import Command from './command';
+import Cmd from './Command/cmd';
+import Cv from './Command/cv';
 
 // IIFE - Immediately Invoked Function Expression
 (function (shell) {
@@ -26,6 +26,6 @@ import Cv from './src/cv';
     };
 
     const shell = new Shell(options);
-    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)));
-    shell.addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
+    shell.addCommand(new Command(Cmd.COMMAND_NAME, new Cmd(shell)))
+        .addCommand(new Command(Cv.COMMAND_NAME, new Cv()));
 }));

@@ -1,9 +1,7 @@
 import ShellWindow from './shellWindow';
+import Command from "./command";
 
-/**
- * @param shell {Shell}
- */
-function addEventListenerOnShell(shell) {
+function addEventListenerOnShell(shell: Shell) {
     shell.form.addEventListener("submit", function (event) {
         shell.shellFormSubmit(event, shell);
     });
@@ -11,7 +9,7 @@ function addEventListenerOnShell(shell) {
         shell.openShellOnKeyPress(event, shell);
     });
     document.getElementById("shell-simulator-close").addEventListener("click", function (event) {
-        shell.closeShell(event, shell);
+        shell.closeShell(shell);
     });
     shell.header.addEventListener("click", function (event) {
         shell.simulator.style.zIndex = shell.displayFront();
@@ -20,65 +18,21 @@ function addEventListenerOnShell(shell) {
 
 export default class Shell extends ShellWindow {
 
-    /**
-     * @type {string}
-     */
-    shellSimulatorId = 'shell-simulator';
+    shellSimulatorId: string = 'shell-simulator';
 
-    /**
-     * @type {HTMLElement}
-     */
-    form = null;
+    form: HTMLElement | null = null;
+    input: HTMLElement | HTMLInputElement | null = null;
+    content: HTMLElement | null = null;
 
-    /**
-     * @type {HTMLElement}
-     */
-    header = null
+    userName: string | null = null;
+    httpHost: string | null = null;
 
-    /**
-     * @type {HTMLElement}
-     */
-    input = null;
+    command: Array<Command> = [];
 
-    /**
-     * @type {HTMLElement}
-     */
-    content = null;
+    historic:Array<string> = [];
+    scheme:Array<string> = [];
 
-    /**
-     * @type {HTMLElement}
-     */
-    simulator = null;
-
-    /**
-     * @type {null|string}
-     */
-    userName = null;
-
-    /**
-     * @type {null|string}
-     */
-    httpHost = null;
-
-    /**
-     * @type {Command[]}
-     */
-    command = [];
-
-    /**
-     * @type {[]}
-     */
-    historic = [];
-
-    /**
-     * @type {[]}
-     */
-    scheme = [];
-
-    /**
-     * @param {Object} options
-     */
-    constructor(options = {}) {
+    constructor(options: Object | null = {}) {
         super();
 
         if (!this.isEmpty(options)) {
@@ -88,10 +42,7 @@ export default class Shell extends ShellWindow {
         this.init();
     }
 
-    /**
-     * @returns {Shell}
-     */
-    init() {
+    init(): Shell {
         this.simulator = document.getElementById(this.shellSimulatorId);
         this.content = document.getElementById(this.shellSimulatorId + '-content');
         this.input = document.getElementById(this.shellSimulatorId + '-input');
@@ -128,59 +79,40 @@ export default class Shell extends ShellWindow {
         return this;
     }
 
-    /**
-     * @param event
-     * @param shell {Shell}
-     */
-    openShellOnKeyPress(event, shell) {
+    openShellOnKeyPress(event: KeyboardEvent, shell: Shell): Shell {
         if (event.ctrlKey && event.altKey && (event.key === "t" || event.key === "r")) {  // case sensitive
             shell.simulator.classList.remove("hidden");
             shell.input.focus();
         }
+
+        return this;
     }
 
-    /**
-     * @param event
-     * @param shell {Shell}
-     */
-    closeShell(event, shell) {
+    closeShell(shell: Shell): Shell {
         shell.simulator.classList.add("hidden");
+
+        return this;
     }
 
-    /**
-     *
-     * @param command {Command}
-     * @returns {Shell}
-     */
-    addCommand(command) {
+    addCommand(command: Command): Shell {
         this.command.push(command);
 
         return this;
     }
 
-    /**
-     * @param command {string}
-     * @returns {null|HTMLDivElement}
-     */
-    executeCommand(command) {
+    executeCommand(command: string): HTMLDivElement | null {
         let response = null;
 
-        /**
-         * @param obCmd {Command}
-         */
         for (const obCmd of this.command) {
             if (obCmd.name === command) {
                 response = obCmd.command.execute();
             }
         }
+
         return response;
     }
 
-    /**
-     * @param command {string}
-     * @returns {Shell}
-     */
-    addCommandToHistoric(command) {
+    addCommandToHistoric(command: string): Shell {
         this.historic.push(command);
 
         return this;
@@ -191,18 +123,22 @@ export default class Shell extends ShellWindow {
      * @param shell {Shell}
      * @returns {Shell}
      */
-    shellFormSubmit(event, shell) {
+    shellFormSubmit(event: Event, shell: Shell): Shell {
         event.preventDefault();
 
         let newElement = document.createElement("div");
-        let inputValue = this.input.value;
-        this.addCommandToHistoric(inputValue);
+        let inputValue: string | null = null;
+
+        if ("value" in this.input) {
+            inputValue = this.input.value;
+            this.addCommandToHistoric(inputValue);
+            this.input.value = null;
+        }
 
         newElement.innerHTML = `<span class="text-shell-green">${this.userName}@${this.httpHost}</span>:
 <span class="text-shell-blue">~</span>$ ${inputValue}`;
 
         this.content.insertBefore(newElement, this.form);
-        this.input.value = null;
 
         const response = this.executeCommand(inputValue);
         if (response) {
