@@ -71,16 +71,6 @@ export default class Shell extends ShellWindow {
     historic = [];
 
     /**
-     * @type {string}
-     */
-    width = '300px';
-
-    /**
-     * @type {string}
-     */
-    height = '200px';
-
-    /**
      * @type {[]}
      */
     scheme = [];
@@ -95,6 +85,13 @@ export default class Shell extends ShellWindow {
             this.loadOptions(options);
         }
 
+        this.init();
+    }
+
+    /**
+     * @returns {Shell}
+     */
+    init() {
         this.simulator = document.getElementById(this.shellSimulatorId);
         this.content = document.getElementById(this.shellSimulatorId + '-content');
         this.input = document.getElementById(this.shellSimulatorId + '-input');
@@ -103,34 +100,6 @@ export default class Shell extends ShellWindow {
         this.userName = this.simulator.dataset.username;
         this.httpHost = this.simulator.dataset.httpHost;
 
-        this.init();
-    }
-
-    /**
-     * @param {Object} obj
-     * @returns {boolean}
-     */
-    isEmpty(obj) {
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key))
-                return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param {Object} options
-     */
-    loadOptions(options) {
-        for (const key in options) {
-            if (this.hasOwnProperty(key)) {
-                this[key] = options[key];
-            }
-        }
-    }
-
-    init() {
         this.move(this);
         addEventListenerOnShell(this);
 

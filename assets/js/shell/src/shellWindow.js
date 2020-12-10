@@ -1,4 +1,6 @@
-export default class ShellWindow {
+import UtilityClass from "./utilityClass";
+
+export default class ShellWindow extends UtilityClass {
 
     /**
      * @type {ShellWindow[]}
@@ -8,27 +10,99 @@ export default class ShellWindow {
     /**
      * @type {number}
      */
-    z_index = 1000;
+    _zIndex = 1000;
 
-    constructor() {
+    /**
+     * @type {string}
+     */
+    _width = '300px';
+
+    /**
+     * @type {string}
+     */
+    _height = '200px';
+
+    /**
+     * @param {Object} options
+     */
+    constructor(options = {}) {
+        super();
+
+        if (!this.isEmpty(options)) {
+            this.loadOptions(options);
+        }
+
         this.calculateZ_index();
 
         ShellWindow.instances.push(this);
     }
 
-    calculateZ_index() {
-        if (0 < ShellWindow.instances.length) {
-            let z_indexes = [];
-            ShellWindow.instances.forEach(element => z_indexes.push(element.z_index));
-            let z_indexMax = Math.max.apply(null, z_indexes);
-            this.z_index = z_indexMax + 1;
-        }
+    /**
+     * @param value
+     */
+    set zIndex(value) {
+        console.log(value);
+        this._zIndex = this.convertToInt(value);
     }
 
+    /**
+     * @returns {number}
+     */
+    get zIndex() {
+        return this._zIndex;
+    }
+
+    /**
+     * @param value
+     */
+    set width(value) {
+        console.log(value);
+        this._width = this.convertToString(value);
+    }
+
+    /**
+     * @returns {string}
+     */
+    get width() {
+        return this._width;
+    }
+
+    /**
+     * @param value
+     */
+    set height(value) {
+        console.log(value);
+        this._height = this.convertToString(value);
+    }
+
+    /**
+     * @returns {string}
+     */
+    get height() {
+        return this._height;
+    }
+
+    /**
+     * @returns {ShellWindow}
+     */
+    calculateZ_index() {
+        if (0 < ShellWindow.instances.length) {
+            let zIndexes = [];
+            ShellWindow.instances.forEach(element => zIndexes.push(element.z_index));
+            let zIndexMax = Math.max(...zIndexes);
+            this.zIndex = zIndexMax + 1;
+        }
+
+        return this;
+    }
+
+    /**
+     * @returns {string}
+     */
     displayFront() {
         this.calculateZ_index();
 
-        return this.z_index.toString();
+        return this.zIndex.toString();
     }
 
     /**
