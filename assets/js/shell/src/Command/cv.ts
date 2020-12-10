@@ -1,4 +1,4 @@
-import ShellWindow from '../shellWindow';
+import ShellWindow from '../Service/shellWindow';
 
 function addEventListenerOnCV(cv: Cv) {
     document

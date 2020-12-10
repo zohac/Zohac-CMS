@@ -1,5 +1,6 @@
-import ShellWindow from './shellWindow';
-import Command from "./command";
+import ShellWindow from './Service/shellWindow';
+import Command from "./Service/command";
+import Option from "./Service/option";
 
 function addEventListenerOnShell(shell: Shell) {
     shell.form.addEventListener("submit", function (event) {
@@ -20,24 +21,22 @@ export default class Shell extends ShellWindow {
 
     shellSimulatorId: string = 'shell-simulator';
 
-    form: HTMLElement | null = null;
-    input: HTMLElement | HTMLInputElement | null = null;
-    content: HTMLElement | null = null;
+    form: HTMLElement | HTMLFormElement;
+    input: HTMLElement | HTMLInputElement;
+    content: HTMLElement;
 
     userName: string | null = null;
     httpHost: string | null = null;
 
     command: Array<Command> = [];
 
-    historic:Array<string> = [];
-    scheme:Array<string> = [];
+    historic: Array<string> = [];
+    scheme: Array<string> = [];
 
-    constructor(options: Object | null = {}) {
+    constructor(options: Option | null) {
         super();
 
-        if (!this.isEmpty(options)) {
-            this.loadOptions(options);
-        }
+        this.loadOptions(options);
 
         this.init();
     }
@@ -58,9 +57,15 @@ export default class Shell extends ShellWindow {
         this.simulator.style.height = this.height;
         this.content.style.maxHeight = this.height;
 
+        this.drawScheme();
+
+        return this;
+    }
+
+    drawScheme() {
         let newElement = null;
-        const content = this.content;
-        const form = this.form;
+        let content = this.content;
+        let form = this.form;
 
         this.scheme.forEach(function (item) {
             newElement = document.createElement("div");
@@ -75,8 +80,6 @@ export default class Shell extends ShellWindow {
         newElement.innerHTML = 'Bienvenue, pour voir les commandes disponible commencez par taper \'cmd\'';
 
         content.insertBefore(newElement, form);
-
-        return this;
     }
 
     openShellOnKeyPress(event: KeyboardEvent, shell: Shell): Shell {

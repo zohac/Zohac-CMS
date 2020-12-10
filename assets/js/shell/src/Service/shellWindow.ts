@@ -1,5 +1,5 @@
 import UtilityClass from "./utilityClass";
-import ShellInterface from "./interface/shellInterface"
+import ShellInterface from "../interface/shellInterface"
 
 export default class ShellWindow extends UtilityClass {
 
@@ -12,15 +12,8 @@ export default class ShellWindow extends UtilityClass {
     simulator: HTMLElement | null = null;
     header: HTMLElement | null = null;
 
-    /**
-     * @param {Object} options
-     */
-    constructor(options = {}) {
+    constructor() {
         super();
-
-        if (!this.isEmpty(options)) {
-            this.loadOptions(options);
-        }
 
         this.calculateZ_index();
 
