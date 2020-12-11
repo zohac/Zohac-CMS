@@ -8,10 +8,13 @@ os: linux
 sudo: required
 dist: trusty
 
-cache: false
+cache:
+  directories:
+    - $HOME/.composer/cache/files
 
 php:
   - '7.3'
+  - '7.4'
 
 before_install:
   - nvm install 12

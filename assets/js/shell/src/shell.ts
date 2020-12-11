@@ -36,7 +36,7 @@ export default class Shell extends ShellWindow {
     constructor(options: Option | null) {
         super();
 
-        this.loadOptions(options);
+        this.loadOptionsIfNotNull(options);
 
         this.init();
     }

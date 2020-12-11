@@ -11,12 +11,16 @@ export default class UtilityClass {
         return true;
     }
 
-    loadOptions(options: Option | null) {
+    loadOptionsIfNotNull(options: Option | null) {
         if (null !== options && !this.isObjectEmpty(options)) {
-            for (const key in options) {
-                if (this.hasOwnProperty(key)) {
-                    this[key] = options[key];
-                }
+            this.loadOptions(options);
+        }
+    }
+
+    loadOptions(options: Option | null) {
+        for (const key in options) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = options[key];
             }
         }
     }
