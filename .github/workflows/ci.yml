@@ -11,52 +11,61 @@ jobs:
         php-versions: ['7.4']
         node-version: ['12.x']
     services:
+      # https://docs.docker.com/samples/library/mysql/
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: 'password'
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
     steps:
-      - uses: actions/checkout@v1
-      - name: Uses Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-        run: npm install -g yarn
+      # —— Setup Github actions 🐙 —————————————————————————————————————————————
+      # https://github.com/actions/checkout (official)
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup PHP, with composer and extensions
+
+      # https://github.com/shivammathur/setup-php (community)
+      - name: Setup PHP, extensions and composer with shivammathur/setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl
-          coverage: xdebug
-      - name: Setup Node
-        uses: actions/setup-node@v1
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+        env:
+          update: true
+
+      ## —— Yarn 🐱 ————————————————————————————————————————————————————————————
+      - name: Yarn install
+        uses: borales/actions-yarn@v2.0.0
         with:
-          node-version: ${{ matrix.node-version }}
+          cmd: install
+      - name: Yarn build
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run encore dev
+
+      # —— Composer 🧙‍️ —————————————————————————————————————————————————————————
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
       - name: Cache composer dependencies
         uses: actions/cache@v1
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
+
       - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      # —— Symfony 🎵 ——————————————————————————————————————————————————————————
+      - name: Check Symfony requirements
+        run: vendor/bin/requirements-checker
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Run functionnal and unit tests
         run: |
-          composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
-      - name: Install NPM dependencies
-        run: |
-          yarn install
-          yarn run build
-          yarn encore dev
-      - name: Prepare database
-        run: |
-          php bin/console doctrine:database:create
-          php bin/console doctrine:schema:update --force
-          php bin/console doctrine:fixtures:load -n
-      - name: Run functional tests
-        run: php bin/phpunit
+          php bin/phpunit --coverage-text --coverage-clover var/log/clover.xml
