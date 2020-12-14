@@ -1,5 +1,5 @@
 {
-    "name" : "Zohac CMS",
+    "name" : "zohac/zohac-cms",
     "description" : "A CMS Based on Symfony",
     "type": "project",
     "license": "MIT",

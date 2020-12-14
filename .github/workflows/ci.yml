@@ -33,16 +33,6 @@ jobs:
         env:
           update: true
 
-      ## —— Yarn 🐱 ————————————————————————————————————————————————————————————
-      - name: Yarn install
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: install
-      - name: Yarn build
-        uses: borales/actions-yarn@v2.0.0
-        with:
-          cmd: run encore dev
-
       # —— Composer 🧙‍️ —————————————————————————————————————————————————————————
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -60,6 +50,16 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      ## —— Yarn 🐱 ————————————————————————————————————————————————————————————
+      - name: Yarn install
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install --force
+      - name: Yarn build
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: run encore dev
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
       - name: Check Symfony requirements
