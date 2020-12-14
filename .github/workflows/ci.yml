@@ -66,6 +66,12 @@ jobs:
 #        run: vendor/bin/requirements-checker
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
+      - name: Code Climate Coverage Action
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
+        with:
+          coverageCommand: php bin/phpunit --coverage-text --coverage-clover var/log/clover.xml
+
         run: |
           php bin/phpunit --coverage-text --coverage-clover var/log/clover.xml
