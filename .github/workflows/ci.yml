@@ -62,8 +62,8 @@ jobs:
           cmd: run encore dev
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
-      - name: Check Symfony requirements
-        run: vendor/bin/requirements-checker
+#      - name: Check Symfony requirements
+#        run: vendor/bin/requirements-checker
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
