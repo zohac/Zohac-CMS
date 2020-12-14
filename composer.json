@@ -1,6 +1,8 @@
 {
+    "name" : "Zohac CMS",
+    "description" : "A CMS Based on Symfony",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^7.3",
         "ext-ctype": "*",
