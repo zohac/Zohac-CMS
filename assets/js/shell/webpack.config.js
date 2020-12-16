@@ -17,6 +17,6 @@ let config = {
             loader: 'ts-loader'
         }]
     }
-}
+};
 
 module.exports = config;

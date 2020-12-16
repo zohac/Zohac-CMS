@@ -1,9 +1,9 @@
-import UtilityClass from "./utilityClass";
-import ShellInterface from "../interface/shellInterface"
+import UtilityClass from './utilityClass';
+import ShellInterface from '../interface/shellInterface'
 
 export default class ShellWindow extends UtilityClass {
 
-    static instances: Array<ShellWindow> = [];
+    static instances: ShellWindow[] = [];
 
     height: string = 'auto';
     width: string = '50vw';
@@ -22,9 +22,9 @@ export default class ShellWindow extends UtilityClass {
 
     calculateZ_index(): ShellInterface {
         if (0 < ShellWindow.instances.length) {
-            let zIndexes = [];
+            const zIndexes = [];
             ShellWindow.instances.forEach(element => zIndexes.push(element.zIndex));
-            let zIndexMax = Math.max(...zIndexes);
+            const zIndexMax = Math.max(...zIndexes);
             this.zIndex = zIndexMax + 1;
         }
 
@@ -61,8 +61,8 @@ export default class ShellWindow extends UtilityClass {
             pos3 = event.clientX;
             pos4 = event.clientY;
             // set the element's new position:
-            shell.simulator.style.top = (shell.simulator.offsetTop - pos2) + "px";
-            shell.simulator.style.left = (shell.simulator.offsetLeft - pos1) + "px";
+            shell.simulator.style.top = (shell.simulator.offsetTop - pos2) + 'px';
+            shell.simulator.style.left = (shell.simulator.offsetLeft - pos1) + 'px';
         }
 
         function closeDragElement() {

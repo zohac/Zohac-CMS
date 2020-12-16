@@ -1,4 +1,4 @@
-import CommandInterface from "../interface/commandInterface";
+import CommandInterface from '../interface/commandInterface';
 
 export default class Command {
 

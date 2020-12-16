@@ -2,11 +2,11 @@ import ShellWindow from '../Service/shellWindow';
 
 function addEventListenerOnCV(cv: Cv) {
     document
-        .getElementById("shell-simulator-cv-close")
-        .addEventListener("click", function () {
+        .getElementById('shell-simulator-cv-close')
+        .addEventListener('click', function () {
             cv.closeCv();
         });
-    cv.header.addEventListener("click", function () {
+    cv.header.addEventListener('click', function () {
         cv.simulator.style.zIndex = cv.displayFront();
     });
 }
@@ -41,18 +41,18 @@ export default class Cv extends ShellWindow {
     }
 
     openCv() {
-        this.simulator.classList.remove("hidden");
+        this.simulator.classList.remove('hidden');
     }
 
     closeCv() {
-        this.simulator.classList.add("hidden");
+        this.simulator.classList.add('hidden');
     }
 
     execute(): HTMLDivElement | null {
         this.openCv();
 
-        let newElement = document.createElement("div");
-        newElement.className = "flex w-full";
+        const newElement = document.createElement('div');
+        newElement.className = 'flex w-full';
         newElement.innerHTML = `<div class="w-20 mr-4">${Cv.COMMAND_NAME}</div>${this.description}`;
 
         return newElement;

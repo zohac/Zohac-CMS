@@ -1,18 +1,18 @@
 import ShellWindow from './Service/shellWindow';
-import Command from "./Service/command";
-import Option from "./Service/option";
+import Command from './Service/command';
+import Option from './Service/option';
 
 function addEventListenerOnShell(shell: Shell) {
-    shell.form.addEventListener("submit", function (event) {
+    shell.form.addEventListener('submit', function (event) {
         shell.shellFormSubmit(event, shell);
     });
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener('keydown', function (event) {
         shell.openShellOnKeyPress(event, shell);
     });
-    document.getElementById("shell-simulator-close").addEventListener("click", function (event) {
+    document.getElementById('shell-simulator-close').addEventListener('click', function (event) {
         shell.closeShell(shell);
     });
-    shell.header.addEventListener("click", function (event) {
+    shell.header.addEventListener('click', function (event) {
         shell.simulator.style.zIndex = shell.displayFront();
     });
 }
@@ -28,10 +28,10 @@ export default class Shell extends ShellWindow {
     userName: string | null = null;
     httpHost: string | null = null;
 
-    command: Array<Command> = [];
+    command: Command[] = [];
 
-    historic: Array<string> = [];
-    scheme: Array<string> = [];
+    historic: string[] = [];
+    scheme: string[] = [];
 
     constructor(options: Option | null) {
         super();
@@ -43,10 +43,10 @@ export default class Shell extends ShellWindow {
 
     init(): Shell {
         this.simulator = document.getElementById(this.shellSimulatorId);
-        this.content = document.getElementById(this.shellSimulatorId + '-content');
-        this.input = document.getElementById(this.shellSimulatorId + '-input');
-        this.form = document.getElementById(this.shellSimulatorId + '-form');
-        this.header = document.getElementById(this.shellSimulatorId + '-header');
+        this.content = document.getElementById(`${this.shellSimulatorId}-content`);
+        this.input = document.getElementById(`${this.shellSimulatorId}-input`);
+        this.form = document.getElementById(`${this.shellSimulatorId}-form`);
+        this.header = document.getElementById(`${this.shellSimulatorId}-header`);
         this.userName = this.simulator.dataset.username;
         this.httpHost = this.simulator.dataset.httpHost;
 
@@ -64,27 +64,27 @@ export default class Shell extends ShellWindow {
 
     drawScheme() {
         let newElement = null;
-        let content = this.content;
-        let form = this.form;
+        const content = this.content;
+        const form = this.form;
 
         this.scheme.forEach(function (item) {
-            newElement = document.createElement("div");
-            newElement.className = "flex w-full text-shell-green font-mono";
+            newElement = document.createElement('div');
+            newElement.className = 'flex w-full text-shell-green font-mono';
             newElement.innerHTML = item;
 
             content.insertBefore(newElement, form);
         });
 
-        newElement = document.createElement("div");
-        newElement.className = "flex w-full";
+        newElement = document.createElement('div');
+        newElement.className = 'flex w-full';
         newElement.innerHTML = 'Bienvenue, pour voir les commandes disponible commencez par taper \'cmd\'';
 
         content.insertBefore(newElement, form);
     }
 
     openShellOnKeyPress(event: KeyboardEvent, shell: Shell): Shell {
-        if (event.ctrlKey && event.altKey && (event.key === "t" || event.key === "r")) {  // case sensitive
-            shell.simulator.classList.remove("hidden");
+        if (event.ctrlKey && event.altKey && (event.key === 't' || event.key === 'r')) {  // case sensitive
+            shell.simulator.classList.remove('hidden');
             shell.input.focus();
         }
 
@@ -92,7 +92,7 @@ export default class Shell extends ShellWindow {
     }
 
     closeShell(shell: Shell): Shell {
-        shell.simulator.classList.add("hidden");
+        shell.simulator.classList.add('hidden');
 
         return this;
     }
@@ -129,10 +129,10 @@ export default class Shell extends ShellWindow {
     shellFormSubmit(event: Event, shell: Shell): Shell {
         event.preventDefault();
 
-        let newElement = document.createElement("div");
+        const newElement = document.createElement('div');
         let inputValue: string | null = null;
 
-        if ("value" in this.input) {
+        if ('value' in this.input) {
             inputValue = this.input.value;
             this.addCommandToHistoric(inputValue);
             this.input.value = null;

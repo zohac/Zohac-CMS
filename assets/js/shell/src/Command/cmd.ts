@@ -1,4 +1,4 @@
-import Shell from "../shell";
+import Shell from '../shell';
 
 export default class Cmd {
 
@@ -19,8 +19,8 @@ export default class Cmd {
         let newElement = null;
 
         for (const command of this.shell.command) {
-            newElement = document.createElement("div");
-            newElement.className = "flex w-full";
+            newElement = document.createElement('div');
+            newElement.className = 'flex w-full';
             newElement.innerHTML = `<div class="w-20 mr-4">${command.name}</div>${command.command.description}`;
 
             this.shell.content.insertBefore(newElement, this.shell.form);
