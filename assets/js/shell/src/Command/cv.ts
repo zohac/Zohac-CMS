@@ -3,10 +3,10 @@ import ShellWindow from '../Service/shellWindow';
 function addEventListenerOnCV(cv: Cv) {
     document
         .getElementById('shell-simulator-cv-close')
-        .addEventListener('click', function () {
+        .addEventListener('click', () => {
             cv.closeCv();
         });
-    cv.header.addEventListener('click', function () {
+    cv.header.addEventListener('click', () => {
         cv.simulator.style.zIndex = cv.displayFront();
     });
 }

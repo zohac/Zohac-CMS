@@ -3,16 +3,16 @@ import Command from './Service/command';
 import Option from './Service/option';
 
 function addEventListenerOnShell(shell: Shell) {
-    shell.form.addEventListener('submit', function (event) {
+    shell.form.addEventListener('submit', event => {
         shell.shellFormSubmit(event, shell);
     });
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', event => {
         shell.openShellOnKeyPress(event, shell);
     });
-    document.getElementById('shell-simulator-close').addEventListener('click', function (event) {
+    document.getElementById('shell-simulator-close').addEventListener('click', () => {
         shell.closeShell(shell);
     });
-    shell.header.addEventListener('click', function (event) {
+    shell.header.addEventListener('click', () => {
         shell.simulator.style.zIndex = shell.displayFront();
     });
 }
@@ -67,7 +67,7 @@ export default class Shell extends ShellWindow {
         const content = this.content;
         const form = this.form;
 
-        this.scheme.forEach(function (item) {
+        this.scheme.forEach(item => {
             newElement = document.createElement('div');
             newElement.className = 'flex w-full text-shell-green font-mono';
             newElement.innerHTML = item;

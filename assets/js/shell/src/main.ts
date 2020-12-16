@@ -5,9 +5,9 @@ import Cmd from './Command/cmd';
 import Cv from './Command/cv';
 
 // IIFE - Immediately Invoked Function Expression
-(function (shell) {
+((shell => {
     shell(window, document);
-}(function (window, document) {
+})((window, document) => {
     const options = new Option();
     options.add('width', '800px')
         .add('height', '400px')
