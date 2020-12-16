@@ -1,0 +1,23 @@
+{% from 'shell/macro/shell.html.twig' import shell %}
+
+{% set httpHost = app.request.getHttpHost %}
+{% if is_granted("ROLE_USER") %}
+    {% set username = app.user.username %}
+{% else %}
+    {% set username = 'anon.' %}
+{% endif %}
+
+{% set shell_content %}
+
+    <form id="shell-simulator-form" autocomplete="off">
+        <label class="flex flex-no-wrap">
+            <span class="text-shell-green">{{ username }}@{{ httpHost }}</span>:<span class="text-shell-blue">~</span>$
+            <input id="shell-simulator-input" type="text" class="bg-aubergine-dark-100 w-full">
+        </label>
+    </form>
+
+{% endset %}
+
+{{ shell(shell_content) }}
+
+{% include 'shell/cv.html.twig' %}

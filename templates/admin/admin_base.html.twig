@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{% block title %}Welcome!{% endblock %}</title>
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            {{ encore_entry_link_tags('tailwind') }}
+        {% endblock %}
+    </head>
+    <body class="flex flex-col justify-center items-center w-screen max-w-screen h-auto min-h-screen sm:overflow-hidden text-base">
+
+        {% include 'flash_message.html.twig' %}
+
+        <main class="flex flex-1 flex-wrap justify-center items-center xl:flex-no-wrap xl:items-center w-screen max-w-screen p-10 xl:mt-auto mb-auto">
+            {% block body %}{% endblock %}
+        </main>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('shell') }}
+        {% endblock %}
+    </body>
+</html>

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Dto\User\UserDto;
 use App\Entity\User;
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\UserType;
 use App\Interfaces\ControllerInterface;
@@ -23,12 +24,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class UserController.
  *
- * @Route("/user")
+ * @Route("/admin/user")
  * @IsGranted("ROLE_ADMIN")
  */
 class UserController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
+
+    const TEMPLATE = '@admin';
 
     /**
      * @Route("/", name="user.list", methods={"GET"})
@@ -38,6 +41,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function userIndex(UserRepository $userRepository): Response
     {
@@ -62,6 +66,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function userShow(?User $user = null): Response
     {
@@ -96,6 +101,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function userNew(Request $request, UserDto $userDto): Response
     {
@@ -119,6 +125,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @throws HydratorException
      * @throws ReflectionException
      * @throws DtoHandlerException
+     * @throws EventException
      */
     public function userEdit(Request $request, ?User $user = null): Response
     {
@@ -144,6 +151,7 @@ class UserController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function userDelete(Request $request, UserService $service, ?User $user = null): Response
     {

@@ -1,1 +1,3 @@
-
+.tooltip:hover .tooltip-box {
+    display: block !important;
+}

@@ -14,11 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends AbstractController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin", name="admin", methods={"GET"})
      */
     public function index()
     {
-        return $this->render('admin/index.html.twig', [
+        return $this->render('@admin/index.html.twig', [
             'controller_name' => 'AdminController',
         ]);
     }

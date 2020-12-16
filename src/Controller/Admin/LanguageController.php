@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Dto\Language\LanguageDto;
 use App\Entity\Language;
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\LanguageType;
 use App\Interfaces\ControllerInterface;
@@ -22,12 +23,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class LanguageController.
  *
- * @Route("/language")
+ * @Route("/admin/language")
  * @IsGranted("ROLE_ADMIN")
  */
 class LanguageController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
+
+    const TEMPLATE = '@admin';
 
     /**
      * @Route("/", name="language.list", methods={"GET"})
@@ -37,6 +40,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function languageIndex(LanguageRepository $languageRepository): Response
     {
@@ -60,6 +64,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function languageShow(?Language $language = null): Response
     {
@@ -94,6 +99,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function languageNew(Request $request, LanguageDto $languageDto): Response
     {
@@ -116,6 +122,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
      * @throws ReflectionException
      * @throws DtoHandlerException
      * @throws HydratorException
+     * @throws EventException
      */
     public function languageEdit(Request $request, ?Language $language = null): Response
     {
@@ -141,6 +148,7 @@ class LanguageController extends AbstractController implements ControllerInterfa
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function languageDelete(Request $request, LanguageService $service, ?Language $language = null): Response
     {

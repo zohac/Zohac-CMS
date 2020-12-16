@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% from 'partial/card.html.twig' import card %}
+{% from 'partial/picture.html.twig' import picture %}
+
+{% block title %}Home!{% endblock %}
+
+{% block body %}
+
+{% set img = {
+    'sources': {
+        0: {
+            'srcset': 'assets/images/portrait.jpg'
+        }
+    },
+    'img': {
+        'src': 'assets/images/portrait.jpg',
+        'alt': 'portrait',
+        'class': 'rounded-full'
+    }
+} %}
+
+{% set card_content %}
+
+    <div class="flex flex-col justify-center lg:w-1/2 my-10 mx-auto text-center lg:text-left">
+        <h1 class="text-2xl font-bold">Simon JOUAN</h1>
+        <h2 class="text-grey-warm-100">Développeur Web FullStack</h2>
+    </div>
+
+    <div class="flex w-full lg:w-1/4 justify-center items-center bg-aubergine-dark-100 lg:bg-grey-warm-20 text-grey-warm-20 py-2 text-4xl">
+        <a href="#" class="mr-2">
+            <i class="fab fa-github-square lg:text-aubergine-dark-100"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-twitter-square lg:text-aubergine-dark-100"></i>
+        </a>
+    </div>
+
+{% endset %}
+
+<main class="flex flex-wrap justify-center items-center sm:flex-no-wrap w-screen max-w-screen p-5 my-auto">
+
+    {{ card(
+        card_content,
+        picture(img, {'class': 'w-1/2 lg:w-1/4 h-auto mx-auto mt-10 lg:m-5'}),
+        {'class': 'bg-grey-warm-20', 'attrs': {'onClick': 'console.log("clicked");'}}
+    ) }}
+
+    <aside class="lg:flex lg:flex-1 justify-center items-center lg:w-1/2 h-full hidden">
+        <div class="w-full text-center text-base">
+            Ouvrez le comme si vous étiez sous
+            <div class="relative inline-block tooltip">
+                &nbsp;<span class="border-dotted border-b">linux</span>.
+                <div class="absolute z-10 py-1 px-4 w-32 text-center rounded-lg bg-aubergine-dark-100 text-grey-warm-20 hidden tooltip-box"
+                     style="bottom: 100%;
+                        left: 50%;
+                        margin-left: -60px;">
+                    ctrl + alt + t
+                    <svg class="absolute text-aubergine-dark-100 w-full left-0 top-full h-5"
+                         x="0px"
+                         y="0px"
+                         viewBox="0 0 255 255"
+                         xml:space="preserve">
+                    <polygon class="fill-current" points="0,0 127.5,127.5 255,0"/>
+                </svg>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+</main>
+
+{% endblock %}

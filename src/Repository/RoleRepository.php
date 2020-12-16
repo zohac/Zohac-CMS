@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Role;
-use function array_key_exists;
+use App\Interfaces\RepositoryInterface;
+use App\Traits\RepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,8 +15,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Role[]    findAll()
  * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RoleRepository extends ServiceEntityRepository
+class RoleRepository extends ServiceEntityRepository implements RepositoryInterface
 {
+    use RepositoryTrait;
+
     const ARCHIVED = 'archived';
 
     private $temporaryCache = null;
@@ -58,30 +60,10 @@ class RoleRepository extends ServiceEntityRepository
             $query = $this->createQueryBuilder('r')
                 ->select('r.uuid, r.name');
 
-            $this->temporaryCache = $this->executeQuery($query, $options);
+            $this->temporaryCache = $this->executeQuery($query, 'r', $options);
         }
 
         return $this->temporaryCache;
-    }
-
-    /**
-     * @param QueryBuilder $query
-     * @param array        $options
-     *
-     * @return array
-     */
-    private function executeQuery(QueryBuilder $query, array $options = []): array
-    {
-        if (array_key_exists(self::ARCHIVED, $options)) {
-            $archived = (bool) $options[self::ARCHIVED];
-
-            $query = $query->andWhere('r.archived = :archived')
-                ->setParameter(self::ARCHIVED, $archived);
-        }
-
-        $query = $query->getQuery();
-
-        return $query->execute();
     }
 
     /**
@@ -89,7 +71,7 @@ class RoleRepository extends ServiceEntityRepository
      *
      * @return Role[]
      */
-    public function findAllInOneRequest(array $options = [])
+    public function findAllInOneRequest(array $options = []): array
     {
         $query = $this->createQueryBuilder('r')
             ->select('r, t, tr, l')
@@ -97,6 +79,6 @@ class RoleRepository extends ServiceEntityRepository
             ->leftJoin('t.translations', 'tr')
             ->leftJoin('tr.language', 'l');
 
-        return $this->executeQuery($query, $options);
+        return $this->executeQuery($query, 'r', $options);
     }
 }

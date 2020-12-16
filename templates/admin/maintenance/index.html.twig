@@ -1,0 +1,22 @@
+{% extends '@admin/admin_base.html.twig' %}
+
+{% block title %}List!{% endblock %}
+
+{% block body %}
+<div class="maintenances-wrapper">
+
+    {% for maintenance in maintenances %}
+    <div class="maintenance-wrapper">
+
+        {% trans from 'maintenance' %}redirectPath{% endtrans %}: {{ maintenance.redirectPath }}<br/>
+        {% trans from 'maintenance' %}mode{% endtrans %}: {{ maintenance.mode }}<br/>
+        {% for ip in maintenance.ips %}
+            {% trans from 'maintenance' %}ip{% endtrans %}: {{ ip }}<br/>
+        {% endfor %}
+
+        <a href="{{ path('maintenance.detail', {"uuid": maintenance.uuid}) }}">{% trans from 'global' %}Detail{% endtrans %}</a>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

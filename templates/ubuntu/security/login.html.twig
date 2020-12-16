@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+    <form method="post"
+          class="flex flex-col flex-no-wrap w-full xl:w-auto xl:flex-wrap xl:flex-row bg-grey-warm-20 text-grey-cool rounded-lg xl:rounded shadow-lg overflow-hidden transition-all p-10 xl:text-xl">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <h1 class="text-center w-full">Please sign in</h1>
+        <label for="inputEmail">Email</label>
+        <input type="email"
+               value="{{ last_username }}"
+               name="email"
+               id="inputEmail"
+               class="w-full"
+               required
+               autofocus>
+        <label for="inputPassword">Password</label>
+        <input type="password"
+               name="password"
+               id="inputPassword"
+               class="w-full"
+               required>
+
+        <input type="hidden"
+               name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
+
+        {#
+        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+        See https://symfony.com/doc/current/security/remember_me.html
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" name="_remember_me"> Remember me
+            </label>
+        </div>
+        #}
+
+        <div class="button-wrapper w-full flex justify-center">
+            <button class="bg-aubergine-dark-100 rounded-lg p-5 mt-10 text-grey-warm-20 w-full xl:p-2 xl:w-1/2"
+                    type="submit">
+                Sign in
+            </button>
+        </div>
+
+    </form>
+{% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Event\IndexViewEvent;
+use App\Exception\EventException;
 use App\Interfaces\ControllerInterface;
 use App\Traits\ControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,11 +18,15 @@ class DefaultController extends AbstractController implements ControllerInterfac
     use ControllerTrait;
 
     /**
-     * @Route("/", name="index")
+     * @Route("/", name="index", methods={"GET"})
+     *
+     * @return Response
+     *
+     * @throws EventException
      */
     public function defaultIndex(): Response
     {
-        $this->getViewService()->setData('base.html.twig');
+        $this->getViewService()->setData('home/home.html.twig');
 
         $this->dispatchEvent(IndexViewEvent::INDEX, ['viewService' => $this->getViewService()]);
 

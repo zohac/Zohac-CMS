@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Dto\Role\RoleDto;
 use App\Entity\Role;
 use App\Exception\DtoHandlerException;
+use App\Exception\EventException;
 use App\Exception\HydratorException;
 use App\Form\RoleType;
 use App\Interfaces\ControllerInterface;
@@ -23,12 +24,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class RoleController.
  *
- * @Route("/role")
+ * @Route("/admin/role")
  * @IsGranted("ROLE_ADMIN")
  */
 class RoleController extends AbstractController implements ControllerInterface
 {
     use ControllerTrait;
+
+    const TEMPLATE = '@admin';
 
     /**
      * @Route("/", name="role.list", methods={"GET"})
@@ -38,6 +41,7 @@ class RoleController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function roleIndex(RoleRepository $roleRepository): Response
     {
@@ -62,6 +66,7 @@ class RoleController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function roleShow(?Role $role = null): Response
     {
@@ -96,6 +101,7 @@ class RoleController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function roleNew(Request $request, RoleDto $roleDto): Response
     {
@@ -119,6 +125,7 @@ class RoleController extends AbstractController implements ControllerInterface
      * @throws HydratorException
      * @throws ReflectionException
      * @throws DtoHandlerException
+     * @throws EventException
      */
     public function roleEdit(Request $request, ?Role $role = null): Response
     {
@@ -144,6 +151,7 @@ class RoleController extends AbstractController implements ControllerInterface
      * @return Response
      *
      * @throws ReflectionException
+     * @throws EventException
      */
     public function roleDelete(Request $request, RoleService $service, ?Role $role = null): Response
     {

@@ -1,0 +1,11 @@
+{% block footer %}
+
+    <div class="self-start h-px w-full bg-aubergine-dark-50 relative overscroll-none animate-width-100 opacity-0">
+        <div class="absolute left-0 h-px w-1 rounded-full bg-aubergine-dark-70 shadow-slide animate-slide opacity-0"></div>
+    </div>
+
+    <footer class="bg-aubergine-dark-100 text-grey-warm-20 w-full h-auto p-5 text-center animate-fade-in-4">
+        Made with <span class="text-orange-ubuntu-100">&#9829;</span> and Symfony / Tailwind CSS. Copyright &copy; {{ "now"|date("Y") }} Simon JOUAN
+    </footer>
+
+{% endblock %}

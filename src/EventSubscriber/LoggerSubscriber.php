@@ -39,16 +39,18 @@ class LoggerSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
-        $subscribedEvents = [
-            KernelEvents::EXCEPTION => 'onException',
-        ];
-        $events = FinderService::getEventsByInterface(EventInterface::class);
+//        $subscribedEvents = [
+//            KernelEvents::EXCEPTION => 'onException',
+//        ];
+//        $events = FinderService::getEventsByInterface(EventInterface::class);
+//
+//        foreach ($events as $event) {
+//            $subscribedEvents[$event] = 'onEvent';
+//        }
+//
+//        return $subscribedEvents;
 
-        foreach ($events as $event) {
-            $subscribedEvents[$event] = 'onEvent';
-        }
-
-        return $subscribedEvents;
+        return [];
     }
 
     /**
