@@ -3,12 +3,12 @@
     addAnotherCollectionWidget(window, document);
 }(function (window, document) {
     // Add listener on the remove buttons
-    const removeButtons = document.getElementsByClassName("remove");
+    const removeButtons = document.getElementsByClassName('remove');
     addListenerOnRemoveBtn(removeButtons);
 
     // Add listener on the "add-another-collection-widget" button
-    const element = document.getElementById("add-another-collection-widget");
-    element.addEventListener("click", addAnotherWidget);
+    const element = document.getElementById('add-another-collection-widget');
+    element.addEventListener('click', addAnotherWidget);
 }));
 
 // Remove a parent node
@@ -20,7 +20,7 @@ function removeParent(removeBtn) {
 // Add listener on remove buttons
 function addListenerOnRemoveBtn(removeButtons) {
     for (const removeBtn of removeButtons) {
-        removeBtn.addEventListener("click", function () {
+        removeBtn.addEventListener('click', function () {
             removeParent(removeBtn);
         });
     }
@@ -28,7 +28,7 @@ function addListenerOnRemoveBtn(removeButtons) {
 
 // Add another collection widget
 function addAnotherWidget() {
-    const list = document.getElementById(this.getAttribute("data-list-selector"));
+    const list = document.getElementById(this.getAttribute('data-list-selector'));
     // Try to find the counter of the list or use the length of the list
     let counter = list.dataset.widgetCounter;
 
@@ -51,7 +51,7 @@ function addAnotherWidget() {
 
     // create a new list element and add it to the list
     let newElem = document.createElement(list.dataset.widgetTags);
-    newElem.insertAdjacentHTML("afterbegin", newWidget);
+    newElem.insertAdjacentHTML('afterbegin', newWidget);
 
     // Add listener on the remove btn
     const removeButtons = newElem.getElementsByClassName('remove');

@@ -1,0 +1,25 @@
+{% macro shell(shell_content, options = {'id': 'shell-simulator'}) %}
+
+    {% set httpHost = app.request.getHttpHost %}
+    {% if is_granted("ROLE_USER") %}
+        {% set username = app.user.username %}
+    {% else %}
+        {% set username = 'anon.' %}
+    {% endif %}
+
+    <div id="{{ options.id }}"
+         class="text-grey-warm-20 hidden absolute"
+         data-http-host="{{ httpHost }}"
+         data-username="{{ username }}">
+        <div id="{{ options.id }}-header" class="flex flex-no-wrap items-center justify-between bg-grey-cool text-center w-full h-auto rounded-t p-1 cursor-move">
+            <div></div>
+            <div>{{ httpHost }}</div>
+            <div id="{{ options.id }}-close" class="cursor-pointer rounded-full m-1 w-4 h-4 bg-gradient-to-br from-shell-red-light to-shell-red-dark shadow-shell">
+            </div>
+        </div>
+        <div id="{{ options.id }}-content" class="bg-aubergine-dark-100 border-solid border border-grey-cool w-full p-1 overflow-x-auto">
+            {{ shell_content }}
+        </div>
+    </div>
+
+{% endmacro %}
