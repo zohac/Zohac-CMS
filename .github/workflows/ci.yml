@@ -73,9 +73,12 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: XDEBUG_MODE=coverage php bin/phpunit --coverage-clover clover.xml
+          coverageCommand: |
+            pecl install pcov
+            php -d pcov.enabled=1 bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          XDEBUG_MODE=coverage php bin/phpunit
+          pecl install pcov
+          php -d pcov.enabled=1 bin/phpunit
