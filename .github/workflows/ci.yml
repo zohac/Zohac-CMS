@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.3','7.4']
+        php-versions: ['7.4']
         node-version: ['12.x']
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -71,9 +71,11 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
         with:
+          cmd: apt-get install php-xdebug
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
+          apt-get install php-xdebug
           php bin/phpunit
