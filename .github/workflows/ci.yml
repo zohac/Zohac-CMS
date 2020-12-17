@@ -10,6 +10,8 @@ jobs:
         operating-system: [ubuntu-latest]
         php-versions: ['7.4']
         node-version: ['12.x']
+        coverage:
+          - xdebug
     services:
       # https://docs.docker.com/samples/library/mysql/
       mysql:
@@ -69,12 +71,11 @@ jobs:
       - name: Code Climate Coverage Action
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          sudo apt-get install php-xdebug
           php bin/phpunit
