@@ -73,9 +73,9 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: php bin/phpunit --coverage-clover clover.xml
+          coverageCommand: XDEBUG_MODE=coverage php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          php bin/phpunit
+          XDEBUG_MODE=coverage php bin/phpunit
