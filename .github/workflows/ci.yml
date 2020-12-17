@@ -74,7 +74,12 @@ jobs:
 #          coverageCommand: php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
-        run: |
-          sudo apt-get install php-xdebug
-          php bin/phpunit
+#      - name: Run functionnal and unit tests
+#        run: |
+#          sudo apt-get install php-xdebug
+#          php bin/phpunit
+
+      - name: GitHub Action for PHPUnit
+        uses: owenvoke/phpunit-action@v1.0.0
+        with:
+          command: php bin/phpunit
