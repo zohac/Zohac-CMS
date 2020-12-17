@@ -66,20 +66,15 @@ jobs:
 #        run: vendor/bin/requirements-checker
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
-#      - name: Code Climate Coverage Action
-#        uses: paambaati/codeclimate-action@v2.7.5
-#        env:
-#          CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
-#        with:
-#          coverageCommand: php bin/phpunit --coverage-clover clover.xml
+      - name: Code Climate Coverage Action
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
+        with:
+          coverageCommand: php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
-#      - name: Run functionnal and unit tests
-#        run: |
-#          sudo apt-get install php-xdebug
-#          php bin/phpunit
-
-      - name: GitHub Action for PHPUnit
-        uses: owenvoke/phpunit-action@v1.0.0
-        with:
-          command: php bin/phpunit
+      - name: Run functionnal and unit tests
+        run: |
+          sudo apt-get install php-xdebug
+          php bin/phpunit
