@@ -11,6 +11,7 @@ jobs:
         php-versions: ['7.4']
         node-version: ['12.x']
         coverage:
+          - pcov
           - xdebug
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -80,5 +81,4 @@ jobs:
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          pecl install pcov
-          php -d pcov.enabled=1 bin/phpunit
+          php bin/phpunit
