@@ -74,9 +74,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: |
-            pecl install pcov
-            php -d pcov.enabled=1 bin/phpunit --coverage-clover clover.xml
+          coverageCommand: php -d pcov.enabled=1 bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
