@@ -10,9 +10,6 @@ jobs:
         operating-system: [ubuntu-latest]
         php-versions: ['7.4']
         node-version: ['12.x']
-        coverage:
-          - pcov
-          - xdebug
     services:
       # https://docs.docker.com/samples/library/mysql/
       mysql:
@@ -74,9 +71,12 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: php -d pcov.enabled=1 bin/phpunit --coverage-clover clover.xml
+          coverage: xdebug
+          coverageCommand: php -d bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
+        with:
+          coverage: xdebug
         run: |
           php bin/phpunit
