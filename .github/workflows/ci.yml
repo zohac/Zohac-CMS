@@ -29,9 +29,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          ini-values: memory_limit=1024M
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
-          coverage: pcov, xdebug
+          coverage: xdebug
           tools: phpunit:8.5
         env:
           update: true
