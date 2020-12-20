@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.4']
+        php-versions: ['7.3','7.4']
         node-version: ['12.x']
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -68,46 +68,15 @@ jobs:
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverage: xdebug
         run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
-          php bin/phpunit --coverage-clover clover.xml
+          php bin/phpunit
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
-#      - name: Code Climate Coverage Action
-#        uses: paambaati/codeclimate-action@v2.7.5
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-#        with:
-#          coverageCommand: php bin/phpunit --coverage-clover clover.xml
-
-  publish-test-results-pass:
-    name: "Publish Unit Tests Results"
-    needs: functional-tests
-    runs-on: ubuntu-latest
-    # the build-and-test job might be skipped, we don't need to run this job then
-    if: success()
-
-    steps:
-      - name: Test pass
+      - name: Code Climate Coverage Action
+        uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          ./cc-test-reporter after-build --exit-code 0
-
-  publish-test-results-fail:
-    name: "Publish Unit Tests Results"
-    needs: functional-tests
-    runs-on: ubuntu-latest
-    # the build-and-test job might be skipped, we don't need to run this job then
-    if: failure()
-
-    steps:
-      - name: Test fail
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          ./cc-test-reporter after-build --exit-code 1
+        with:
+          coverageCommand: php bin/phpunit --coverage-clover clover.xml
