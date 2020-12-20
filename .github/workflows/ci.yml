@@ -68,8 +68,6 @@ jobs:
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
-        with:
-          coverage: xdebug
         run: |
           php bin/phpunit
 
