@@ -30,6 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+          coverage: pcov, xdebug
         env:
           update: true
 
@@ -72,11 +73,9 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverage: xdebug
-          coverageCommand: php -d bin/phpunit --coverage-clover clover.xml
+          coverageCommand: php bin/phpunit --coverage-clover clover.xml
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
-        with:
-          coverage: xdebug
         run: |
           php bin/phpunit
