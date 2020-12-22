@@ -30,8 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo, sqlite
-          coverage: pcov
-          ini-values: max_execution_time=600
+          coverage: xdebug
         env:
           update: true
 
