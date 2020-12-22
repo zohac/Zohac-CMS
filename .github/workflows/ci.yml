@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.3','7.4']
+        php-versions: ['7.4']
         node-version: ['12.x']
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -62,13 +62,8 @@ jobs:
           cmd: run encore dev
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
-#      - name: Check Symfony requirements
-#        run: vendor/bin/requirements-checker
-
-      ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
-        run: |
-          php bin/phpunit -v
+      #      - name: Check Symfony requirements
+      #        run: vendor/bin/requirements-checker
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
@@ -77,4 +72,11 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverage: xdebug
-          coverageCommand: php bin/phpunit --coverage-clover clover.xml
+          coverageCommand: php -d bin/phpunit --coverage-clover clover.xml
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Run functionnal and unit tests
+        with:
+          coverage: xdebug
+        run: |
+          php bin/phpunit
