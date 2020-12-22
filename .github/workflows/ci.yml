@@ -31,6 +31,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
           coverage: pcov
+          ini-values: memory_limit=4096M
         env:
           update: true
 
@@ -50,7 +51,9 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+        run: |
+          composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+          php bin/phpunit install
 
       ## —— Yarn 🐱 ————————————————————————————————————————————————————————————
       - name: Yarn install
@@ -69,7 +72,7 @@ jobs:
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          php bin/phpunit -v
+          php bin/phpunit --coverage-text -v
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
