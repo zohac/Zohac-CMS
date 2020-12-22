@@ -70,9 +70,7 @@ jobs:
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
-        run: |
-          echo test - ${{ secrets.CC_TEST_REPORTER_ID }} -
-          php bin/phpunit --coverage-text
+        run: php bin/phpunit --coverage-text
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
