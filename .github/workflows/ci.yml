@@ -79,3 +79,4 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
+          debug: true
