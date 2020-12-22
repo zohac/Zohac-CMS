@@ -70,7 +70,7 @@ jobs:
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
         run: |
-          php bin/phpunit
+          php bin/phpunit -v
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
