@@ -70,13 +70,15 @@ jobs:
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
-        run: php bin/phpunit --coverage-text
+        run: |
+          echo ${{ secret.CC_TEST_REPORTER_ID }}
+          php bin/phpunit --coverage-text
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: fc87722934160253fde28e0855d39489406fa82980ed846cb54d1633ee43e82c
+          CC_TEST_REPORTER_ID: ${{ secret.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
           debug: true
