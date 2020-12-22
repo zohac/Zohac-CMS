@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.4']
+        php-versions: ['7.3','7.4']
         node-version: ['12.x']
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -30,6 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+          coverage: pcov
         env:
           update: true
 
@@ -62,8 +63,13 @@ jobs:
           cmd: run encore dev
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
-      #      - name: Check Symfony requirements
-      #        run: vendor/bin/requirements-checker
+#      - name: Check Symfony requirements
+#        run: vendor/bin/requirements-checker
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Run functionnal and unit tests
+        run: |
+          php bin/phpunit -v
 
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
@@ -71,12 +77,4 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverage: xdebug
-          coverageCommand: php -d bin/phpunit --coverage-clover clover.xml
-
-      ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
-        with:
-          coverage: xdebug
-        run: |
-          php bin/phpunit
+          coverageCommand: php bin/phpunit --coverage-clover clover.xml
