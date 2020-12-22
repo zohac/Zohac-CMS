@@ -31,6 +31,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
           coverage: xdebug
+          tools: phpunit:8.5
         env:
           update: true
 
@@ -56,11 +57,11 @@ jobs:
       - name: Yarn install
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install
+          cmd: install --force
       - name: Yarn build
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run encore production
+          cmd: run encore dev
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
 #      - name: Check Symfony requirements
