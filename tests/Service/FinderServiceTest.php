@@ -8,10 +8,10 @@ use App\Interfaces\Event\EventInterface;
 use App\Service\FinderService;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\TestCase;
 use SebastianBergmann\RecursionContext\InvalidArgumentException;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class FinderServiceTest extends TestCase
+class FinderServiceTest extends KernelTestCase
 {
     /**
      * @throws Exception
