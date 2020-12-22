@@ -67,13 +67,6 @@ jobs:
 #      - name: Check Symfony requirements
 #        run: vendor/bin/requirements-checker
 
-      ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
-        with:
-          coverage: xdebug
-        run: |
-          php bin/phpunit -v
-
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
         uses: paambaati/codeclimate-action@v2.7.5
@@ -82,3 +75,10 @@ jobs:
         with:
           coverage: xdebug
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
+
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Run functionnal and unit tests
+        with:
+          coverage: xdebug
+        run: |
+          php bin/phpunit -v
