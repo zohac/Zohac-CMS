@@ -69,6 +69,8 @@ jobs:
 
       ## —— Tests ✅ ———————————————————————————————————————————————————————————
       - name: Run functionnal and unit tests
+        with:
+          coverage: xdebug
         run: |
           php bin/phpunit -v
 
@@ -78,4 +80,5 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
+          coverage: xdebug
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
