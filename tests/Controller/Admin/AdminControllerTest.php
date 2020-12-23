@@ -110,7 +110,7 @@ class AdminControllerTest extends WebTestCase
 
     public function provideUrls()
     {
-        yield ['/admin/admin/'];
+        yield ['/admin/'];
     }
 
     protected function tearDown(): void
