@@ -45,6 +45,8 @@ class DebugServiceTest extends TestCase
     }
 
     /**
+     * @param bool $isDebug
+     * @return DebugService
      * @throws RuntimeException
      */
     public function getDebugService(bool $isDebug = false): DebugService
@@ -69,5 +71,7 @@ class DebugServiceTest extends TestCase
     {
         parent::tearDown();
         // avoid memory leaks
+
+        $this->flashBag = null;
     }
 }
