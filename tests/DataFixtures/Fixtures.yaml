@@ -72,3 +72,9 @@ App\Entity\User:
     language: '@language_*'
 #    roles:
 #      - '@role_*'
+
+App\Entity\Parameter:
+  parameter_{1..10}:
+    uuid: <uuid()>
+    name: name_<current()>
+    value: [value_<current()>]
