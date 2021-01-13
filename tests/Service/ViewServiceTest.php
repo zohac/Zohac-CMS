@@ -4,6 +4,9 @@ namespace App\Tests\Service;
 
 use App\Interfaces\Event\EventInterface;
 use App\Service\ViewService;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\ExpectationFailedException;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ViewServiceTest extends KernelTestCase
@@ -19,6 +22,11 @@ class ViewServiceTest extends KernelTestCase
         $this->viewService = self::$container->get(ViewService::class);
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testSetData()
     {
         $return = $this->viewService->setData('view', ['an option']);
@@ -28,6 +36,11 @@ class ViewServiceTest extends KernelTestCase
         $this->assertTrue(is_array($this->viewService->getOptions()));
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testSetView()
     {
         $return = $this->viewService->setData('view', ['an option']);
@@ -39,6 +52,11 @@ class ViewServiceTest extends KernelTestCase
         $this->assertEquals('view-2', $this->viewService->getView());
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testAddOptions()
     {
         $return = $this->viewService->setData('view', ['an option']);
@@ -51,6 +69,11 @@ class ViewServiceTest extends KernelTestCase
         $this->assertContains('an another option', $this->viewService->getOptions());
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testGetViewEvents()
     {
         $events = $this->viewService->getViewEvents();

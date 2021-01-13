@@ -6,6 +6,9 @@ use App\Event\User\UserEvent;
 use App\Exception\EventException;
 use App\Interfaces\Event\EventInterface;
 use App\Service\EventService;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\ExpectationFailedException;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class EventServiceTest extends WebTestCase
@@ -21,17 +24,32 @@ class EventServiceTest extends WebTestCase
         $this->eventService = self::$container->get(EventService::class);
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testGetEventService()
     {
         $this->assertInstanceOf(EventService::class, $this->eventService);
     }
 
+    /**
+     * @throws EventException
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testGetEvent()
     {
         $event = $this->eventService->getEvent(UserEvent::CREATE);
         $this->assertEquals(UserEvent::CREATE, $event::CREATE);
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testGetEvents()
     {
         $events = $this->eventService->getEvents();

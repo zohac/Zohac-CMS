@@ -5,14 +5,24 @@ namespace App\Tests\Service\User;
 use App\Dto\User\UserDto;
 use App\Entity\Role;
 use App\Entity\User;
+use App\Exception\HydratorException;
+use App\Exception\UuidException;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use App\Service\User\UserService;
 use App\Service\UuidService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\ExpectationFailedException;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class UserServiceTest extends KernelTestCase
 {
@@ -45,6 +55,14 @@ class UserServiceTest extends KernelTestCase
      */
     private $entityManager;
 
+    /**
+     * @throws ORMException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     * @throws UuidException
+     * @throws ServiceCircularReferenceException
+     * @throws ServiceNotFoundException
+     */
     public function setUp(): void
     {
         self::bootKernel(['debug' => 0]);
@@ -57,7 +75,15 @@ class UserServiceTest extends KernelTestCase
         $this->loadFixtures();
     }
 
-    public function loadFixtures()
+    /**
+     * @return $this
+     *
+     * @throws UuidException
+     * @throws ORMException
+     * @throws ORMInvalidArgumentException
+     * @throws OptimisticLockException
+     */
+    public function loadFixtures(): self
     {
         $this->fixtures = $this->loadFixtureFiles([
             __DIR__.'/../../DataFixtures/Fixtures.yaml',
@@ -78,6 +104,12 @@ class UserServiceTest extends KernelTestCase
         return $this;
     }
 
+    /**
+     * @throws HydratorException
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testCreateUserFromDto()
     {
         $userDto = $this->getUserDto(true);
@@ -121,6 +153,12 @@ class UserServiceTest extends KernelTestCase
         return $userDto;
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws HydratorException
+     * @throws InvalidArgumentException
+     */
     public function testUpdateUserFromDtoWithoutPassword()
     {
         $userDto = $this->getUserDto();
@@ -133,7 +171,7 @@ class UserServiceTest extends KernelTestCase
         $user = $this->userService->updateUserFromDto($userDto, $user);
 
         $this->assertInstanceOf(User::class, $user);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3}\-[a-f0-9]{12}/',
             $user->getUuid()
         );
@@ -151,6 +189,12 @@ class UserServiceTest extends KernelTestCase
         }
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws HydratorException
+     * @throws InvalidArgumentException
+     */
     public function testUpdateUserFromDtoWithPassword()
     {
         $userDto = $this->getUserDto(true);
@@ -179,6 +223,11 @@ class UserServiceTest extends KernelTestCase
         }
     }
 
+    /**
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testDeleteUser()
     {
         $user = $this->fixtures['user_1'];

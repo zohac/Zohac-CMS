@@ -3,6 +3,8 @@
 namespace App\Tests\Service;
 
 use App\Service\TranslatorService;
+use PHPUnit\Framework\ExpectationFailedException;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class TranslatorServiceTest extends KernelTestCase
@@ -18,6 +20,10 @@ class TranslatorServiceTest extends KernelTestCase
         $this->translatorService = self::$container->get(TranslatorService::class);
     }
 
+    /**
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
     public function testSetAndGetLocal()
     {
         $this->translatorService->setLocale('fr');

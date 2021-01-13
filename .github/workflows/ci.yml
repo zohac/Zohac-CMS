@@ -29,7 +29,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo, sqlite
+          coverage: pcov
         env:
           update: true
 
@@ -49,31 +50,32 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+        run: |
+          composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+          php bin/phpunit install
 
       ## —— Yarn 🐱 ————————————————————————————————————————————————————————————
       - name: Yarn install
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: install --force
+          cmd: install
       - name: Yarn build
         uses: borales/actions-yarn@v2.0.0
         with:
-          cmd: run encore dev
+          cmd: run encore production
 
       # —— Symfony 🎵 ——————————————————————————————————————————————————————————
 #      - name: Check Symfony requirements
 #        run: vendor/bin/requirements-checker
 
+      ## —— Tests ✅ ———————————————————————————————————————————————————————————
+      - name: Run functionnal and unit tests
+        run: php bin/phpunit --coverage-text
+
       ## —— Code Climate Coverage Action ✅ ————————————————————————————————————
       - name: Code Climate Coverage Action
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: ff14f7183876ba0509b623f14150241093cd8b56bc7504f99d847b0d769e5bd8
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: php bin/phpunit --coverage-clover clover.xml
-
-      ## —— Tests ✅ ———————————————————————————————————————————————————————————
-      - name: Run functionnal and unit tests
-        run: |
-          php bin/phpunit
