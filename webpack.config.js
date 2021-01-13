@@ -55,7 +55,7 @@ Encore
         config.corejs = 3;
     })
     .configureBabel((config) => {
-        config.plugins.push('@babel/plugin-proposal-class-properties')
+        config.plugins.push('@babel/plugin-proposal-class-properties');
     })
 
     // .enableLessLoader()
@@ -69,7 +69,7 @@ Encore
     })
 
     // enables Sass/SCSS support
-    .enableSassLoader()
+    // .enableSassLoader()
 
     // uncomment if you use TypeScript
     .enableTypeScriptLoader()

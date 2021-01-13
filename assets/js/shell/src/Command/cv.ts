@@ -21,9 +21,7 @@ export default class Cv extends ShellWindow {
     constructor(description: string | null = null) {
         super();
 
-        if (description) {
-            this.description = description
-        }
+        if (description) this.description = description;
 
         this.init();
     }
@@ -53,7 +51,7 @@ export default class Cv extends ShellWindow {
 
         const newElement = document.createElement('div');
         newElement.className = 'flex w-full';
-        newElement.innerHTML = `<div class="w-20 mr-4">${Cv.COMMAND_NAME}</div>${this.description}`;
+        // newElement.innerHTML = `<div class="w-20 mr-4">${Cv.COMMAND_NAME}</div>${this.description}`;
 
         return newElement;
     }

@@ -38,7 +38,10 @@ export default class ShellWindow extends UtilityClass {
     }
 
     move(shell: ShellInterface): ShellInterface {
-        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        let pos1 = 0;
+        let pos2 = 0;
+        let pos3 = 0;
+        let pos4 = 0;
 
         /* the header is where you move the DIV from:*/
         shell.header.onmousedown = dragMouseDown;
